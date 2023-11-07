@@ -37,7 +37,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'useraccount',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'drf_spectacular',
 ]
+
+#User_Auth mocde
+AUTH_USER_MODEL = 'useraccount.UserAccount'
+
+#REST_FRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+#DJOSER
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,6 +72,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'djangoProject1.urls'
+AUTHENTICATION_BACKENDS = (
+   "django.contrib.auth.backends.ModelBackend",
+)
 
 TEMPLATES = [
     {
