@@ -1,34 +1,54 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserAccount(AbstractUser):
-    # user type choices from premium to basic
-    USER_TYPE_CHOICES = (
-        (1, 'Premium'),
-        (2, 'Basic'),
+    USER_ROLE_CHOICES = (
+        (1, 'Basic Student'),
+        (2, 'Blogger'),
+        (3, 'Premium Student'),
     )
 
-# choises of user role between student, dentist and bloggers
-    USER_ROLE_CHOICES = (
-        (1, 'Student'),
-        (2, 'Dentist'),
-        (3, 'Blogger'),
-        (4, 'User'),
-    )
     userRole = models.PositiveSmallIntegerField(choices=USER_ROLE_CHOICES, default=1)
-    userType = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES, default=2)
     phone = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=100, blank=True)
-    email = models.EmailField(unique=True)
-
+    email = models.EmailField(unique=True, blank=False, null=False)
+    is_banned = models.BooleanField(default=False)
+    REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+
+
+class Certificate(models.Model):
+    number = models.CharField(max_length=100, blank=True, null=True)
+    certificateFile = models.FileField(upload_to='certificateFile', blank=True, null=True)
+    profile = models.ForeignKey("useraccount.ProfileModel", on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.username
+
 
 class ProfileModel(models.Model):
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
+    bio = models.TextField(max_length=500, blank=True, null=True)
     profileImage = models.ImageField(upload_to='profileImage', blank=True)
+    place_of_work = models.CharField(max_length=100, blank=True, null=True)
+    speciality = models.CharField(max_length=100, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    is_verified_pro = models.BooleanField(default=False)
+    selfie = models.ImageField(upload_to='selfie', blank=True, null=True)
 
     def __str__(self):
-        return self.user.first_name + ' ' + self.user.last_name
+        return self.user.username
+
+
+@receiver(post_save, sender=UserAccount)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        ProfileModel.objects.create(user=instance)
+
+
+@receiver(post_save, sender=UserAccount)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profilemodel.save()

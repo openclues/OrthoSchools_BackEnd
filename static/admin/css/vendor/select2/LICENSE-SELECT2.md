@@ -1,0 +1,1 @@
+C:/Users/islam/university/lib/site-packages/django/contrib/admin/static/admin/css/vendor/select2/LICENSE-SELECT2.md
