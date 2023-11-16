@@ -1,10 +1,6 @@
 
-W
-'useraccount/websiteViews/index_views.py,9\e\9ec08896956c2380e67931fae5a3254c50e94592
 a
 1useraccount/templates/Modified_files/sign-in.html,6\3\6312214b2f02306e9403bcca4ad9cfe99b5e7cf2
-Q
-!useraccount/websiteViews/views.py,f\7\f75660480dbffecc605d2f185e3c195ecbe15afd
 _
 /useraccount/templates/Modified_files/index.html,9\e\9e52219d12e719b3cd5bcc4daf2648b5ad02bd34
 >

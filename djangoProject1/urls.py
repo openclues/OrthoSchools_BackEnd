@@ -23,10 +23,13 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 import useraccount.websiteViews.views
 from blog.views import BlogDetailView, AdminHomeScreenView
 from djangoProject1 import settings
+from useraccount.api.user_api_views.userViews import RegisterApiView, CreateProfileApiView
 from useraccount.websiteViews.views import signup_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('register/', RegisterApiView.as_view(  ), name='register'),
+    path('profile/create', CreateProfileApiView.as_view()),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

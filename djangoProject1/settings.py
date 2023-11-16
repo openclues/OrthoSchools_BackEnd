@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-@j-1tiq463#h4t5jm295f#-z(icpua+qpj*p51+6bzs^dh-^q!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -43,8 +41,8 @@ STATIC_URL = '/static/'
 
 INSTALLED_APPS = [
     # 'django_admin_bootstrapped',
-    'admin_tools',
-    'admin_tools.dashboard',
+    # 'admin_tools',
+    # 'admin_tools.dashboard',
 
     'admin_interface',
     'colorfield',
@@ -66,7 +64,6 @@ INSTALLED_APPS = [
     'blog',
     'ckeditor',
 
-
 ]
 ADMIN_INTERFACE_SETTING = {
     'theme': 'flat_responsive',
@@ -74,11 +71,9 @@ ADMIN_INTERFACE_SETTING = {
     'favicon': '/static/admin_interface/img/favicon.ico',
 }
 
-
-#User_Auth mocde
 AUTH_USER_MODEL = 'useraccount.UserAccount'
 
-#REST_FRAMEWORK
+# REST_FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -88,8 +83,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-#DJOSER
-
+# DJOSER
 
 
 MIDDLEWARE = [
@@ -104,7 +98,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'djangoProject1.urls'
 AUTHENTICATION_BACKENDS = (
-   "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.ModelBackend",
 )
 
 TEMPLATES = [
@@ -118,7 +112,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
 
-
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -129,9 +122,8 @@ TEMPLATES = [
     },
 ]
 TEMPLATES = [
-# admin_tools.template_loaders.Loader
+    # admin_tools.template_loaders.Loader
     {
-
 
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
@@ -154,17 +146,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 WSGI_APPLICATION = 'djangoProject1.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
+        'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
+        'USER': 'orthosch_myad',  # <-- UPDATED line
+        'PASSWORD': 'Java2992!',  # <-- UPDATED line
+        'HOST': '108.61.198.173',  # <-- UPDATED line
+        'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -183,7 +177,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
