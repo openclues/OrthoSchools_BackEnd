@@ -25,6 +25,8 @@ class RegisterApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class CreateProfileApiView(generics.UpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CreateProfileRequestSerializer

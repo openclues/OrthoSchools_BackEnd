@@ -10,10 +10,6 @@ from useraccount.models import UserAccount
 from django.contrib.auth.forms import AuthenticationForm, authenticate
 
 
-class LoginForm(forms.ModelForm):
-    class Meta:
-        model = UserAccount
-        fields = ['email', 'password']
-        widgets = {
-            'password': forms.PasswordInput(),
-        }
+class LoginForm(forms.Form):
+    email = forms.EmailField(label='Email')
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)

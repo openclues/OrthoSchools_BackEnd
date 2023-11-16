@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render
 
 from django.shortcuts import render, redirect
@@ -33,7 +34,7 @@ def register(request):
 
 # render login form
 def login_view(request):
-    if request.user.is_authenticated == True:
+    if request.user.is_authenticated:
         return redirect('/')
     return render(request, 'Modified_files/sign-in.html')
 
@@ -41,30 +42,23 @@ def login_view(request):
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('/')
-    else :
-
-        if request.method == 'POST':
-            print("request.method == 'POST'")
-            post = request.POST.copy()
-            post['username'] = request.POST['email']
-            request.POST = post
-            print(request.POST['email'])
-            print(request.POST['password'])
-            print(request.POST['username'])
-
-            form = AuthenticationForm(data = request.POST)
-            print(form)
-            if form.is_valid():
-                return redirect('/')  # Replace 'dashboard' with your desired URL for logged-in users
-
+    else:
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = authenticate(
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
+            )
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Hello {user.username}! You have been logged in')
             else:
-                print("form.is_not_valid()")
-                render(request, 'Modified_files/sign-in.html', {'form': form})
-        else:
-            print("request.method != 'POST'")
-            form = LoginForm()  # Use your LoginForm for rendering the login form
+                messages.error(request, 'Login failed!')
+            return redirect('/')  # Replace 'dashboard' with your desired URL for logged-in users
 
-        return render(request, 'Modified_files/sign-in.html', {'form': form})
+        else:
+            messages.error(request, 'Invalid login credentials.')
+            return render(request, 'Modified_files/sign-in.html', {'form': form})
 
 
 def IndexView(request):
@@ -77,8 +71,7 @@ def IndexView(request):
         return render(request, 'Modified_files/index.html', {
             'user': request.user,
             'profile': profile
-        } )
-
+        })
 
 
 def logout_view(request):
