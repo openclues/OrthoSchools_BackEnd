@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 {% load static %}
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
@@ -87,41 +88,62 @@
                                     </p>
                                 </div>
                             </div>
+                            <div id="error-message" style="color: red;"></div>
+
                             <div class="sign__form">
-                                <form method="post" action="{% url 'register' %}">
+                                <form method="post" action="{% url 'signup' %}">
                                     {% csrf_token %}
-                                    {{ form.username.errors }}
+
                                     <div class="sign__input-wrapper mb-25">
-                                        <h5>Username</h5>
+                                        <h5>First name</h5>
+{#                                        {% render_field form.first_name  placeholder="First Name" %}#}
                                         <div class="sign__input">
-                                            <input type="text" name="username" placeholder="Username" />
+                                            {% render_field form.first_name type="text"  placeholder="First Name" class="sing__input"%}
                                             <i class="fal fa-user"></i>
                                         </div>
+                                        <p style="color:red;">{{ form.first_name.errors }}</p>
                                     </div>
-                                    {{ form.email.errors }}
+
+                                    <div class="sign__input-wrapper mb-25">
+                                        <h5>Last name</h5>
+                                        <div class="sign__input">
+                                            {% render_field form.last_name type="text" placeholder="Last Name" %}
+                                            <i class="fal fa-user"></i>
+                                        </div>
+                                        <p style="color: red;">{{ form.last_name.errors }}</p>
+                                    </div>
+
                                     <div class="sign__input-wrapper mb-25">
                                         <h5>Email</h5>
                                         <div class="sign__input">
-                                            <input type="email" name="email" placeholder="e-mail address" value="{{ form.email.value }}" />
+                                            {% render_field form.email type="email"  placeholder="e-mail address" value=form.email.value%}
+{#                                            <input type="email" name="email" placeholder="e-mail address" value="{{ form.email.value }}" />#}
                                             <i class="fal fa-envelope"></i>
                                         </div>
+                                        <p style="color: red !important;">{{ form.email.errors }}</p>
                                     </div>
-                                    {{ form.password.errors }}
+
                                     <div class="sign__input-wrapper mb-25">
                                         <h5>Password</h5>
                                         <div class="sign__input">
-                                            <input type="password" name="password" placeholder="Password" />
+                                            {% render_field form.password  type="password"  placeholder="Password" class="sing__input"%}
                                             <i class="fal fa-lock"></i>
                                         </div>
+                                        <p style="color: red;">{{ form.password.errors }}</p>
                                     </div>
-                                    {{ form.confirm_password.errors }}
+
                                     <div class="sign__input-wrapper mb-10">
                                         <h5>Confirm Password</h5>
                                         <div class="sign__input">
-                                            <input type="password" name="confirm_password" placeholder="Confirm Password" />
+                                            {% render_field form.confirm_password type="password"  placeholder="Confirm password"%}
                                             <i class="fal fa-lock"></i>
                                         </div>
+                                        <p style="color: red;">{{ form.confirm_password.errors }}</p>
                                     </div>
+<div id="loading-spinner" style="display: none;">
+    <img src="{% static 'path-to-your-loading-spinner.gif' %}" alt="Loading" />
+</div>
+
                                     <div class="sign__action d-flex justify-content-between mb-30">
                                         <div class="sign__agree d-flex align-items-center">
                                             <input class="m-check-input" type="checkbox" id="m-agree" />
@@ -130,7 +152,9 @@
                                             </label>
                                         </div>
                                     </div>
+
                                     <button class="tp-btn w-100"><span></span> Sign Up</button>
+
                                     <div class="sign__new text-center mt-20">
                                         <p>Already in Eduker ? <a href="{% static 'sign-in.html' %}"> Sign In</a></p>
                                     </div>
@@ -145,21 +169,75 @@
     </main>
 
     <!-- JS here -->
-    <script src="{% static 'js/vendor/jquery.js' %}"></script>
-    <script src="{% static 'js/vendor/waypoints.js' %}"></script>
-    <script src="{% static 'js/bootstrap-bundle.js' %}"></script>
-    <script src="{% static 'js/meanmenu.js' %}"></script>
-    <script src="{% static 'js/swiper-bundle.js' %}"></script>
-    <script src="{% static 'js/owl-carousel.js' %}"></script>
-    <script src="{% static 'js/magnific-popup.js' %}"></script>
-    <script src="{% static 'js/parallax.js' %}"></script>
-    <script src="{% static 'js/backtotop.js' %}"></script>
-    <script src="{% static 'js/nice-select.js' %}"></script>
-    <script src="{% static 'js/counterup.js' %}"></script>
-    <script src="{% static 'js/wow.js' %}"></script>
-    <script src="{% static 'js/isotope-pkgd.js' %}"></script>
-    <script src="{% static 'js/imagesloaded-pkgd.js' %}"></script>
-    <script src="{% static 'js/ajax-form.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
+
+<!-- Add a div to display error messages -->
+{#<div id="error-message" style="color: red;"></div>#}
+
+<script src="{% static 'js/vendor/jquery.js' %}"></script>
+<script src="{% static 'js/vendor/waypoints.js' %}"></script>
+<script src="{% static 'js/bootstrap-bundle.js' %}"></script>
+<script src="{% static 'js/meanmenu.js' %}"></script>
+<script src="{% static 'js/swiper-bundle.js' %}"></script>
+<script src="{% static 'js/owl-carousel.js' %}"></script>
+<script src="{% static 'js/magnific-popup.js' %}"></script>
+<script src="{% static 'js/parallax.js' %}"></script>
+<script src="{% static 'js/backtotop.js' %}"></script>
+<script src="{% static 'js/nice-select.js' %}"></script>
+<script src="{% static 'js/counterup.js' %}"></script>
+<script src="{% static 'js/wow.js' %}"></script>
+<script src="{% static 'js/isotope-pkgd.js' %}"></script>
+<script src="{% static 'js/imagesloaded-pkgd.js' %}"></script>
+<script src="{% static 'js/ajax-form.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+{#<script>#}
+{#    $(document).ready(function () {#}
+{#        // Intercept the form submission#}
+{#        $('form').submit(function (event) {#}
+{#            event.preventDefault();  // Prevent normal form submission#}
+{##}
+{#            // Show loading spinner#}
+{#            $('#loading-spinner').show();#}
+{##}
+{#            // Clear previous error messages#}
+{#            $('#error-message').text('');#}
+{##}
+{#            // Make an Ajax request#}
+{#            $.ajax({#}
+{#                type: 'POST',#}
+{#                url: '{% url "registeruser" %}',  // Replace with your URL#}
+{#                data: $(this).serialize(),#}
+{#                success: function (response) {#}
+{#                    if (response.success) {#}
+{#                        console.log("success")#}
+{#                        // Successful login, redirect or perform other actions#}
+{#                        window.location.href = '/';#}
+{#                    } else {#}
+{#                        if (response.errors) {#}
+{#                            $.each(response.errors, function (key, value) {#}
+{#                                console.log(key, value)#}
+{#                                $('[name="' + key + '"]').siblings('p').text(value);#}
+{#                            });#}
+{#                        } else {#}
+{#                            // Display a general error message#}
+{#                            $('#error-message').text('Registration failed. Please check the form.');#}
+{#                        }#}
+{##}
+{#                    }#}
+{#                },#}
+{#                error: function (error) {#}
+{#                    console.log(error);#}
+{#                    // Handle other errors as needed#}
+{#                    $('#error-message').text('An error occurred. Please try again.');#}
+{#                },#}
+{#                complete: function () {#}
+{#                    // Hide loading spinner regardless of success or failure#}
+{#                    $('#loading-spinner').hide();#}
+{#                }#}
+{#            });#}
+{#        });#}
+{#    });#}
+{#</script>#}
+
 </body>
 </html>

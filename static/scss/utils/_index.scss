@@ -1,1 +1,5 @@
-C:/Users/islam/Documents/GitHub/djangoProject1/useraccount/static/scss/utils/_index.scss
+@forward 'colors';
+@forward 'mixins';
+@forward 'breakpoints';
+@forward 'typography';
+@forward 'declaration';

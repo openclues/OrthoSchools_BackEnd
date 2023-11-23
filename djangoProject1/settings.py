@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
     'admin_interface',
     'colorfield',
-
+    'widget_tweaks',
     'django.contrib.admin',
     'sass_processor',
     'django.contrib.auth',

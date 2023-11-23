@@ -24,11 +24,12 @@ import useraccount.websiteViews.views
 from blog.views import BlogDetailView, AdminHomeScreenView
 from djangoProject1 import settings
 from useraccount.api.user_api_views.userViews import RegisterApiView, CreateProfileApiView
-from useraccount.websiteViews.views import signup_view
+
+# from useraccount.websiteViews.views import signup_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', RegisterApiView.as_view(  ), name='register'),
+    path('register/', RegisterApiView.as_view(), name='registeruser'),
     path('profile/create', CreateProfileApiView.as_view()),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
@@ -36,18 +37,16 @@ urlpatterns = [
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('signup/', signup_view, name='signup'),
+    path('signup/', useraccount.websiteViews.views.register, name='signup'),
     path('register/', useraccount.websiteViews.views.register, name='register'),
     path('login/', useraccount.websiteViews.views.login_view, name='login'),
     path('login_user/', useraccount.websiteViews.views.login_user, name='login_user'),
     path('', useraccount.websiteViews.views.IndexView, name='index'),
     path('logout/', useraccount.websiteViews.views.logout_view, name='logout'),
-    #blog
+    # blog
     path('blogs/<slug:slug>/', BlogDetailView.as_view(), name='blog-detail'),
 
-
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
