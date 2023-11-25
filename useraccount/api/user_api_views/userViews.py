@@ -1,3 +1,5 @@
+from django.contrib import messages
+from djoser import serializers
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework import generics
@@ -16,15 +18,19 @@ class RegisterApiView(APIView):
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            user = UserAccount.objects.create_user(username=serializer.data['email'], email=serializer.data['email'],
-                                                   password=serializer.data['password'],
-                                                   first_name=serializer.data['first_name'],
-                                                   last_name=serializer.data['last_name'])
+        try:
+            serializer.is_valid(raise_exception=True)
+            user = UserAccount.objects.create_user(
+                username=serializer.data['email'],
+                email=serializer.data['email'],
+                password=serializer.data['password'],
+                first_name=serializer.data['first_name'],
+                last_name=serializer.data['last_name']
+            )
+            messages.success(request, 'Signup successful! You are now logged in.')  # Add success message
             return Response(RegisterResponseSerializer(user, many=False).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+        except serializers.ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateProfileApiView(generics.UpdateAPIView):
@@ -43,5 +49,3 @@ class CreateProfileApiView(generics.UpdateAPIView):
         # Set user_id before updating the instance
         serializer.validated_data['user_id'] = self.request.user.id
         serializer.save()
-
-

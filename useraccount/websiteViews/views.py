@@ -11,6 +11,7 @@ from django.contrib.auth import login, authenticate, logout
 import useraccount
 from django.contrib.auth.forms import AuthenticationForm  # add this
 
+from space.models import Space
 from useraccount.forms.login_form import LoginForm
 from useraccount.forms.register_form import RegistrationForm
 from useraccount.models import ProfileModel, UserAccount
@@ -50,13 +51,6 @@ def register(request):
     return render(request, 'Modified_files/sign-up.html', {'form': form})
 
 
-# render login form
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('/')
-    return render(request, 'Modified_files/sign-in.html')
-
-
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('/')
@@ -67,13 +61,12 @@ def login_user(request):
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password'],
             )
-            # user = UserAccount.objects.get(email=form.cleaned_data['email'])
             if user is not None:
                 login(request, user)
                 messages.success(request, f'Hello {user.username}! You have been logged in')
                 return redirect('/')  # Replace 'dashboard' with your desired URL for logged-in users
             else:
-                messages.error(request, 'Login failed!')
+                messages.error(request, 'Email or password is incorrect.')
                 return render(request, 'Modified_files/sign-in.html', {'form': form})
 
             # if user is not None:
@@ -88,19 +81,39 @@ def login_user(request):
         #     return render(request, 'Modified_files/sign-in.html', {'form': form})
 
 
+# render login form
+def login_view(request):
+    if request.method == 'POST':
+        return login_user(request)
+    else:
+        if request.user.is_authenticated:
+            return redirect('/')
+        else:
+            form = LoginForm(request.POST)
+            return render(request, 'Modified_files/sign-in.html', {'form': form})
+
+    # if request.user.is_authenticated:
+    #     return redirect('/')
+    # return render(request, 'Modified_files/sign-in.html')
+
+
 def IndexView(request):
     if not request.user.is_authenticated:
-        print("not request.user.is_authenticated")
         return redirect('login')
     else:
-
         profile = ProfileModel.objects.get_or_create(user=request.user)
+        spaces = Space.objects.all()
+
         return render(request, 'Modified_files/index.html', {
             'user': request.user,
-            'profile': profile
+            'profile': profile,
+            'spaces': spaces,
         })
 
 
 def logout_view(request):
     logout(request)
+    # messages.clear(request)
+
+    messages.success(request, 'You have been logged out.')
     return redirect('login')

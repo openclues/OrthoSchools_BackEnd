@@ -111,33 +111,31 @@
                   </div>
                 </div>
                   {% if messages %}
-  <ul class="messages">
     {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
     {% endfor %}
-  </ul>
 {% endif %}
+
 
                 <div class="sign__form" >
 
-                  <form method="post" action="{% url 'login_user' %}">
+                  <form method="post" action="{% url 'login' %}">
                                           {% csrf_token %}
                     <div class="sign__input-wrapper mb-25">
                       <h5>Email</h5>
                       <div class="sign__input">
-                        <input type="text" placeholder="e-mail address" name="email" id="id_email"/>
+                        <input type="text" placeholder="e-mail address" name="email" id="id_email" required/>
                         <i class="fal fa-envelope"></i>
-                          {{ form.errors }}
-                                                              {{ form.email.errors }}
 
                       </div>
                     </div>
                     <div class="sign__input-wrapper mb-10">
                       <h5>Password</h5>
                       <div class="sign__input">
-                        <input type="text" placeholder="Password" name="password" id="id_password"/>
+                        <input type="text" placeholder="Password" name="password" id="id_password" required/>
                         <i class="fal fa-lock"></i>
-                                                              {{ form.password.errors }}
 
                       </div>
                     </div>

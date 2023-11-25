@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from space.models import Space
 from .models import UserAccount, ProfileModel, Certificate
 from django.contrib.auth.admin import UserAdmin
 
@@ -49,3 +51,19 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(UserAccount, CustomUserAdmin)
+
+
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+
+from unfold.admin import ModelAdmin
+
+
+admin.site.unregister(UserAccount)
+
+
+@admin.register(UserAccount)
+class UserAdmin(BaseUserAdmin, ModelAdmin):
+
+    pass

@@ -40,7 +40,7 @@
                </svg>
                <img src=" {% static 'img/favicon.png' %} " alt="">
             </div>
-         </div>  
+         </div>
       </div>
       <!-- pre loader area end -->
 
@@ -51,7 +51,7 @@
          </svg>
       </div>
       <!-- back to top end -->
-      
+
       <!-- header area start -->
     <header>
       <div class="header__area">
@@ -99,7 +99,7 @@
                       class="fa-solid fa-bell fs-5"
                       style="color: #ffffff"
                       class="mt-5"
-                     
+
                     ></i>
                   </a>
                   <div
@@ -138,34 +138,34 @@
                       class="profile-toggele"
                       id="profile-toggele"
                       class="mt-5"
-                     
+
                     >
-{#                    {% if profile.profileImage  is not None%}#}
-{#                        <img src="http://http://127.0.0.1:8000{{ profileImage.url }}" alt="User Profile Image" class="profile-toggele-img" id="profile-toggele-img">#}
-{#                    {% else %}#}
+                    {% if profile.profileImage  is not None%}
+                        <img src="http://http://127.0.0.1:8000{{ profileImage.url }}" alt="User Profile Image" class="profile-toggele-img" id="profile-toggele-img">
+                    {% else %}
                         <img src="{% static 'img/Ellipse 16.png' %}" alt="Default Image" class="profile-toggele-img" id="profile-toggele-img">
-{#                        {% endif %}#}
+                        {% endif %}
                       <div class="profile-menu"
                       id="profile-menu">
                       <div class="text">
-                        <div class="head"> {{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="head"> {{ user.email }} {{ user.last_name }}</div>
                         <div class="email">{{ profileImage.url }}</div>
                       </div>
-                        
+
                         <ul>
                           <li>
-                           
+
                             <a href=" {% static 'profile.html' %} ">
                               <i class="fa-solid fa-user"></i>
                               <span>
-                                
+
                                 Profile
                               </span>
                             </a>
                           </li>
                           <li>
                             <a href="#">
-                              
+
                               <i class="fa-solid fa-address-card"></i>
                               <span>
                                 About
@@ -175,11 +175,11 @@
                           </li>
                           <li>
                            <a href="#">
-                             
+
                               <i class="fa-solid fa-bookmark"></i>
                              <span>
                                Saved Posts
- 
+
                              </span>
                            </a>
                          </li>
@@ -196,7 +196,7 @@
                           </li>
                           <li>
                             <form action="{% url 'logout' %}" method="post">
-  {% csrf_token %} {# Include CSRF token for security #}
+  {% csrf_token %} {# Include CSRF token for security
   <input type="submit" value="Sign out">
 </form>
 
@@ -225,7 +225,7 @@
       </div>
     </header>
     <!-- header area end -->
-      
+
       <!-- offcanvas area start -->
       <div class="offcanvas__area">
          <div class="modal fade" id="offcanvasmodal" tabindex="-1" aria-labelledby="offcanvasmodal" aria-hidden="true">
@@ -236,13 +236,13 @@
                          <div class="offcanvas__top mb-40 d-flex justify-content-between align-items-center">
                             <div class="offcanvas__logo d-flex align-items-center">
                               <img src=" {% static 'img/Ellipse 16.png' %} " alt="" class="profile-toggele-img" id="profile-toggele-img">
-                    
+
                               <div class="text ms-2 ">
                                  <div class="head fw-bold"> Yassine Bassou</div>
                                  <div class="email">
                                      .com</div>
                                </div>
-                                 
+
                             </div>
                             <div class="offcanvas__close">
                                <button class="offcanvas__close-btn" data-bs-toggle="modal" data-bs-target="#offcanvasmodal">
@@ -262,11 +262,23 @@
                          </div>
                          <hr>
                          <div class=" mb-15 mobile-spaces">
-                           <h3 class="course__sidebar-title text-center ">Spaces</h5>
+                                                            {% for space in spaces %}
+                           <h3 class="course__sidebar-title text-center ">Spaces</h3>
+                               {% endfor %}
+
                            <ul class=" ">
-                              <li>
-                                 <a class="space" href="#">
-                                    
+                                <li>
+                                     <a class="space" href="#">
+                                        <div class="image">
+                                         <img src=" {% static 'img/doctor-nurses-special-equipment.jpg' %} " alt="" style="width: 100%;">
+                                        </div>
+                                        <div class="text ps-3">
+                                         <h5 class="title">space.name</h5>
+                                         <div class="subTitle">50 member</div>
+                                        </div>
+                                     </a>
+                                    </li>
+a class="space" href="#">
                                     <div class="image">
                                        <img src=" {% static 'img/doctor-nurses-special-equipment.jpg' %} " alt="" style="width: 100%;">
                                     </div>
@@ -276,33 +288,12 @@
                                     </div>
                                  </a>
                               </li>
+
                               <li>
-                                 <a class="space" href="#">
-                                    <div class="image">
-                                       <img src=" {% static 'img/doctor-nurses-special-equipment.jpg' %} " alt="" style="width: 100%;">
-                                    </div>
-                                    <div class="text ps-3">
-                                       <h5 class="title">Medical Space</h5>
-                                       <div class="subTitle">50 member</div>
-                                    </div>
-                                 </a> 
+
                               </li>
                               <li>
-                                 <a class="space currentSpace " href="#">
-                                    <div class="image">
-                                       <img src=" {% static 'img/top-view-painting-supplies-table.jpg' %} " alt="ART" style="width: 100%;">
-                                    </div>
-                                    <div class="text ps-3  ">
-                                       <h5 class="title">Art Space</h5>
-                                       <div class="subTitle">22 member</div>
-                                    </div>
-                                 </a>
-                              </li>
-                              <li>
-                                
-                              </li>
-                              <li>
-                                
+
                               </li>
                            </ul>
                          </div>
@@ -310,72 +301,72 @@
                             <hr>
                             <ul class="menu">
                               <li>
-                               
+
                                 <a href=" {% static 'profile.html' %} ">
                                   <i class="fa-solid fa-user"></i>
                                   <span>
-                                    
+
                                     Profile
                                   </span>
                                 </a>
                               </li>
                               <li>
                                 <a href="#">
-                                  
+
                                   <i class="fa-solid fa-address-card"></i>
                                   <span>
                                     About
-    
+
                                   </span>
                                 </a>
                               </li>
                               <li>
                                  <a href="#">
-                                   
+
                                    <i class="fa-solid fa-bookmark"></i>
                                    <span>
                                      Saved Posts
-       
+
                                    </span>
                                  </a>
                                </li>
                               <li>
-    
+
                                 <a href=" {% static 'settings.html' %} ">
                                   <i class="fa-solid fa-gear"></i>
                                   <span>
                                     settings
-    
+
                                   </span>
-    
+
                                 </a>
                               </li>
                               <li>
                                 <a href=" {% static 'sign-in.html' %} ">
                                   <i class="fa-solid fa-right-from-bracket"></i>
                                   <span>
-    
+
                                     Sign out
                                   </span>
                                 </a>
                               </li>
                             </ul>
                          </div>
-                      
+
                       </div>
                    </div>
                 </div>
             </div>
         </div>
       </div>
-      <!-- offcanvas area end -->      
+      <!-- offcanvas area end -->
       <div class="body-overlay"></div>
       <!-- offcanvas area end -->
 
       <main>
 
          <!-- breadcrumb area start -->
-        
+
          <!-- breadcrumb area end -->
 
 
@@ -395,7 +386,7 @@
                             </a>
                           </div>
                           <!-- profile picture end -->
-        
+
                           <!-- share content box start -->
                           <div class="share-content-box w-100">
                             <form class="share-text-box">
@@ -404,7 +395,7 @@
                             </form>
                           </div>
                           <!-- share content box end -->
-        
+
                           <!-- Modal start -->
                           <div class="modal fade" id="textbox" aria-labelledby="textbox" aria-hidden="true" style="display: none;">
                             <div class="modal-dialog">
@@ -467,7 +458,7 @@
                                  <div class="course__view">
                                     <h4>Showing 1 - 6 of 84</h4>
                                  </div>
-                              </div> 
+                              </div>
                            </div>
                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6">
                               <div class="course__sort d-flex justify-content-sm-end">
@@ -505,7 +496,7 @@
                                                  </a>
                                                </div>
                                                <!-- profile picture end -->
-                             
+
                                                <div class="posted-author">
                                                  <div class="d-flex align-items-center">
                                                    <h6 class="author">
@@ -515,7 +506,7 @@
                                                  </div>
                                                  <span class="post-time">12:00PM </span>
                                                </div>
-                             
+
                                                <div class="post-settings-bar">
                                                  <span></span>
                                                  <span></span>
@@ -543,7 +534,7 @@
                                                        </a>
                                                      </figure>
                                                    </div>
-                                                  
+
                                                  </div>
                                                </div>
                                                <div class="post-meta">
@@ -559,8 +550,8 @@
                                                       <i class="fa-solid fa-share"></i>
                                                       <span>Share</span>
                                                      </button>
-                                                   
-                                                 
+
+
                                                </div>
                                              </div>
                                            </div>
@@ -578,7 +569,7 @@
                                                  </a>
                                                </div>
                                                <!-- profile picture end -->
-                             
+
                                                <div class="posted-author">
                                                  <div class="d-flex align-items-center">
                                                    <h6 class="author">
@@ -588,7 +579,7 @@
                                                  </div>
                                                  <span class="post-time">12:00PM </span>
                                                </div>
-                             
+
                                                <div class="post-settings-bar">
                                                  <span></span>
                                                  <span></span>
@@ -640,8 +631,8 @@
                                                       <i class="fa-solid fa-share"></i>
                                                       <span>Share</span>
                                                      </button>
-                                                   
-                                                 
+
+
                                                </div>
                                              </div>
                                            </div>
@@ -659,7 +650,7 @@
                                                  </a>
                                                </div>
                                                <!-- profile picture end -->
-                             
+
                                                <div class="posted-author">
                                                  <div class="d-flex align-items-center">
                                                    <h6 class="author">
@@ -669,7 +660,7 @@
                                                  </div>
                                                  <span class="post-time">12:00PM </span>
                                                </div>
-                             
+
                                                <div class="post-settings-bar">
                                                  <span></span>
                                                  <span></span>
@@ -697,7 +688,7 @@
                                                        </a>
                                                      </figure>
                                                    </div>
-                                                  
+
                                                  </div>
                                                </div>
                                                <div class="post-meta">
@@ -713,8 +704,8 @@
                                                       <i class="fa-solid fa-share"></i>
                                                       <span>Share</span>
                                                      </button>
-                                                   
-                                                 
+
+
                                                </div>
                                              </div>
                                            </div>
@@ -732,7 +723,7 @@
                                                  </a>
                                                </div>
                                                <!-- profile picture end -->
-                             
+
                                                <div class="posted-author">
                                                  <div class="d-flex align-items-center">
                                                    <h6 class="author">
@@ -742,7 +733,7 @@
                                                  </div>
                                                  <span class="post-time">12:00PM </span>
                                                </div>
-                             
+
                                                <div class="post-settings-bar">
                                                  <span></span>
                                                  <span></span>
@@ -770,7 +761,7 @@
                                                        </a>
                                                      </figure>
                                                    </div>
-                                                  
+
                                                  </div>
                                                </div>
                                                <div class="post-meta">
@@ -786,8 +777,8 @@
                                                       <i class="fa-solid fa-share"></i>
                                                       <span>Share</span>
                                                      </button>
-                                                   
-                                                 
+
+
                                                </div>
                                              </div>
                                            </div>
@@ -805,7 +796,7 @@
                                                  </a>
                                                </div>
                                                <!-- profile picture end -->
-                             
+
                                                <div class="posted-author">
                                                  <div class="d-flex align-items-center">
                                                    <h6 class="author">
@@ -815,7 +806,7 @@
                                                  </div>
                                                  <span class="post-time">12:00PM </span>
                                                </div>
-                             
+
                                                <div class="post-settings-bar">
                                                  <span></span>
                                                  <span></span>
@@ -843,7 +834,7 @@
                                                        </a>
                                                      </figure>
                                                    </div>
-                                                  
+
                                                  </div>
                                                </div>
                                                <div class="post-meta">
@@ -859,8 +850,8 @@
                                                       <i class="fa-solid fa-share"></i>
                                                       <span>Share</span>
                                                      </button>
-                                                   
-                                                 
+
+
                                                </div>
                                              </div>
                                            </div>
@@ -878,7 +869,7 @@
                                                  </a>
                                                </div>
                                                <!-- profile picture end -->
-                             
+
                                                <div class="posted-author">
                                                  <div class="d-flex align-items-center">
                                                    <h6 class="author">
@@ -888,7 +879,7 @@
                                                  </div>
                                                  <span class="post-time">12:00PM </span>
                                                </div>
-                             
+
                                                <div class="post-settings-bar">
                                                  <span></span>
                                                  <span></span>
@@ -916,7 +907,7 @@
                                                        </a>
                                                      </figure>
                                                    </div>
-                                                  
+
                                                  </div>
                                                </div>
                                                <div class="post-meta">
@@ -932,8 +923,8 @@
                                                       <i class="fa-solid fa-share"></i>
                                                       <span>Share</span>
                                                      </button>
-                                                   
-                                                 
+
+
                                                </div>
                                              </div>
                                            </div>
@@ -961,7 +952,7 @@
                                                          <h3 class="course__title">
                                                             <a href=" {% static 'course-details.html' %} ">Non-Degree Seeking Online Design for Learning Environments.</a>
                                                          </h3>
-                              
+
                                                          <div class="course__bottom d-sm-flex align-items-center justify-content-between">
                                                             <div class="course__tutor">
                                                                <a href="#"><img src=" {% static 'img/course/tutor/course-tutor-1.jpg' %} " alt="">Brian Cumin</a>
@@ -1012,7 +1003,7 @@
                                                          <h3 class="course__title">
                                                             <a href=" {% static 'course-details.html' %} ">Language Assessment in the Classroom Course.</a>
                                                          </h3>
-                              
+
                                                          <div class="course__bottom d-sm-flex align-items-center justify-content-between">
                                                             <div class="course__tutor">
                                                                <a href="#"><img src=" {% static 'img/course/tutor/course-tutor-1.jpg' %} " alt="">Brian Cumin</a>
@@ -1063,7 +1054,7 @@
                                                          <h3 class="course__title">
                                                             <a href=" {% static 'course-details.html' %} ">A framework for keeping up with an ever-evolving profession.</a>
                                                          </h3>
-                              
+
                                                          <div class="course__bottom d-sm-flex align-items-center justify-content-between">
                                                             <div class="course__tutor">
                                                                <a href="#"><img src=" {% static 'img/course/tutor/course-tutor-1.jpg' %} " alt="">Brian Cumin</a>
@@ -1114,7 +1105,7 @@
                                                          <h3 class="course__title">
                                                             <a href=" {% static 'course-details.html' %} ">Expertise in a single subject or across a spectrum.</a>
                                                          </h3>
-                              
+
                                                          <div class="course__bottom d-sm-flex align-items-center justify-content-between">
                                                             <div class="course__tutor">
                                                                <a href="#"><img src=" {% static 'img/course/tutor/course-tutor-1.jpg' %} " alt="">Brian Cumin</a>
@@ -1165,7 +1156,7 @@
                                                          <h3 class="course__title">
                                                             <a href=" {% static 'course-details.html' %} ">Differentiation for Learning Course - National Learning Centre</a>
                                                          </h3>
-                              
+
                                                          <div class="course__bottom d-sm-flex align-items-center justify-content-between">
                                                             <div class="course__tutor">
                                                                <a href="#"><img src=" {% static 'img/course/tutor/course-tutor-1.jpg' %} " alt="">Brian Cumin</a>
@@ -1216,7 +1207,7 @@
                                                          <h3 class="course__title">
                                                             <a href=" {% static 'course-details.html' %} ">Teacher Development: Health Curriculum Course.</a>
                                                          </h3>
-                              
+
                                                          <div class="course__bottom d-sm-flex align-items-center justify-content-between">
                                                             <div class="course__tutor">
                                                                <a href="#"><img src=" {% static 'img/course/tutor/course-tutor-1.jpg' %} " alt="">Brian Cumin</a>
@@ -1249,7 +1240,7 @@
                                                 </div>
                                              </div>
                                           </div>
-                                       </div>                                                                                                               
+                                       </div>
                                     </div>
                                  </div>
                                </div>
@@ -1288,15 +1279,30 @@
                   </div>
                   <div class="col-xxl-4 col-xl-4 col-lg-4 order-1 d-none d-lg-block">
                      <div class="course__sidebar ">
-                       
+
                         <div class="course__sidebar-widget white-bg">
                            <div class="course__sidebar-info">
-                              <h3 class="course__sidebar-title text-center ">Spaces</h3>
+                              <h3 class="course__sidebar-title text-center ">Spaces </h3>
                               <ul>
+                                  {% for space in spaces %}
+                                    <li>
+                                        <a class="space" href="#">
+                                        <div class="image">
+                                            <img src=" {% static 'img/doctor-nurses-special-equipment.jpg' %} " alt="" style="width: 100%;">
+                                        </div>
+                                        <div class="text ps-3">
+                {% for user in space.get_users_inside_space %}
+                    <div class="subTitle">{{ user }}</div>
+                {% endfor %}
+{#                                            <div class="subTitle">{{  }}</div>#}
+                                        </div>
+                                        </a>
+                                    </li>
+                                    {% endfor %}
                                  <li>
-                                    <a class="space" href="#">
-                                       
-                                       <div class="image">
+                                 <a class="space" href="#">
+
+                                     <div class="image">
                                           <img src=" {% static 'img/doctor-nurses-special-equipment.jpg' %} " alt="" style="width: 100%;">
                                        </div>
                                        <div class="text ps-3">
@@ -1314,7 +1320,7 @@
                                           <h5 class="title">Medical Space</h5>
                                           <div class="subTitle">50 member</div>
                                        </div>
-                                    </a> 
+                                    </a>
                                  </li>
                                  <li>
                                     <a class="space currentSpace " href="#">
@@ -1328,20 +1334,22 @@
                                     </a>
                                  </li>
                                  <li>
-                                   
+
                                  </li>
                                  <li>
-                                   
+
                                  </li>
                               </ul>
                            </div>
                         </div>
-                        
-                       
+
+
                   </div>
                </div>
             </div>
+            </div>
          </section>
+
          <!-- course area end -->
 
 
@@ -1491,6 +1499,6 @@
       <script src=" {% static 'js/ajax-form.js' %} "></script>
       <script src=" {% static 'js/main.js' %} "></script>
       <script src=" {% static 'js/script.js' %} "></script>
-     
+
    </body>
 </html>

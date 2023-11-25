@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
 
+from useraccount.models import UserAccount
+
 
 class Space(models.Model):
     name = models.CharField(max_length=100)
@@ -14,9 +16,8 @@ class Space(models.Model):
 
     # Define choices for user types with more readable keys
     USER_TYPES = (
-        ('basic student', 'Basic Student'),
-        ('premium student', 'Premium Student'),
-        ('blogger', 'Blogger'),
+        (1, 'Basic Dentist'),
+        (2, 'Blogger')
     )
 
     # Field to specify allowed user types in the space
@@ -32,6 +33,10 @@ class Space(models.Model):
     is_optional_for_basic_students = models.BooleanField(default=True)
     is_optional_for_premium_students = models.BooleanField(default=True)
     is_optional_for_bloggers = models.BooleanField(default=True)
+
+    @staticmethod
+    def get_users_inside_space(self):
+        return UserAccount.objects.filter(userRole__in=self.allowed_user_types)
 
     def __str__(self):
         return self.name

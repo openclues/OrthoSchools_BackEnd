@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{% static 'css/font-awesome-pro.css' %}" />
     <link rel="stylesheet" href="{% static 'css/spacing.css' %}" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 </head>
 <body>
     <!--[if lte IE 9]>
@@ -91,36 +92,32 @@
                             <div id="error-message" style="color: red;"></div>
 
                             <div class="sign__form">
-                                <form method="post" action="{% url 'signup' %}">
+                                <form method="post">
                                     {% csrf_token %}
+                    <div class="d-flex justify-content-between">
 
-                                    <div class="sign__input-wrapper mb-25">
-                                        <h5>First name</h5>
-{#                                        {% render_field form.first_name  placeholder="First Name" %}#}
-                                        <div class="sign__input">
-                                            {% render_field form.first_name type="text"  placeholder="First Name" class="sing__input"%}
+                      <div class="sign__input-wrapper-name mb-25">
+                        <h5>First Name</h5>
+                       <div class="sign__input">
+                                            {% render_field form.first_name type="text"  placeholder="First Name" class="sing__input" required="true"    %}
                                             <i class="fal fa-user"></i>
                                         </div>
-                                        <p style="color:red;">{{ form.first_name.errors }}</p>
-                                    </div>
-
-                                    <div class="sign__input-wrapper mb-25">
-                                        <h5>Last name</h5>
-                                        <div class="sign__input">
+                      </div>
+                      <div class="sign__input-wrapper-name mb-25 ">
+                        <h5>Last Name</h5>
+<div class="sign__input">
                                             {% render_field form.last_name type="text" placeholder="Last Name" %}
                                             <i class="fal fa-user"></i>
-                                        </div>
-                                        <p style="color: red;">{{ form.last_name.errors }}</p>
-                                    </div>
+                                        </div>                      </div>
+                    </div>
 
                                     <div class="sign__input-wrapper mb-25">
                                         <h5>Email</h5>
                                         <div class="sign__input">
-                                            {% render_field form.email type="email"  placeholder="e-mail address" value=form.email.value%}
-{#                                            <input type="email" name="email" placeholder="e-mail address" value="{{ form.email.value }}" />#}
+                                            {% render_field form.email type="email"  placeholder="e-mail address" %}
                                             <i class="fal fa-envelope"></i>
                                         </div>
-                                        <p style="color: red !important;">{{ form.email.errors }}</p>
+                                        <div id="email-error" style="color: red;"></div>
                                     </div>
 
                                     <div class="sign__input-wrapper mb-25">
@@ -128,8 +125,9 @@
                                         <div class="sign__input">
                                             {% render_field form.password  type="password"  placeholder="Password" class="sing__input"%}
                                             <i class="fal fa-lock"></i>
+
                                         </div>
-                                        <p style="color: red;">{{ form.password.errors }}</p>
+                                        <div id="password-error" style="color: red;"></div>
                                     </div>
 
                                     <div class="sign__input-wrapper mb-10">
@@ -138,11 +136,7 @@
                                             {% render_field form.confirm_password type="password"  placeholder="Confirm password"%}
                                             <i class="fal fa-lock"></i>
                                         </div>
-                                        <p style="color: red;">{{ form.confirm_password.errors }}</p>
                                     </div>
-<div id="loading-spinner" style="display: none;">
-    <img src="{% static 'path-to-your-loading-spinner.gif' %}" alt="Loading" />
-</div>
 
                                     <div class="sign__action d-flex justify-content-between mb-30">
                                         <div class="sign__agree d-flex align-items-center">
@@ -152,6 +146,9 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <div class="spinner-border" role="status" style="display: none;">
+  <span class="visually-hidden">Loading...</span>
+</div>
 
                                     <button class="tp-btn w-100"><span></span> Sign Up</button>
 
@@ -190,54 +187,77 @@
 <script src="{% static 'js/ajax-form.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/jquery.min.js' %}"></script>
-{#<script>#}
-{#    $(document).ready(function () {#}
-{#        // Intercept the form submission#}
-{#        $('form').submit(function (event) {#}
-{#            event.preventDefault();  // Prevent normal form submission#}
-{##}
-{#            // Show loading spinner#}
-{#            $('#loading-spinner').show();#}
-{##}
-{#            // Clear previous error messages#}
-{#            $('#error-message').text('');#}
-{##}
-{#            // Make an Ajax request#}
-{#            $.ajax({#}
-{#                type: 'POST',#}
-{#                url: '{% url "registeruser" %}',  // Replace with your URL#}
-{#                data: $(this).serialize(),#}
-{#                success: function (response) {#}
-{#                    if (response.success) {#}
-{#                        console.log("success")#}
-{#                        // Successful login, redirect or perform other actions#}
-{#                        window.location.href = '/';#}
-{#                    } else {#}
-{#                        if (response.errors) {#}
-{#                            $.each(response.errors, function (key, value) {#}
-{#                                console.log(key, value)#}
-{#                                $('[name="' + key + '"]').siblings('p').text(value);#}
-{#                            });#}
-{#                        } else {#}
-{#                            // Display a general error message#}
-{#                            $('#error-message').text('Registration failed. Please check the form.');#}
-{#                        }#}
-{##}
-{#                    }#}
-{#                },#}
-{#                error: function (error) {#}
-{#                    console.log(error);#}
-{#                    // Handle other errors as needed#}
-{#                    $('#error-message').text('An error occurred. Please try again.');#}
-{#                },#}
-{#                complete: function () {#}
-{#                    // Hide loading spinner regardless of success or failure#}
-{#                    $('#loading-spinner').hide();#}
-{#                }#}
-{#            });#}
-{#        });#}
-{#    });#}
-{#</script>#}
+<script>
+$(document).ready(function () {
+    // Intercept the form submission
+    $('form').submit(function (event) {
+        event.preventDefault();  // Prevent normal form submission
 
+        // Clear previous error messages
+        $('.sign__input-wrapper p').text('');
+        $('#error-message').text('');
+        $('#email-error').text('');
+        $('#password-error').text('');
+
+        // Check if password matches confirm password
+        const password = $('[name="password"]').val();
+        const confirmPassword = $('[name="confirm_password"]').val();
+
+        if (password !== confirmPassword) {
+            // Display an error message for password mismatch
+            $('#password-error').text('Passwords do not match');
+            return;  // Stop form submission
+        }
+
+        // Show loading spinner
+        $('.spinner-border').show();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "registeruser" %}',  // Replace with your URL
+            data: $(this).serialize(),
+            success: function (response, status, xhr) {
+                if (xhr.status === 201) {
+                    console.log("success");
+                    // Successful signup, redirect or perform other actions
+                    window.location.href = '{% url "login" %}';
+                } else {
+                    // Handle other errors or provide a general message
+                    $('#error-message').text('Registration failed. Please check the form.');
+                }
+            },
+            error: function (response) {
+                const responseJSON = response.responseJSON;
+                console.log(responseJSON);
+
+                // Handle errors for each field
+                handleFieldError(responseJSON, 'email', '#email-error');
+                handleFieldError(responseJSON, 'password', '#password-error');
+
+                // Hide loading spinner regardless of success or failure
+                $('.spinner-border').hide();
+            },
+            complete: function () {
+                // Hide loading spinner regardless of success or failure
+                console.log("complete");
+                $('.spinner-border').hide();
+            }
+        });
+    });
+
+    // Function to handle errors for each field
+    function handleFieldError(responseJSON, fieldName, errorElementId) {
+        if (responseJSON[fieldName] && responseJSON[fieldName].length > 0) {
+            const fieldErrors = responseJSON[fieldName];
+            console.log(`${fieldName} errors:`, fieldErrors);
+
+            // Display or handle errors for the field as needed
+            // Update the corresponding error message element
+            $(errorElementId).text(fieldErrors[0]);
+        }
+    }
+});
+
+</script>
 </body>
 </html>

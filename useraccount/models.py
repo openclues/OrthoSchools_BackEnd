@@ -27,9 +27,8 @@ class UserManager(BaseUserManager):
 
 class UserAccount(AbstractUser):
     USER_ROLE_CHOICES = (
-        (1, 'Basic Student'),
-        (2, 'Blogger'),
-        (3, 'Premium Student'),
+        (1, 'Basic Dentist'),
+        (2, 'Blogger')
     )
 
     userRole = models.PositiveSmallIntegerField(choices=USER_ROLE_CHOICES, default=1)

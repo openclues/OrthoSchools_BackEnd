@@ -1,0 +1,27 @@
+<!-- admin_menu.html -->
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'admin:index' %}">Admin</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% for app in app_list %}
+                    {% if app.models %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="{{ app.app_label }}Dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ app.name }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="{{ app.app_label }}Dropdown">
+                                {% for model in app.models %}
+                                    <a class="dropdown-item" href="{% url 'admin:app_list' app_label=app.app_label %}#{{ model.object_name.lower }}" title="{{ model.verbose_name_plural }}">{{ model.verbose_name_plural }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+</div>

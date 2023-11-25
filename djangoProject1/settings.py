@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.urls import reverse_lazy
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -40,9 +42,20 @@ STATIC_URL = '/static/'
 # ADMIN_TOOLS_INDEX_DASHBOARD = 'blog.dashboard.CustomDashboard'
 
 INSTALLED_APPS = [
+    "unfold",  # before django.contrib.admin
+    "unfold.contrib.filters",  # optional, if special filters are needed
+    "unfold.contrib.forms",  # optional, if special form elements are needed
+    "unfold.contrib.import_export",  # optional, if django-import-export package is used
+    "unfold.contrib.guardian",  # optional, if django-guardian package is used
+    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
+    # "django.contrib.admin",  # required
+
     # 'django_admin_bootstrapped',
     # 'admin_tools',
     # 'admin_tools.dashboard',
+    'django_static_fontawesome',
+    'django_static_jquery3',
+    'django_admin_global_sidebar',
 
     'admin_interface',
     'colorfield',
@@ -50,7 +63,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'sass_processor',
     'django.contrib.auth',
-
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -66,6 +78,8 @@ INSTALLED_APPS = [
 
 ]
 ADMIN_INTERFACE_SETTING = {
+    'show_sidebar': False,
+    'show_topbar': True,
     'theme': 'flat_responsive',
     'title': 'Your Admin Panel Title',
     'favicon': '/static/admin_interface/img/favicon.ico',
@@ -201,3 +215,107 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# settings.py
+
+# Activate internationalization
+USE_I18N = True
+
+# Set the languages you want to support
+LANGUAGES = [
+    ('en', 'English'),
+    ('ar', 'Arabic'),
+    # Add more languages as needed
+]
+
+# Set the default language
+LANGUAGE_CODE = 'en'
+
+# Enable localization of dates, numbers, and time
+USE_L10N = True
+
+# Specify where Django should store translation files
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),  # Change 'locale' to the directory you choose
+]
+
+
+DJANGO_ADMIN_GLOBAL_SIDEBAR_MENUS = [
+
+    {
+        "title": "Home",
+        "icon": "fa fa-home",
+        "url": "/admin/",
+    },{
+        "title": "Manage Books",
+        "icon": "fa fa-book",
+        "children": [
+            {
+                "title": "Manage Spaces",
+                "icon": "fas fa-list",
+                "model": "space.space",
+                # "permissions": ["django_admin_global_sidebar_example.view_category"],
+            }
+        ]
+    },{
+        "title": "Authenticate",
+        "icon": "fa fa-cogs",
+        "children": [
+
+            # {
+            #     "title": "Manage Groups",
+            #     "icon": "fas fa-users",
+            #     "model": "auth.group",
+            #     "permissions": ["auth.view_group",],
+            # }
+        ]
+    },
+]
+
+UNFOLD = {
+    "SHOW_VIEW_ON_SITE": True,  # show/hide "View on site" button, default: True
+
+    "SIDEBAR": {
+        "title": "Orthoaca",
+        # "image": "https://www.orthoaca.com/wp-content/uploads/2021/09/Orthoaca-Logo-1.png",
+        "show_on_all_pages": True,  # show/hide sidebar on all pages, default: True
+        "show_search": True,  # Search in applications and models names
+        "show_all_applications": True,
+        # Dropdown with all applications and models
+        "navigation": [
+            {
+                # "title": "Navigation",
+                # "separator": True,  # Top border
+                "items": [
+                    {
+                        "title":"Dashboard",
+                        "icon": "dashboard",  # Supported icon set: https://fonts.google.com/icons
+                        "link": reverse_lazy("admin:index"),
+                        # "badge": "sample_app.badge_callback",
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": "Manage Users",
+                        "icon": "people",
+                        "link": reverse_lazy("admin:useraccount_useraccount_changelist"),
+                    },
+
+                ],
+            },
+
+        ],
+    },
+
+    "SHOW_HISTORY": True,  # show/hide "History" button, default: True
+
+    "EXTENSIONS": {
+        "modeltranslation": {
+            "flags": {
+                "en": "🇬🇧",
+                "fr": "🇫🇷",
+                "nl": "🇧🇪",
+            },
+        },
+    },
+}
