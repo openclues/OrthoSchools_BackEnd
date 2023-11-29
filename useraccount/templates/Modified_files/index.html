@@ -1,3 +1,7 @@
+
+
+
+
 {% load static %}
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -140,22 +144,24 @@
                       class="mt-5"
 
                     >
-                    {% if profile.profileImage  is not None%}
-                        <img src="http://http://127.0.0.1:8000{{ profileImage.url }}" alt="User Profile Image" class="profile-toggele-img" id="profile-toggele-img">
-                    {% else %}
-                        <img src="{% static 'img/Ellipse 16.png' %}" alt="Default Image" class="profile-toggele-img" id="profile-toggele-img">
-                        {% endif %}
+                 {% if profile.profileImage and profile.profileImage.url %}
+    <img src="{{ profile.profileImage.url }}" alt="User Profile Image" class="profile-toggele-img" id="profile-toggele-img">
+{% else %}
+    <img src="{% static 'img/dentist.png' %}" alt="Default Image" class="profile-toggele-img" id="profile-toggele-img">
+{% endif %}
+
+
                       <div class="profile-menu"
                       id="profile-menu">
                       <div class="text">
-                        <div class="head"> {{ user.email }} {{ user.last_name }}</div>
-                        <div class="email">{{ profileImage.url }}</div>
+                        <div class="head"> {{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="email">{{ user.email }}</div>
                       </div>
 
                         <ul>
                           <li>
 
-                            <a href=" {% static 'profile.html' %} ">
+                            <a href=" {% url 'edit_profile' %} ">
                               <i class="fa-solid fa-user"></i>
                               <span>
 
@@ -195,9 +201,9 @@
                             </a>
                           </li>
                           <li>
-                            <form action="{% url 'logout' %}" method="post">
-  {% csrf_token %} {# Include CSRF token for security
-  <input type="submit" value="Sign out">
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sign out</button>
 </form>
 
                           </li>
@@ -1294,7 +1300,7 @@ a class="space" href="#">
                 {% for user in space.get_users_inside_space %}
                     <div class="subTitle">{{ user }}</div>
                 {% endfor %}
-{#                                            <div class="subTitle">{{  }}</div>#}
+                                            <div class="subTitle">{{  ""}}</div>
                                         </div>
                                         </a>
                                     </li>
@@ -1502,3 +1508,4 @@ a class="space" href="#">
 
    </body>
 </html>
+</script>

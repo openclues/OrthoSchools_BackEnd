@@ -1,0 +1,23 @@
+{% extends 'unfold/layouts/base_simple.html' %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block title %}
+  {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}
+{% endblock %}
+
+{% block branding %}
+{% endblock %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+
+{% block content %}
+
+<div class ="row">
+    <div class="col-md-12">
+        {% include 'unfold/helpers/history.html' %}
+    </div>
+</div>
+        <!-- show list of spaces from database -->
+{#        <ul>#}
+
+{% endblock %}

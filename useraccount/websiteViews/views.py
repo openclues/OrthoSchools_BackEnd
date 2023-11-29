@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 
 # Create your views here.
+from rest_framework.authtoken.models import Token
+
 import useraccount
 from django.contrib.auth.forms import AuthenticationForm  # add this
 
@@ -26,29 +28,32 @@ def is_ajax(request):
 
 
 def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+    # if request.method == 'POST':
+    #     form = RegistrationForm(request.POST)
+    #
+    #     if form.is_valid():
+    #         print("form is valid")
+    #         user = UserAccount.objects.create_user(
+    #             username=form.cleaned_data['email'],
+    #
+    #             email=form.cleaned_data['email'],
+    #             password=form.cleaned_data['password'],
+    #             first_name=form.cleaned_data['first_name'],
+    #             last_name=form.cleaned_data['last_name'],
+    #         )
+    #         user.save()
+    #         # messages.success(request, f'Account created for {form.cleaned_data["username"]}!')
+    #         messages.success(request, 'Signup successful! You are now logged in.')  # Add success message
+    #
+    #         return redirect('login')
+    #     else:
+    return render(request, 'Modified_files/sign-up.html', {'form': RegistrationForm()})
 
-        if form.is_valid():
-            print("form is valid")
-            user = UserAccount.objects.create_user(
-                username=form.cleaned_data['email'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-            )
-            user.save()
-            # messages.success(request, f'Account created for {form.cleaned_data["username"]}!')
-            messages.success(request, 'Signup successful! You are now logged in.')  # Add success message
 
-            return redirect('login')
-        else:
-            render(request, 'Modified_files/sign-up.html', {'form': form})
-    else:
-        form = RegistrationForm()
+# else:
+#     form = RegistrationForm()
 
-    return render(request, 'Modified_files/sign-up.html', {'form': form})
+# return render(request, 'Modified_files/sign-up.html', {'form': form})
 
 
 def login_user(request):
@@ -63,6 +68,8 @@ def login_user(request):
             )
             if user is not None:
                 login(request, user)
+                Token.objects.get_or_create(user=user)
+
                 messages.success(request, f'Hello {user.username}! You have been logged in')
                 return redirect('/')  # Replace 'dashboard' with your desired URL for logged-in users
             else:
@@ -101,7 +108,7 @@ def IndexView(request):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
-        profile = ProfileModel.objects.get_or_create(user=request.user)
+        profile = ProfileModel.objects.get(user=request.user.id)
         spaces = Space.objects.all()
 
         return render(request, 'Modified_files/index.html', {

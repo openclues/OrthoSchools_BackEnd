@@ -91,11 +91,11 @@
 }
 .profile-menu {
   position: absolute;
-  bottom: -273px;
-  right: 0px;
+  bottom: -200px;
+  right: -10px;
   padding: 10px 15px;
-  width: 200px;
-  border-radius: 5px;
+  width: 250px;
+  border-radius: 10px;
   visibility: 0%;
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -107,13 +107,25 @@
 }
 @keyframes slide {
   from {
-    bottom: -245px;
+    bottom: -145px;
     opacity: 0%;
   }
   to {
-    bottom: -273px;
+    bottom: -200px;
     opacity: 100%;
   }
+}
+
+.profile-menu::after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  top: -12px;
+  right: 20px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 21px solid #ffffff;
 }
 .show {
   display: block;
@@ -125,7 +137,7 @@
 
 .profile-menu .text .head {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 15px;
 }
 .profile-menu text .email {
   font-size: 15px;
@@ -180,7 +192,7 @@
 
 .card-small {
   padding: 16px;
-
+  
   /* -webkit-box-shadow: none;
   box-shadow: none; */
 }
@@ -534,6 +546,7 @@ ul li {
   }
 }
 
+
 .profile-list .main-menu {
   display: flex;
 }
@@ -713,16 +726,17 @@ ul li {
 }
 
 .sign__input textarea {
-  background-color: #f5f6f8;
+  background: #e3e3e3;
   border: none;
   resize: none;
   height: 200px;
   padding: 10px;
+  border-radius: 5px;
 
 }
 
 .sign__input textarea::placeholder {
-
+  
 
 
 }
@@ -835,7 +849,7 @@ textarea {
 }
 textarea::placeholder {
   color: #8e8c94;
-
+  
 }
 .green-bord {
   border: 2px solid #0080008f !important;}
@@ -874,7 +888,7 @@ textarea::placeholder {
 }
 
 .space-img-label {
-  margin: 20px;
+  margin: 20px; 
   display: flex;
   align-items: center;
   background-color: #2984c9;
@@ -970,4 +984,127 @@ margin: 10px 0px;
   padding: 10px 25px;
   /* margin: 10px; */
   border-radius: 30px;
+}
+
+.title-btn {
+  border: 1px solid rgb(83 83 83 / 52%);
+  padding: 5px 10px;
+  width: 80px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.title-container{
+  margin-bottom: 20px;
+}
+
+ .sign__input input {
+  height: 50px;
+}
+
+.border-left {
+  border-left: 2px solid rgba(128, 128, 128, 0.252);
+}
+
+.log-out  {
+  border-top: 1px solid rgba(128, 128, 128, 0.436) ;
+}
+.profile-menu li a i {
+  padding: 0px 10px;
+  font-size: 17px;
+
+}
+
+.profile__menu-right .sign__input input ,.profile__menu-right .password__inputinput {
+  padding: 0px 10px
+}
+
+
+.cover {
+  margin: 10px 0px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cover img {
+  width: 100%;
+  object-fit: cover;
+
+}
+
+.profile__info-wrapper .profile-pic-info-2{
+  z-index: 5;
+    position: relative;
+
+    transition: 0.3s ease;
+  width: 150px;
+  height: 150px;
+
+    border-radius: 50%;
+    
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.542);
+    overflow: hidden;
+}
+ .pic-edit-info-2 {
+
+  position: relative;
+  top: -50px;
+  transition: 0.3s ease;
+  right: 50%;
+  transform: translateX(-56%);
+}
+
+.profile-pic-info-2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover-pic-2 {
+  margin: 10px 0px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.update-info {
+  background-color: #2f7edb;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+
+}
+
+.certificate-container {
+  border-bottom: 1px solid gainsboro;
+  margin-bottom: 20px;
+}
+
+.certif-input {
+  color: #2f7edb;
+  border: 1px solid #2984c9;
+  padding: 0px 20px;
+  border-radius: 5px;
+}
+
+.add-cert {
+  color: #2f7edb;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 992px) {
+  .border-left {
+    width: 100% !important;
+    border: none;
+  }
+}
+
+
+.remove {
+  color: red;
+  margin-left: 25px;
+  font-size: 12px;
+}
+
+.certificate-info {
+  margin-bottom: -10px;
 }

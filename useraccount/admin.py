@@ -1,4 +1,31 @@
 from django.contrib import admin
+from django.shortcuts import render
+
+
+class CustomAdminIndexView(admin.AdminSite):
+    def index(self, request, extra_context=None):
+        spaces = Space.objects.all()  # Replace with your actual model and queryset logic
+
+        context = {
+            'title': 'Dashboard',
+            'subtitle': 'Custom Dashboard View',
+            'spaces': spaces,
+        }
+
+        if extra_context is not None:
+            context.update(extra_context)
+
+        return render(request, 'admin/index.html', context)
+
+
+# Register the custom admin site
+custom_admin_site = CustomAdminIndexView(name='custom_admin')
+
+from django.contrib import admin
+from django.http import HttpRequest
+from django.utils import timezone
+from django.utils.html import format_html
+from unfold.decorators import action
 
 from space.models import Space
 from .models import UserAccount, ProfileModel, Certificate
@@ -22,8 +49,6 @@ class ProfileAdmin(admin.ModelAdmin):
         'bio',
         'place_of_work',
         'speciality',
-        'is_verified',
-        'is_verified_pro',
         'selfie',
     )
 
@@ -40,18 +65,18 @@ class ProfileAdmin(admin.ModelAdmin):
     user.short_description = 'Username'
     email.short_description = 'Email'
     phone.short_description = 'Phone'
-# search
-    search_fields = ('', 'bio', 'place_of_work', 'speciality', 'is_verified', 'is_verified_pro', 'selfie')
+    # search
+    search_fields = ('', 'bio', 'place_of_work', 'speciality', 'selfie')
+
 
 admin.site.register(ProfileModel, ProfileAdmin)
 
 
 class CustomUserAdmin(UserAdmin):
-    ...
+    list_display = ('email', 'first_name', 'last_name', 'userRole', 'is_staff', 'is_active',)
 
 
 admin.site.register(UserAccount, CustomUserAdmin)
-
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -59,11 +84,32 @@ from django.contrib.auth.models import User
 
 from unfold.admin import ModelAdmin
 
-
 admin.site.unregister(UserAccount)
 
 
 @admin.register(UserAccount)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
+    actions_submit_line = ["submit_line_action_activate"]
 
-    pass
+    list_display = (
+        'first_name', 'last_name', 'userRole', 'email', 'created_since', 'is_verified', 'is_verified_pro', 'is_suspend')
+    list_filter = UserAdmin.list_filter + ('userRole',)
+    fieldsets = UserAdmin.fieldsets + (
+        ('User Role', {'fields': ('userRole',)}),
+        ('Verification', {'fields': ('is_verified', 'is_verified_pro', 'is_suspend')}
+         ))
+
+    def created_since(self, obj):
+        return str((timezone.now() - obj.date_joined).days) + " days ago"
+
+    @action(description="Suspend User")
+    def submit_line_action_activate(self, request, queryset):
+        for user in queryset:
+            if user.is_suspend:
+                # If user is already suspended, show "Unsuspend" action
+                self.message_user(request, "User is already suspended.")
+            else:
+                # If user is not suspended, suspend the user
+                user.is_suspend = True
+                user.save()
+                self.message_user(request, "User Suspended Successfully.")

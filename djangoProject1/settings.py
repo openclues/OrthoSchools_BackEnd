@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.contrib.auth.decorators import permission_required
 from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,36 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = '/static/'
 # ADMIN_TOOLS_INDEX_DASHBOARD = 'blog.dashboard.CustomDashboard'
 
+
+DJOSER = {
+    'LOGIN_FIELD': "email",
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'SERIALIZERS': {
+        'user_create': 'useraccount.api.serializers.user_api_serializer.RegisterRequestSerializer',
+        # your serializer
+    }
+    # 'SERIALIZERS': {
+    #     'user_create': 'useraccount.user_api_serializer.RegisterRequestSerializer',  # your serializer
+    #     'user': 'useraccount.user_api_serializer.RegisterResponseSerializer'
+    # },
+    #
+    # 'VIEWS': {
+    #     'user_create': 'useraccount.userViews.RegisterApiView',  # your view
+    # }
+
+}
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'mail.orthoschools.com'
+EMAIL_HOST_USER = 'auth@orthoschools.com'
+EMAIL_HOST_PASSWORD = 'Java456!@'
+EMAIL_PORT = 587
+# EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'auth@orthoschools.com'
+
+
 INSTALLED_APPS = [
     "unfold",  # before django.contrib.admin
     "unfold.contrib.filters",  # optional, if special filters are needed
@@ -55,9 +86,8 @@ INSTALLED_APPS = [
     # 'admin_tools.dashboard',
     'django_static_fontawesome',
     'django_static_jquery3',
-    'django_admin_global_sidebar',
-
-    'admin_interface',
+    # 'django_admin_global_sidebar',
+    # 'admin_interface',
     'colorfield',
     'widget_tweaks',
     'django.contrib.admin',
@@ -75,6 +105,7 @@ INSTALLED_APPS = [
     'space',
     'blog',
     'ckeditor',
+    'course'
 
 ]
 ADMIN_INTERFACE_SETTING = {
@@ -91,8 +122,8 @@ AUTH_USER_MODEL = 'useraccount.UserAccount'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
@@ -112,7 +143,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'djangoProject1.urls'
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.AllowAllUsersModelBackend",
 )
 
 TEMPLATES = [
@@ -275,11 +306,14 @@ DJANGO_ADMIN_GLOBAL_SIDEBAR_MENUS = [
 
 UNFOLD = {
     "SHOW_VIEW_ON_SITE": True,  # show/hide "View on site" button, default: True
-
+    "SHOW_HEADER": False,  # show/hide header, default: True
     "SIDEBAR": {
+
+
         "title": "Orthoaca",
         # "image": "https://www.orthoaca.com/wp-content/uploads/2021/09/Orthoaca-Logo-1.png",
         "show_on_all_pages": True,  # show/hide sidebar on all pages, default: True
+
         "show_search": True,  # Search in applications and models names
         "show_all_applications": True,
         # Dropdown with all applications and models
@@ -299,6 +333,22 @@ UNFOLD = {
                         "title": "Manage Users",
                         "icon": "people",
                         "link": reverse_lazy("admin:useraccount_useraccount_changelist"),
+                        # "permission": lambda request: permission_required("useraccount.view_useraccount", raise_exception=False),
+                    },
+                    {
+                        "title": "Manage Spaces",
+                        "icon": "diversity_2",
+                        "link": reverse_lazy("admin:space_space_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "space.view_space") or request.user.has_perm("space.change_space") or request.user.is_superuser,
+                    },
+
+                    {
+                        "title": "Manage Courses",
+                        "icon": "school",
+                        "link": reverse_lazy("admin:course_course_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "course.view_course") or request.user.has_perm("course.change_course") or request.user.is_superuser,
                     },
 
                 ],

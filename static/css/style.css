@@ -125,7 +125,7 @@
 }
 
 /*---------------------------------
-    typography css start 
+    typography css start
 ---------------------------------*/
 body {
   font-family: var(--tp-ff-body);
@@ -308,7 +308,7 @@ input[type="color"] {
 }
 
 /*---------------------------------
-    common classes css start 
+    common classes css start
 ---------------------------------*/
 .w-img img {
   width: 100%;
@@ -363,7 +363,7 @@ input[type="color"] {
 }
 
 /*----------------------------------------
-    Body Overlay 
+    Body Overlay
 -----------------------------------------*/
 .body-overlay {
   background-color: rgba(var(--tp-common-black), 0.5);
@@ -1334,7 +1334,7 @@ input[type="color"] {
 .header__search-input input {
   width: 100%;
   height: 40px;
-  border-radius: 5px;
+  border-radius: 30px;
   background-color: var(--tp-grey-1);
   border: 1px solid var(--tp-grey-1);
   padding: 0 20px;
@@ -3049,7 +3049,7 @@ input[type="color"] {
 /*  08. COURSE CSS START
 /*----------------------------------------*/
 .course__item {
-  padding: 25px 25px;
+  /* padding: 25px 25px; */
   -webkit-box-shadow: 0px 1px 2px rgba(26, 31, 35, 0.07);
   -moz-box-shadow: 0px 1px 2px rgba(26, 31, 35, 0.07);
   -ms-box-shadow: 0px 1px 2px rgba(26, 31, 35, 0.07);
@@ -3468,8 +3468,7 @@ input[type="color"] {
   color: var(--tp-theme-3);
 }
 .course__content {
-  padding-top: 23px;
-  padding-bottom: 10px;
+  padding: 10px;
 }
 .space__content {
   padding: 30px 10px;
@@ -3543,12 +3542,13 @@ input[type="color"] {
   border-radius: 50%;
 }
 .course__lesson {
-  width: 70px;
-  height: 30px;
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
   flex-shrink: 0;
-  border-radius: 5px;
-  background: #00418d;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.25);
+  /* border-radius: 5px; */
+  background: #3360bd;
+  /* box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.25); */
   color: #fff;
 }
 .course__lesson:hover {
@@ -3810,7 +3810,7 @@ input[type="color"] {
   -o-border-radius: 4px;
   -ms-border-radius: 4px;
   border-radius: 4px;
-  padding: 27px 30px;
+  /* padding: 27px 30px; */
   padding-bottom: 24px;
   margin-bottom: 10px;
 }
@@ -9221,7 +9221,7 @@ input[type="color"] {
   padding: 0 50px;
   font-size: 14px;
   border: 2px solid transparent;
-  background: var(--tp-grey-2);
+  background: #e3e3e3;
   color: var(--tp-common-black);
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -10285,8 +10285,8 @@ p.checkout-coupon input[type="text"]:focus {
   color: var(--tp-theme-1);
 }
 .profile__info-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 25px;
+  font-weight: 500;
   color: var(--tp-text-5);
   margin-bottom: 0;
 }
@@ -10296,7 +10296,7 @@ p.checkout-coupon input[type="text"]:focus {
   display: inline-block;
 }
 .profile__info-wrapper {
-  padding: 0 70px;
+  padding: 10px 100px;
 }
 @media (max-width: 575px) {
   .profile__info-wrapper {
@@ -10577,7 +10577,7 @@ p.checkout-coupon input[type="text"]:focus {
   width: 100%;
   height: 60px;
   line-height: 56px;
-  background: var(--tp-grey-2);
+  background: #e3e3e3;
   border: 2px solid var(--tp-grey-2);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;

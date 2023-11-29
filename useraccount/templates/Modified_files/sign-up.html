@@ -2,28 +2,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Sign-up Page</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Place favicon.ico in the root directory -->
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png' %}" />
-    <!-- CSS here -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/meanmenu.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/animate.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/owl-carousel.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/swiper-bundle.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/backtotop.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/font-awesome-pro.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/spacing.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-</head>
+{% include 'parts/site_head.html' %}
 <body>
     <!--[if lte IE 9]>
       <p class="browserupgrade">
@@ -34,16 +13,7 @@
     <![endif]-->
 
     <!-- pre loader area start -->
-    <div id="loading">
-        <div id="loading-center">
-            <div id="loading-center-absolute">
-                <svg id="loader">
-                    <path id="corners" d="m 0 12.5 l 0 -12.5 l 50 0 l 0 50 l -50 0 l 0 -37.5" />
-                </svg>
-                <img src="{% static 'img/favicon.png' %}" alt="" />
-            </div>
-        </div>
-    </div>
+        {% include 'parts/loading_part.html' %}
     <!-- pre loader area end -->
 
     <!-- back to top start -->
@@ -105,7 +75,7 @@
                       </div>
                       <div class="sign__input-wrapper-name mb-25 ">
                         <h5>Last Name</h5>
-<div class="sign__input">
+                        <div class="sign__input">
                                             {% render_field form.last_name type="text" placeholder="Last Name" %}
                                             <i class="fal fa-user"></i>
                                         </div>                      </div>
@@ -214,7 +184,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'POST',
-            url: '{% url "registeruser" %}',  // Replace with your URL
+            url: '{% url "user-create" %}',  // Replace with your URL
             data: $(this).serialize(),
             success: function (response, status, xhr) {
                 if (xhr.status === 201) {

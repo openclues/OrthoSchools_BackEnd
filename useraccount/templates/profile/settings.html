@@ -1,0 +1,956 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+{% include 'parts/site_head.html' %}
+
+  <body>
+    <!--[if lte IE 9]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+        your experience and security.
+      </p>
+    <![endif]-->
+
+    <!-- pre loader area start -->
+    {% include 'parts/loading_part.html' %}
+    <!-- pre loader area end -->
+
+    <!-- back to top start -->
+    <div class="progress-wrap">
+      <svg
+        class="progress-circle svg-content"
+        width="100%"
+        height="100%"
+        viewBox="-1 -1 102 102"
+      >
+        <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
+      </svg>
+    </div>
+    <!-- back to top end -->
+
+    <header>
+      <div class="header__area">
+        <div class="header__bottom" id="header-sticky">
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-6">
+                <div class="logo">
+                  <a href="index.html">
+                    <img src="{% static 'img/logo/Group 14.png' %}" alt="logo" />
+                  </a>
+                </div>
+              </div>
+              <div class="col-xxl-5 col-xl-7 col-lg-8 d-none d-lg-block">
+                <div class="main-menu">
+                  <nav id="mobile-menu">
+                    <ul>
+                      <li class="">
+                        <a href="index.html">Home</a>
+                      </li>
+                      <li>
+                        <a href="spaces.html">Spaces</a>
+                      </li>
+                      <li class="has-dropdown">
+                        <a href="#">Courses</a>
+                        <ul class="submenu">
+                          <li><a href="course-v1.html">Courses Offered</a></li>
+                          <li><a href="myCourses.html">My Courses</a></li>
+                        </ul>
+                      </li>
+
+                      <li class="">
+                        <a href="#">Blog</a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+              <div class="col-xxl-5 col-xl-3 col-lg-2 col-md-6 col-6">
+                <div
+                  class="header__bottom-right d-flex justify-content-end align-items-center"
+                >
+                  <a></a>
+                    <i
+                      class="fa-solid fa-bell fs-5"
+                      style="color: #ffffff"
+                      class="mt-5"
+
+                    ></i>
+                  </a>
+                  <div
+                    class="header__search w-auto d-none d-lg-flex justify-content-end align-items-center pl-30"
+                  >
+                    <form action="#" class="search">
+                      <div class="header__search-input">
+                        <input type="text" placeholder="Search..." />
+                        <button class="header__search-btn">
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M8.11117 15.2222C12.0385 15.2222 15.2223 12.0385 15.2223 8.11111C15.2223 4.18375 12.0385 1 8.11117 1C4.18381 1 1.00006 4.18375 1.00006 8.11111C1.00006 12.0385 4.18381 15.2222 8.11117 15.2222Z"
+                              stroke="#031220"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M17 17L13.1334 13.1333"
+                              stroke="#031220"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </form>
+                    <div
+                      class="profile-toggele"
+                      id="profile-toggele"
+                      class="mt-5"
+
+                    >
+                    <img src="/ortho-uni/assets/img/Ellipse 16.png" alt="" class="profile-toggele-img" id="profile-toggele-img">
+                      <div class="profile-menu"
+                      id="profile-menu">
+                      <div class="text d-flex">
+                        <div class="profile-thumb-create-post">
+                          <img src="{% static 'img/Ellipse241.png' %}" alt="">
+                       </div>
+                        <div class="head ms-2 "> Yassine Bassou</div>
+                        <!-- <div class="email">yassine@gmail.com</div> -->
+                      </div>
+
+                        <ul>
+                          <li>
+
+                            <a href="profile.html">
+                              <i class="fa-solid fa-user"></i>
+                              <span>
+
+                                Profile
+                              </span>
+                            </a>
+
+
+                          </li>
+                          <li>
+                           <a href="#">
+
+                              <i class="fa-solid fa-bookmark"></i>
+                             <span>
+                               Saved Posts
+
+                             </span>
+                           </a>
+                         </li>
+
+                          <li class="log-out">
+                            <a href="sign-in.html">
+                              <i class="fa-solid fa-right-from-bracket"></i>
+                              <span>
+
+                                Log out
+                              </span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="header__hamburger ml-50 d-lg-none">
+                    <button
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#offcanvasmodal"
+                      class="hamurger-btn"
+                    >
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- header area end -->
+
+    <!-- offcanvas area start -->
+    <div class="offcanvas__area">
+      <div class="modal fade" id="offcanvasmodal" tabindex="-1" aria-labelledby="offcanvasmodal" aria-hidden="true">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                <div class="offcanvas__wrapper">
+                   <div class="offcanvas__content">
+                      <div class="offcanvas__top mb-40 d-flex justify-content-between align-items-center">
+                         <div class="offcanvas__logo d-flex align-items-center">
+                           <img src="{% static 'img/Ellipse 16.png' %}" alt="" class="profile-toggele-img" id="profile-toggele-img">
+
+                           <div class="text ms-2 ">
+                              <div class="head fw-bold"> Yassine Bassou</div>
+                              <div class="email">yassine@gmail.com</div>
+                            </div>
+
+                         </div>
+                         <div class="offcanvas__close">
+                            <button class="offcanvas__close-btn" data-bs-toggle="modal" data-bs-target="#offcanvasmodal">
+                               <i class="fal fa-times"></i>
+                            </button>
+                         </div>
+                      </div>
+                      <div class="offcanvas__search mb-25">
+                         <form action="#">
+                            <input type="text" placeholder="What are you searching for?">
+                            <button type="submit" ><i class="far fa-search"></i></button>
+                         </form>
+                      </div>
+                      <div class="mobile-menu fix"></div>
+                      <div class="offcanvas__text d-none d-lg-block">
+                         <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and will give you a complete account of the system and expound the actual teachings of the great explore</p>
+                      </div>
+
+
+                      <div class="offcanvas__contact mt-30 mb-20">
+                         <hr>
+                         <ul class="menu">
+                          <li>
+
+                            <a href="profile.html">
+                              <i class="fa-solid fa-user"></i>
+                              <span>
+
+                                Profile
+                              </span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+
+                              <i class="fa-solid fa-address-card"></i>
+                              <span>
+                                About
+
+                              </span>
+                            </a>
+                          </li>
+                          <li>
+                             <a href="#">
+
+                               <i class="fa-solid fa-bookmark"></i>
+                               <span>
+                                 Saved Posts
+
+                               </span>
+                             </a>
+                           </li>
+                          <li>
+
+                            <a href="settings.html">
+                              <i class="fa-solid fa-gear"></i>
+                              <span>
+                                settings
+
+                              </span>
+
+                            </a>
+                          </li>
+                          <li>
+                            <a href="sign-in.html">
+                              <i class="fa-solid fa-right-from-bracket"></i>
+                              <span>
+
+                                Sign out
+                              </span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+
+                   </div>
+                </div>
+             </div>
+         </div>
+     </div>
+   </div>
+   <!-- offcanvas area end -->
+   <div class="body-overlay"></div>
+   <!-- offcanvas area end -->
+    <main>
+
+
+      <!-- profile area start -->
+
+      <!-- profile area end -->
+
+      <!-- profile menu area start -->
+      <section class="profile__menu pb-150 grey-bg-2">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 ">
+              <div class="cover-pic cover-pic-2 d-flex justify-content-end align-items-end p-relative">
+                <img src="{{ profile.cover }}" alt="" class="cover-pic-info" id="cover-pic-info">
+                <button type="button" class="cover-edit-info" data-toggle="modal" data-target="#cover-pic-modal">
+                  <i class="fa-regular fa-pen-to-square"></i> Add
+                </button>
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-4">
+              <div class="profile__menu-left white-bg mb-50 card">
+
+                <div class="profile__menu-tab">
+                  <div
+                    class="nav nav-tabs flex-column justify-content-start text-start"
+                    id="nav-tab"
+                    role="tablist"
+                  >
+                    <a
+                      class="nav-link active"
+                      href="#basic-info"
+
+
+
+                    >
+                      <i class="fa-regular fa-user"></i> Profile Information
+                </a>
+                <a
+                class="nav-link"
+                id="nav-order-tab"
+
+                href="#about"
+
+
+
+              >
+                <i class="fa-regular fa-file-lines"></i>About Details
+      </a>
+                    <a
+                    class="nav-link"
+
+
+                  href="#security"
+
+
+                  >
+                    <i class="fa-regular fa-lock"></i>Security
+              </a>
+
+
+                    <a
+                    class="nav-link"
+                    id="nav-exp-tab"
+                    href="#certificate"
+
+
+                  >
+                    <i class="fa-regular fa-file-lines"></i>My Certificate
+          </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xxl-8 col-md-8">
+              <div class="profile__menu-right">
+                <div class="tab-content" id="nav-tabContent">
+                  <div
+                    class="tab-pane  d-block active"
+                    id="nav-account"
+                    role="tabpanel"
+                    aria-labelledby="nav-account-tab"
+                  >
+                    <div class="profile__info">
+
+
+                      <div class="profile__info-wrapper white-bg card" id="basic-info">
+                        <div
+                        class=" d-flex justify-content-between align-items-center mb-20"
+                      >
+                        <h3 class="profile__info-title">Basic Information</h3>
+
+                      </div >
+                        <div class="">
+
+                          <div class=" d-flex flex-column flex-lg-row justify-content-center align-items-center ">
+
+                            <div style="width: 30%; " class="d-flex justify-content-center">
+                              <div>
+
+                                <div class="profile" style="">
+                                  <div class="profile-pic-info-2" >
+                                    <img class="" src="{% static 'img/dentist.png' %}" alt="" id="profile-pic-info" />
+
+                                  </div>
+
+                                </div>
+                                <button type="button" class="pic-edit-info pic-edit-info-2" data-toggle="modal" data-target="#profile-modal">
+                                  <i class="fa-regular fa-pen-to-square"></i> Add
+                                </button>
+                              </div>
+                            </div>
+                           <div class="border-left " style="width: 70%; padding: 0px 10px;" >
+                                <div class="title-container">
+                                  <div class="tilte-title">Title</div>
+                                  <div>
+<div class="btn-group d-flex" role="group" aria-label="Basic example">
+    <button type="button" class="title-btn btn-primary">Dr.</button>
+    <button type="button" class="title-btn ">Prof.</button>
+    <button type="button" class="title-btn ">Non</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.title-btn').click(function() {
+            // Remove 'btn-primary' class from all buttons
+            $('.title-btn').removeClass('btn-primary');
+
+            // Add 'btn-primary' class to the clicked button
+            $(this).addClass('btn-primary');
+        });
+    });
+</script>
+                                  </div>
+                                </div>
+                                <div class="basic-inputs">
+                                  <form action="">
+                                    <div class="d-flex justify-content-between">
+
+                                      <div class="sign__input-wrapper-name mb-25">
+                                        <h6>First Name</h6>
+                                        <div class="sign__input">
+                                          <input type="text" placeholder="First Name" value="{{ user.first_name }} "  required />
+
+                                        </div>
+                                      </div>
+                                      <div class="sign__input-wrapper-name mb-25 ">
+                                        <h6>Last Name</h6>
+                                        <div class="sign__input">
+                                          <input type="text" placeholder="Last Name" value="{{ user.last_name }}" />
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+
+                                      <div class="sign__input-wrapper-name mb-25">
+                                        <h6>Phone Number</h6>
+                                        <div class="sign__input">
+                                          <input type="text" placeholder="Phone Number" value="{{ user.phone }}" />
+
+                                        </div>
+                                      </div>
+                                      <div class="sign__input-wrapper-name mb-25 ">
+                                        <h6>Date of Birth</h6>
+                                        <div class="sign__input">
+                                          <input type="text" placeholder="" />
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+
+                                      <div class="sign__input-wrapper-name mb-25">
+                                        <h6>Location</h6>
+                                        <div class="sign__input">
+                                          <input type="text" placeholder="" />
+
+                                        </div>
+                                      </div>
+                                      <div class="sign__input-wrapper-name mb-25 ">
+                                        <h5>City</h5>
+                                        <div class="sign__input">
+                                          <input type="text" placeholder="" />
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </form>
+                                </div>
+                           </div>
+                        </div>
+                        </div>
+
+
+
+
+                      <!-- <div class="profile__info-item">
+                        <p>Address</p>
+                        <div class=" d-flex justify-content-between">
+
+                          <div>
+
+                            <h4>mouhamed bahaa</h4>
+                          </div>
+                          <button
+                          class="profile__info-btn"
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#profile_edit_modal"
+                          >
+                          <i class="fa-regular fa-pen-to-square"></i> Edit
+                          Profile
+                        </button>
+                      </div>
+                      </div> -->
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="tab-pane d-block"
+
+                  >
+                    <div class="order__info" >
+
+
+                      <div class="card white-bg" id="about">
+                        <div
+                        class=" d-flex  align-items-center"
+                      >
+                        <h3 class="">About Details</h3>
+
+                      </div>
+                      <div class="sign__input-wrapper">
+                        <h5>Bio</h5>
+                        <div class="sign__input">
+                          <textarea
+                            style="width: 100%"
+                            placeholder="Bio..."
+                          ></textarea>
+                          <!-- <i class="fal fa-envelope"></i> -->
+                        </div>
+                        <div class="max-words mb-10">
+                          max 50 words
+                        </div>
+                      </div>
+
+
+                       <div class="sign__input-wrapper mb-25">
+                      <h5>Works at</h5>
+                      <div class="sign__input">
+                        <input type="text" placeholder="place of work" value="{{ profile.place_of_work }}" />
+
+                      </div>
+                    </div>
+                    <div class="sign__input-wrapper mb-25">
+                      <h5>Study in</h5>
+                      <div class="sign__input">
+                        <input type="text" placeholder="place of study" />
+
+                      </div>
+                    </div>
+
+                      <!-- <div class="profile__info-item">
+                        <p>Address</p>
+                        <div class=" d-flex justify-content-between">
+
+                          <div>
+
+                            <h4>mouhamed bahaa</h4>
+                          </div>
+                          <button
+                          class="profile__info-btn"
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#profile_edit_modal"
+                          >
+                          <i class="fa-regular fa-pen-to-square"></i> Edit
+                          Profile
+                        </button>
+                      </div>
+                      </div> -->
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                  class="tab-pane d-block"
+                  id="nav-password"
+                  role="tabpanel"
+                  aria-labelledby="nav-password-tab"
+                >
+                  <div class=" card" id="security">
+
+                    <div class=" white-bg">
+                      <div class="">
+                      <h3 class="">Security</h3>
+                    </div>
+                      <form action="#">
+                        <div class="sign__input-wrapper mb-25">
+                          <h5>Email</h5>
+                          <div class="sign__input">
+                            <input type="text" placeholder="" />
+
+                          </div>
+                        </div>
+                        <div class="password__input">
+                          <p>Old Password</p>
+                          <input
+                            type="password"
+                            placeholder=""
+                          />
+                        </div>
+                        <div class="password__input">
+                          <p>New Password</p>
+                          <input
+                            type="password"
+                            placeholder=""
+                          />
+                        </div>
+                        <div class="password__input">
+                          <p>Confirm Password</p>
+                          <input
+                            type="password"
+                            placeholder=""
+                          />
+                        </div>
+
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                  <div
+                    class="tab-pane d-block"
+                    id="nav-exp"
+                    role="tabpanel"
+                    aria-labelledby="nav-order-tab"
+                  >
+                    <div class=" card" id="certificate">
+
+
+                      <div class="">
+                        <div
+                        class=" d-flex justify-content-between align-items-center"
+                      >
+                        <h3 class="order__info-title">My Certificate</h3>
+
+                      </div>
+                      <div class="certificate-container">
+                            <div class="certificate mt-10">
+                              <div class="certificate-info d-flex align-items-center">
+
+                                <i class="fa-regular fa-file fs-5"></i>
+                                <div class="title ms-2 fw-bold">Front end deeveloper at ...</div>
+                              </div>
+                              <button class="remove">Remove</button>
+                            </div>
+                      </div>
+                      <div class="add-certificate-container">
+                          <label for="certif" class="certif-input">
+                            <i class="fa-solid fa-paperclip"></i>
+                              Attachment
+                            <input type="file" id="certif" accept=".pdf">
+                          </label>
+                          <div class="sign__input-wrapper mb-25 mt-15">
+                            <h5>Add Title</h5>
+                            <div class="sign__input">
+                              <input type="text" placeholder="" />
+
+                            </div>
+                          </div>
+                      </div>
+
+
+
+
+
+                      <div class="ps-3 pt-3 pb-3 d-flex justify-content-end">
+                        <button class="add-cert">Add Certificate + </button>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-10">
+              <button class="update-info">Update My Information</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- profile menu area end -->
+<!--
+      <div class="profile__edit-modal">
+       Modal
+        <div
+          class="modal fade"
+          id="profile_edit_modal"
+          tabindex="-1"
+          aria-labelledby="profile_edit_modal"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="profile__edit-wrapper">
+                <div class="profile__edit-close">
+                  <button
+                    type="button"
+                    class="profile__edit-close-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#course_enroll_modal"
+                  >
+                    <i class="fa-light fa-xmark"></i>
+                  </button>
+                </div>
+                <form action="#">
+                  <div class="profile__edit-input">
+                    <p>Name</p>
+                    <input type="text" placeholder="Your Name" />
+                  </div>
+                  <div class="profile__edit-input">
+                    <p>Email</p>
+                    <input type="text" placeholder="Your Email" />
+                  </div>
+                  <div class="profile__edit-input">
+                    <p>Phone</p>
+                    <input type="text" placeholder="Your Phone" />
+                  </div>
+                  <div class="profile__edit-input">
+                    <p>Address</p>
+                    <input type="text" placeholder="Your Address" />
+                  </div>
+                  <div class="profile__edit-input">
+                    <button type="submit" class="tp-btn w-100">Update</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </main>
+<!-- profile Modal start  -->
+<div class="modal fade" id="profile-modal" tabindex="1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="false">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"> Add your profile picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="img-container">
+          <div class="profile-pic">
+            <img src="{% static 'img/dentist.png' %}" alt="no-profile" id="profile-pic" >
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+
+         <label for="input-file" class="btn btn-primary">
+
+              <input
+
+              type="file"
+              accept="image/png, image/jpeg, image/jpg"
+              id="input-file"
+
+
+              >
+              <i class="fa-regular fa-pen-to-square"></i> <span class="span" id="upload-span">
+
+                Upload image
+              </span>
+            </input>
+          </label>
+          <button type="button" class="btn btn-secondary confirm hide" data-dismiss="modal" id="confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- profile Modal end  -->
+
+
+<!-- cover Modal start  -->
+<div class="modal fade" id="cover-pic-modal" tabindex="1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="false">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"> Add your profile picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="img-container">
+          <div class="cover-pic-privew">
+            <img src="{% static 'img/no-profile.png' %}" alt="no-profile" id="cover-pic-privew" >
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+
+         <label for="input-file-cover" class="btn btn-primary">
+
+              <input
+
+              type="file"
+              accept="image/png, image/jpeg, image/jpg"
+              id="input-file-cover">
+              <i class="fa-regular fa-pen-to-square"></i> <span class="span" id="upload-span-cover">
+
+                Upload image
+              </span>
+            </input>
+          </label>
+          <button type="button" class="btn btn-secondary confirm hide" data-dismiss="modal" id="confirm-cover">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- cover Modal end  -->
+
+    <script>
+      let profilePic = document.getElementById("profile-pic");
+      let profilePicMain = document.getElementById('profile-pic-info');
+      let inputFile = document.getElementById("input-file");
+      let confirmBtn = document.getElementById("confirm");
+      let uploadSpan = document.getElementById("upload-span");
+
+      let coverPic = document.getElementById("cover-pic-privew");
+      let coverPicMain = document.getElementById('cover-pic-info');
+      let coverInputFile = document.getElementById("input-file-cover");
+      let coverConfirmBtn = document.getElementById("confirm-cover");
+      let coverUploadSpan = document.getElementById("upload-span-cover");
+
+
+
+      let profilePicSrc ="";
+      let coverPicSrc ="";
+
+      function profileImgUpload(){
+          {#coverImgUploadtoServer()#}
+        profilePic.src = URL.createObjectURL(inputFile.files[0]);
+        profilePicSrc = profilePic.src;
+        console.log(profilePicSrc)
+        profileId = inputFile.files[0].name;
+        if (inputFile.files[0].name) {
+        confirmBtn.classList.add("show");
+        uploadSpan.innerText = "Upload New Image";
+
+      }
+      console.log(profilePicSrc)
+      }
+
+
+      function coverImgUpload(){
+          // make a request to upload cover image
+
+        coverPic.src = URL.createObjectURL(coverInputFile.files[0]);
+
+        coverPicSrc = coverPic.src;
+        console.log(coverPicSrc)
+
+        // profileId = inputFile.files[0].name;
+        if (coverInputFile.files[0].name) {
+          coverConfirmBtn.classList.add("show");
+          coverUploadSpan.innerText = "Upload New Image";
+      }
+      console.log(coverPicSrc)
+      }
+
+
+      inputFile.onchange = profileImgUpload;
+      coverInputFile.onchange = coverImgUpload;
+
+
+      confirmBtn.addEventListener("click" , function(){
+        profilePicMain.src = `${profilePicSrc}` ;
+      ;
+      })
+
+
+
+      coverConfirmBtn.addEventListener("click" , function(){
+        coverPicMain.src = `${coverPicSrc}` ;
+
+      ;
+      })
+</script>
+<script>
+    var $j = jQuery.noConflict();
+
+    // Define the getCookie function
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = $j.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $j(document).ready(function() {
+        $j('#confirm-cover').click(function() {
+            // Trigger the coverImgUpload function when the Confirm button is clicked
+            var coverInputFile = document.getElementById('input-file-cover');
+            var formData = new FormData();
+            formData.append('cover', coverInputFile.files[0]);
+            console.log(coverInputFile.files[0]);
+            $j.ajax({
+                url: "{% url 'update_profile' %}",
+                type: 'PATCH',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: {
+                    "Authorization": "Token " + "{{ request.user.auth_token.key }}",
+                    // Add other headers as needed
+                },
+                success: function(response) {
+                    console.log('Upload successful:', response);
+                    showToast('Cover image uploaded successfully');
+                },
+                error: function(error) {
+                    console.error('Upload failed:', error);
+                    showToast('Error uploading cover image');
+                }
+            });
+        });
+
+        function showToast(message) {
+            alert(message);
+        }
+
+        function getCSRFToken() {
+            // Replace this with your method to retrieve the CSRF token
+            // This example assumes the token is stored in a meta tag
+            return $j('meta[name=csrf-token]').attr('content');
+        }
+
+        function getSessionId() {
+            // Get the sessionid directly from the cookie
+            return getCookie("sessionid");
+        }
+    });
+</script>
+
+</script>
+
+    </script>
+
+    {% include 'parts/scripts.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>

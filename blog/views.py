@@ -16,7 +16,7 @@ class BlogDetailView(View):
 
 
 class AdminHomeScreenView(View):
-    template_name = 'new_admin.html'  # Adjust the template name as needed
+    template_name = 'admin/index.html'  # Adjust the template name as needed
 
     def get(self, request):
         return render(request, self.template_name, {})

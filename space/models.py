@@ -17,7 +17,7 @@ class Space(models.Model):
     # Define choices for user types with more readable keys
     USER_TYPES = (
         (1, 'Basic Dentist'),
-        (2, 'Blogger')
+        (2, 'Premium Dentist'),
     )
 
     # Field to specify allowed user types in the space
