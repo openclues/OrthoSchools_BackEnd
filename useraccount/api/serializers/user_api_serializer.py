@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 from useraccount.models import UserAccount, ProfileModel
 
-from djoser.serializers import UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, TokenCreateSerializer
 
 
 class RegisterRequestSerializer(UserCreateSerializer):
@@ -63,3 +64,24 @@ class CreateProfileResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
         fields = ['bio', 'profileImage', 'place_of_work', 'speciality', 'cover']
+
+
+class CustomTokenCreateSerializer(TokenCreateSerializer):
+    pass
+
+
+class UserAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAccount
+        fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'address', 'is_active',
+                  'last_login']
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+class ProfileFullDataSerializer(serializers.ModelSerializer):
+    user = UserAccountSerializer(
+        read_only=True
+    )
+    class Meta:
+        model = ProfileModel
+        fields = '__all__'

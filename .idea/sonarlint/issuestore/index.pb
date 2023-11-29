@@ -39,3 +39,13 @@ R
 "useraccount/forms/register_form.py,2\7\27edbca9d1b45d21e8b178f782e44d4c669f5acd
 J
 templates/admin/index.html,1\c\1c82ee135a55bd7e4342f60241c7748e6d362f79
+E
+useraccount/models.py,d\e\dee5c4b631dd35fc12ca3557c6a18154cc32b3e3
+a
+1useraccount/templates/Modified_files/sign-up.html,1\4\14c4334f6846f47750c4d6acdd9cc9e77c0dcf16
+P
+ useraccount/static/css/style.css,4\d\4d9cb268fabf25b5c32f1bd41b43b6f71d78a170
+O
+useraccount/static/css/main.css,2\d\2dd0aa8dde5fdc6d75635417b1055dfaa62a85b4
+J
+djangoProject1/settings.py,c\9\c98c6294c8d496a4da261f894871328d084fc57b

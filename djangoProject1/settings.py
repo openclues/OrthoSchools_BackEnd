@@ -16,6 +16,7 @@ from pathlib import Path
 from django.contrib.auth.decorators import permission_required
 from django.urls import reverse_lazy
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -53,14 +54,6 @@ DJOSER = {
         'user_create': 'useraccount.api.serializers.user_api_serializer.RegisterRequestSerializer',
         # your serializer
     }
-    # 'SERIALIZERS': {
-    #     'user_create': 'useraccount.user_api_serializer.RegisterRequestSerializer',  # your serializer
-    #     'user': 'useraccount.user_api_serializer.RegisterResponseSerializer'
-    # },
-    #
-    # 'VIEWS': {
-    #     'user_create': 'useraccount.userViews.RegisterApiView',  # your view
-    # }
 
 }
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

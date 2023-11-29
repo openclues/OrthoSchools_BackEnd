@@ -57,6 +57,7 @@
       <!-- back to top end -->
 
       <!-- header area start -->
+
     <header>
       <div class="header__area">
         <div class="header__bottom" id="header-sticky">
@@ -64,34 +65,14 @@
             <div class="row align-items-center">
               <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-6">
                 <div class="logo">
-                  <a href=" {% static 'index.html' %} ">
+                  <a href=" {% url 'index' %} ">
                     <img src=" {% static 'img/logo/Group 14.png' %} " alt="logo" />
                   </a>
                 </div>
               </div>
               <div class="col-xxl-5 col-xl-7 col-lg-8 d-none d-lg-block">
                 <div class="main-menu">
-                  <nav id="mobile-menu">
-                    <ul>
-                      <li class="">
-                        <a href=" {% static 'index.html' %} ">Home</a>
-                      </li>
-                      <li>
-                        <a href=" {% static 'spaces.html' %} ">Spaces</a>
-                      </li>
-                      <li class="has-dropdown">
-                        <a href="#">Courses</a>
-                        <ul class="submenu">
-                          <li><a href=" {% static 'course-v1.html' %} ">Courses Offered</a></li>
-                          <li><a href=" {% static 'myCourses.html' %} ">My Courses</a></li>
-                        </ul>
-                      </li>
-
-                      <li class="">
-                        <a href="#">Following</a>
-                      </li>
-                    </ul>
-                  </nav>
+                    {%  include 'parts/common/mobile_menu.html' %}
                 </div>
               </div>
               <div class="col-xxl-5 col-xl-3 col-lg-2 col-md-6 col-6">

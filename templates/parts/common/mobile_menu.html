@@ -1,0 +1,22 @@
+{% load static %}
+<nav id="mobile-menu">
+                    <ul>
+                      <li class="">
+                        <a href=" {% url 'index' %} ">Home</a>
+                      </li>
+                      <li>
+                        <a href=" {% static 'spaces.html' %} ">Spaces</a>
+                      </li>
+                      <li class="has-dropdown">
+                        <a href="#">Courses</a>
+                        <ul class="submenu">
+                          <li><a href=" {% static 'course-v1.html' %} ">Courses Offered</a></li>
+                          <li><a href=" {% static 'myCourses.html' %} ">My Courses</a></li>
+                        </ul>
+                      </li>
+
+                      <li class="">
+                        <a href="#">Following</a>
+                      </li>
+                    </ul>
+                  </nav>

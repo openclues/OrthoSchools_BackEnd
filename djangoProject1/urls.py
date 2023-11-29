@@ -24,7 +24,8 @@ import useraccount.websiteViews.views
 from blog.views import BlogDetailView
 from djangoProject1 import settings
 from space.models import Space
-from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView
+from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
+    CustomTokenCreateView, GetProfileApiView
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
@@ -32,14 +33,15 @@ from useraccount.websiteViews.index_views import email_verification
 
 urlpatterns = [
     # path('admin/', AdminHomeScreenView.as_view(), name='admin'),
+
     path('admin/', admin.site.urls, {'extra_context': {'spaces': Space.objects.all()}}),
     path('register/', RegisterApiView.as_view({'post': 'create'}), name='user-create'),
-
     # path('register/', RegisterApiView.as_view(), name='registeruser'),
     path('profile/create', CreateProfileApiView.as_view()),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('user/info', GetProfileApiView.as_view()),
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
