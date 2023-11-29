@@ -299,9 +299,7 @@
             <div class="col-12 ">
               <div class="cover-pic cover-pic-2 d-flex justify-content-end align-items-end p-relative">
               {% if profile.cover %}
-{% with base_url=request.build_absolute_uri  %}
-    <img src="{{ base_url }}{{ profile.cover.url }}" alt="{{ profile.cover.url }}" class="cover-pic-info" id="cover-pic-info">
-{% endwith %}
+    <img src="https://orthoschools.com/{{ profile.cover.url }}" alt="{{ profile.cover.url }}" class="cover-pic-info" id="cover-pic-info">
               {% else %}
     <!-- Handle the case where 'cover' is empty or None -->
                 <p>No cover image available</p>
