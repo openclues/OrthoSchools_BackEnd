@@ -130,7 +130,15 @@
 .show {
   display: block;
 }
+@media screen and (max-width: 992px)  {
+  .cover-pic {
+    height: 200px;}
 
+    .profile__menu-left {
+
+      display: none;
+  }
+}
 .profile-menu .text {
   margin-bottom: 20px;
 }

@@ -13,4 +13,3 @@ profileImg.addEventListener("click", () => {
     profileMenu.classList.remove("show");
   }
 });
-console.log("hello");

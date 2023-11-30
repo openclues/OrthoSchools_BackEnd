@@ -30,12 +30,14 @@ class CreateProfileRequestSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(max_length=100, required=False)
     email = serializers.EmailField(required=False)
     phone = serializers.CharField(max_length=20, required=False)
+    title = serializers.CharField(max_length=100, required=False)
     address = serializers.CharField(max_length=100, required=False)
+
 
     class Meta:
         model = ProfileModel
         fields = ['bio', 'profileImage', 'place_of_work', 'speciality', 'cover', 'first_name', 'last_name', 'email',
-                  'phone', 'address', ]
+                  'phone', 'address','title','birth_date','study_in']
 
     def create(self, validated_data):
         return ProfileModel.objects.create(**validated_data)
@@ -53,6 +55,10 @@ class CreateProfileRequestSerializer(serializers.ModelSerializer):
         instance.place_of_work = validated_data.get('place_of_work', instance.place_of_work)
         instance.speciality = validated_data.get('speciality', instance.speciality)
         instance.cover = validated_data.get('cover', instance.cover)
+
+        instance.title = validated_data.get('title', instance.title)
+        instance.birth_date = validated_data.get('birth_date', instance.birth_date)
+        instance.study_in = validated_data.get('study_in', instance.study_in)
         instance.save()
         return instance
 

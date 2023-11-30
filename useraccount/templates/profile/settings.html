@@ -12,6 +12,7 @@
       </p>
     <![endif]-->
 
+
     <!-- pre loader area start -->
     {% include 'parts/loading_part.html' %}
     <!-- pre loader area end -->
@@ -180,8 +181,8 @@
                            <img src="{% static 'img/Ellipse 16.png' %}" alt="" class="profile-toggele-img" id="profile-toggele-img">
 
                            <div class="text ms-2 ">
-                              <div class="head fw-bold"> Yassine Bassou</div>
-                              <div class="email">yassine@gmail.com</div>
+                              <div class="head fw-bold"> {{ user.last_name }} {{ user.last_name }}</div>
+                              <div class="email">{{ user.email }}</div>
                             </div>
 
                          </div>
@@ -365,6 +366,7 @@
                         class=" d-flex justify-content-between align-items-center mb-20"
                       >
                         <h3 class="profile__info-title">Basic Information</h3>
+                        <h3 class="profile__info-title">Basic Information</h3>
 
                       </div >
                         <div class="">
@@ -382,7 +384,7 @@
 
                                 </div>
                                 <button type="button" class="pic-edit-info pic-edit-info-2" data-toggle="modal" data-target="#profile-modal">
-                                  <i class="fa-regular fa-pen-to-square"></i> Add
+                                  <i class="fa-regular fa-pen-to-square"></i> Add profile
                                 </button>
                               </div>
                             </div>
@@ -391,15 +393,27 @@
                                   <div class="tilte-title">Title</div>
                                   <div>
 <div class="btn-group d-flex" role="group" aria-label="Basic example">
-    <button type="button" class="title-btn btn-primary">Dr.</button>
-    <button type="button" class="title-btn ">Prof.</button>
-    <button type="button" class="title-btn ">Non</button>
+
+    <button type="button" class="title-btn btn-primary" data-title="Dr.">Dr.</button>
+    <button type="button" class="title-btn " data-title="Prof.">Prof.</button>
+    <button type="button" class="title-btn " data-title="">Non</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+
     $(document).ready(function() {
+                var profileTitle = "{{ profile.title }}";
+
+        // Remove "btn-primary" class from all buttons
+        $(".title-btn").removeClass("btn-primary");
+
+        // Add "btn-primary" class to the button whose text matches profile.title
+        $(".title-btn:contains(" + profileTitle + ")").addClass("btn-primary");
+
         $('.title-btn').click(function() {
+
+
             // Remove 'btn-primary' class from all buttons
             $('.title-btn').removeClass('btn-primary');
 
@@ -417,14 +431,14 @@
                                       <div class="sign__input-wrapper-name mb-25">
                                         <h6>First Name</h6>
                                         <div class="sign__input">
-                                          <input type="text" placeholder="First Name" value="{{ user.first_name }} "  required />
+                                          <input type="text" name="first_name" placeholder="First Name" value="{{ user.first_name }} "  required />
 
                                         </div>
                                       </div>
                                       <div class="sign__input-wrapper-name mb-25 ">
                                         <h6>Last Name</h6>
                                         <div class="sign__input">
-                                          <input type="text" placeholder="Last Name" value="{{ user.last_name }}" />
+                                          <input type="text" name="last_name" placeholder="Last Name" value="{{ user.last_name }}" />
 
                                         </div>
                                       </div>
@@ -434,34 +448,18 @@
                                       <div class="sign__input-wrapper-name mb-25">
                                         <h6>Phone Number</h6>
                                         <div class="sign__input">
-                                          <input type="text" placeholder="Phone Number" value="{{ user.phone }}" />
+                                          <input type="text" placeholder="Phone Number" name="phone" value="{{ user.phone }}" />
 
                                         </div>
                                       </div>
                                       <div class="sign__input-wrapper-name mb-25 ">
-                                        <h6>Date of Birth</h6>
-                                        <div class="sign__input">
-                                          <input type="text" placeholder="" />
-
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-
-                                      <div class="sign__input-wrapper-name mb-25">
                                         <h6>Location</h6>
                                         <div class="sign__input">
-                                          <input type="text" placeholder="" />
-
-                                        </div>
+                                          <input type="text" placeholder="" name="location" value="{{ user.address }}" />
                                       </div>
-                                      <div class="sign__input-wrapper-name mb-25 ">
-                                        <h5>City</h5>
-                                        <div class="sign__input">
-                                          <input type="text" placeholder="" />
+                                    </div>
 
-                                        </div>
-                                      </div>
+
                                     </div>
                                   </form>
                                 </div>
@@ -513,8 +511,10 @@
                         <div class="sign__input">
                           <textarea
                             style="width: 100%"
+                            name="bio"
                             placeholder="Bio..."
-                          ></textarea>
+                            value="{{ profile.bio }}"
+                          >{{ profile.bio }}</textarea>
                           <!-- <i class="fal fa-envelope"></i> -->
                         </div>
                         <div class="max-words mb-10">
@@ -526,14 +526,14 @@
                        <div class="sign__input-wrapper mb-25">
                       <h5>Works at</h5>
                       <div class="sign__input">
-                        <input type="text" placeholder="place of work" value="{{ profile.place_of_work }}" />
+                        <input type="text" placeholder="place of work" name = "place_of_work" value="{{ profile.place_of_work }} " />
 
                       </div>
                     </div>
                     <div class="sign__input-wrapper mb-25">
                       <h5>Study in</h5>
                       <div class="sign__input">
-                        <input type="text" placeholder="place of study" />
+                        <input type="text" name="study_in" value="{{ profile.study_in }}" placeholder="place of study" />
 
                       </div>
                     </div>
@@ -576,7 +576,7 @@
                         <div class="sign__input-wrapper mb-25">
                           <h5>Email</h5>
                           <div class="sign__input">
-                            <input type="text" placeholder="" />
+                            <input type="text" placeholder="" value="{{ user.email }}"  />
 
                           </div>
                         </div>
@@ -622,6 +622,7 @@
                         <h3 class="order__info-title">My Certificate</h3>
 
                       </div>
+
                       <div class="certificate-container">
                             <div class="certificate mt-10">
                               <div class="certificate-info d-flex align-items-center">
@@ -662,8 +663,10 @@
               </div>
             </div>
             <div class="d-flex justify-content-end mt-10">
-              <button class="update-info">Update My Information</button>
+              <button class="update-info" id="update_info_button">Update My Information</button>
             </div>
+
+
           </div>
         </div>
       </section>
@@ -753,13 +756,26 @@
               </span>
             </input>
           </label>
-          <button type="button" class="btn btn-secondary confirm hide" data-dismiss="modal" id="confirm">Confirm</button>
+          <button type="button" class="btn btn-secondary confirm hide" data-dismiss="modal" id="profile_confirm">Confirm</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- profile Modal end  -->
+  <div class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 0; right: 0; z-index: 9999;">
+    <div class="toast-header">
+
+
+      <button type="button" class="btn-xlg close" data-dismiss="toast" aria-label="Close" id="close-toast">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      "Your information has been updated successfully"
+    </div>
+  </div>
+
 
 
 <!-- cover Modal start  -->
@@ -868,7 +884,71 @@
       ;
       })
 </script>
+
 <script>
+    var $j = jQuery.noConflict();
+    $j(document).ready(function(){
+        $j('#update_info_button').click(function(){
+            var first_name = $j('input[name="first_name"]').val();
+            var last_name = $j('input[name="last_name"]').val();
+            var phone = $j('input[name="phone"]').val();
+            var study_in = $j('input[name="study_in"]').val();
+            var address = $j('input[name="location"]').val();
+            var place_of_work = $j('input[name="place_of_work"]').val();
+            var place_of_study = $j('input[name="place_of_study"]').val();
+            var bio = $j('textarea[name="bio"]').val();
+            var title = $('.title-btn.btn-primary').data('title');
+            console.log(title);
+            var csrf_token = $j('input[name="csrfmiddlewaretoken"]').val();
+            var url = "{% url 'update_profile' %}";
+            $('.update_info_button').hide();
+            $j('.spinner-border').show();
+            console.log(phone);
+            $j.ajax({
+                url: url,
+                  headers: {
+                    "Authorization": "Token " + "{{ request.user.auth_token.key }}",
+                    // Add other headers as needed
+                },
+                type: 'PATCH',
+                data: {
+                    first_name: first_name,
+                    last_name: last_name,
+                    phone: phone,
+                    place_of_work: place_of_work,
+                    place_of_study: place_of_study,
+                    bio: bio,
+                    study_in :study_in,
+                    address:address,
+                    title: title,
+                    csrfmiddlewaretoken: csrf_token
+                },
+                success: function(response){
+                    $j('.spinner-border').hide();
+                    $j('.update_info_button').show();
+                    console.log(response);
+                    $('.toast').toast('show').addClass('bg-success');
+                    $('.toast-body').text("Your information has been updated successfully");
+
+                    location.reload();
+
+
+                },
+                error: function(error){
+                    $j('.spinner-border').hide();
+                    $j('.update_info_button').show();
+                                          $('.toast').toast('show').addClass('bg-danger');
+                    $('.toast-body').text("Error updating profile");
+
+                    {#alert('Error updating profile');#}
+                }
+            });
+        })
+    })
+
+
+
+
     var $j = jQuery.noConflict();
 
     // Define the getCookie function
@@ -887,6 +967,9 @@
         }
         return cookieValue;
     }
+
+
+
 
     $j(document).ready(function() {
         $j('#confirm-cover').click(function() {
@@ -907,18 +990,19 @@
                 },
                 success: function(response) {
                     console.log('Upload successful:', response);
-                    showToast('Cover image uploaded successfully');
+                    $('.toast').toast('show');
+                    $('.toast-body').text("Your cover image has been updated successfully");
+                    location.reload();
                 },
                 error: function(error) {
                     console.error('Upload failed:', error);
-                    showToast('Error uploading cover image');
-                }
+                    $('.toast').toast('show');
+                    $('.toast-body').text("Error updating cover image");
+                            }
             });
         });
 
-        function showToast(message) {
-            alert(message);
-        }
+
 
         function getCSRFToken() {
             // Replace this with your method to retrieve the CSRF token
@@ -935,8 +1019,13 @@
 
 </script>
 
-    </script>
+<script>
+$(document).ready(function(){
+    $('.birthdayPicker').datepicker();
+});
 
+
+</script>
     {% include 'parts/scripts.html' %}
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

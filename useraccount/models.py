@@ -67,13 +67,17 @@ class Certificate(models.Model):
 
 
 class ProfileModel(models.Model):
+    title = models.CharField(max_length=100, blank=True, null=True)
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True, null=True)
+    study_in = models.CharField(max_length=100, blank=True, null=True)
     cover = models.ImageField(upload_to='cover', blank=True, null=True)
     profileImage = models.ImageField(upload_to='profileImage', blank=True)
     place_of_work = models.CharField(max_length=100, blank=True, null=True)
     speciality = models.CharField(max_length=100, blank=True, null=True)
     selfie = models.ImageField(upload_to='selfie', blank=True, null=True)
+    birth_date = models.DateField(null=True, blank=True)
+
 
     def __str__(self):
         return self.user.username

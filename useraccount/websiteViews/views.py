@@ -70,7 +70,6 @@ def login_user(request):
                 login(request, user)
                 Token.objects.get_or_create(user=user)
 
-                messages.success(request, f'Hello {user.username}! You have been logged in')
                 return redirect('/')  # Replace 'dashboard' with your desired URL for logged-in users
             else:
                 messages.error(request, 'Email or password is incorrect.')
@@ -122,5 +121,4 @@ def logout_view(request):
     logout(request)
     # messages.clear(request)
 
-    messages.success(request, 'You have been logged out.')
     return redirect('login')

@@ -5,13 +5,15 @@ from django.shortcuts import render
 from django.template.base import Token
 from django.views import View
 
+from useraccount.forms.profile_user_form import ProfileAndUserForm
 from useraccount.models import ProfileModel
 
 
 class ShowProfileView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
+        form = ProfileAndUserForm()
         user = request.user
         profile = ProfileModel.objects.get(user=user)
-        return render(request, 'profile/settings.html', {'profile': profile, 'user': user, 'request': request})
+        return render(request, 'profile/settings.html', {'profile': profile, 'user': user, 'request': request, 'form': form})
 

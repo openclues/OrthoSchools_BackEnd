@@ -98,7 +98,7 @@ class UpdateUserAndProfileApiView(generics.UpdateAPIView):
     def perform_update(self, serializer):
         serializer.validated_data['user_id'] = self.request.user.id
         serializer.save()
-        return Response(CreateProfileResponseSerializer(serializer.data, many=False).data, status=status.HTTP_200_OK)
+        return Response(ProfileFullDataSerializer(serializer.data, many=False).data, status=status.HTTP_200_OK)
 
 
 class GetProfileApiView(generics.RetrieveAPIView):
