@@ -1,0 +1,32 @@
+{#<!-- admin/space_change_form.html -->#}
+{##}
+{#{% extends "admin/change_form.html" %}#}
+{##}
+{#{% block content %}#}
+{#  {{ block.super }}#}
+{##}
+{#  <form method="post" action="" enctype="multipart/form-data">#}
+{#    {% csrf_token %}#}
+{##}
+{#    <label for="id_name">Name:</label>#}
+{#    {{ form.name }}#}
+{##}
+{#    <label for="id_description">Description:</label>#}
+{#    {{ form.description }}#}
+{##}
+{#    <label for="id_cover">Cover:</label>#}
+{#    {{ form.cover }}#}
+{##}
+{#    <label for="id_category">Category:</label>#}
+{#    {{ form.category }}#}
+{##}
+{#    <label for="id_allowed_user_types">Allowed User Types:</label>#}
+{#    {{ form.allowed_user_types }}#}
+{##}
+{#    <!-- Add other fields as needed -->#}
+{##}
+{#    <input type="submit" value="Save changes">#}
+{#  </form>#}
+{##}
+{#  <!-- Custom content for the change form template -->#}
+{#{% endblock %}#}

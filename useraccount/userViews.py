@@ -2,16 +2,19 @@ from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from useraccount.api.serializers.user_api_serializer import RegisterRequestSerializer, CreateProfileRequestSerializer, \
-    CreateProfileResponseSerializer, ProfileFullDataSerializer
-from useraccount.models import ProfileModel
+    CreateProfileResponseSerializer, ProfileFullDataSerializer, ProfileInterestesSerializer, CategorySerializer
+from useraccount.models import ProfileModel, Category
 from djoser.views import UserViewSet, TokenCreateView
 
 # login even if the user is inactive
 
 from djoser.views import TokenCreateView
 from rest_framework.response import Response
+
+from useraccount.serializers import HomeDataSerializer, FullUserSerializer, VisitorProfileSerializer
 
 
 class CustomTokenCreateView(TokenCreateView):
@@ -80,6 +83,7 @@ class CreateProfileApiView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.validated_data['user_id'] = self.request.user.id
+        # handle the interests
         serializer.save()
 
 
@@ -118,3 +122,65 @@ class GetProfileApiView(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         print(serializer.data)
         return Response(serializer.data)
+
+
+class ProfileInterestsApiView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ProfileInterestesSerializer
+
+    def get_queryset(self):
+        return ProfileModel.objects.filter(user=self.request.user)
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = generics.get_object_or_404(queryset)
+        return obj
+
+
+class CategoriesApiView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+    # pass context to the serializer
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class HomeDataApiView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        # Assuming you want to get home data for the currently authenticated user
+        user = self.request.user
+
+        # You can add any additional logic or customization here before serializing the data
+        serializer = HomeDataSerializer({'user': user}, context={'request': request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProfileViewSet(generics.RetrieveAPIView):
+    serializer_class = FullUserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        return ProfileModel.objects.filter(user=user_id)
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = generics.get_object_or_404(queryset)
+        return obj
+
+    def retrieve(self, request, *args, **kwargs):
+        user = self.request.user
+        instance = self.get_object()
+        if user.id == instance.user.id:
+            serializer = self.get_serializer(instance)
+            print(serializer.data)
+            return Response(serializer.data)
+        else:
+            serializer = VisitorProfileSerializer(instance)
+            print(serializer.data)
+            return Response(serializer.data)

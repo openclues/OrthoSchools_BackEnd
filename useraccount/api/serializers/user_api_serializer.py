@@ -2,9 +2,28 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-from useraccount.models import UserAccount, ProfileModel
+from useraccount.models import UserAccount, ProfileModel, Category
 
 from djoser.serializers import UserCreateSerializer, TokenCreateSerializer
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    is_selected = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+    def get_is_selected(self, obj):
+        if self.context.get('request'):
+
+            user = self.context['request'].user
+            if user.is_authenticated:
+                profile = ProfileModel.objects.get(user=user)
+                if obj in profile.interstes.all():
+                    return True
+                else:
+                    return False
 
 
 class RegisterRequestSerializer(UserCreateSerializer):
@@ -33,11 +52,10 @@ class CreateProfileRequestSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=100, required=False)
     address = serializers.CharField(max_length=100, required=False)
 
-
     class Meta:
         model = ProfileModel
         fields = ['bio', 'profileImage', 'place_of_work', 'speciality', 'cover', 'first_name', 'last_name', 'email',
-                  'phone', 'address','title','birth_date','study_in']
+                  'phone', 'address', 'title', 'birth_date', 'study_in']
 
     def create(self, validated_data):
         return ProfileModel.objects.create(**validated_data)
@@ -55,10 +73,10 @@ class CreateProfileRequestSerializer(serializers.ModelSerializer):
         instance.place_of_work = validated_data.get('place_of_work', instance.place_of_work)
         instance.speciality = validated_data.get('speciality', instance.speciality)
         instance.cover = validated_data.get('cover', instance.cover)
-
         instance.title = validated_data.get('title', instance.title)
         instance.birth_date = validated_data.get('birth_date', instance.birth_date)
         instance.study_in = validated_data.get('study_in', instance.study_in)
+
         instance.save()
         return instance
 
@@ -88,6 +106,18 @@ class ProfileFullDataSerializer(serializers.ModelSerializer):
     user = UserAccountSerializer(
         read_only=True
     )
+
     class Meta:
         model = ProfileModel
         fields = '__all__'
+
+
+class ProfileInterestesSerializer(serializers.ModelSerializer):
+    interests = CategorySerializer(read_only=True, many=True)
+
+    class Meta:
+        model = ProfileModel
+        fields = '__all__'
+
+    def get_interests(self, obj):
+        return obj.interests.all()

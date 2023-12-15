@@ -16,7 +16,6 @@ from pathlib import Path
 from django.contrib.auth.decorators import permission_required
 from django.urls import reverse_lazy
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -64,43 +63,49 @@ EMAIL_PORT = 587
 # EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'auth@orthoschools.com'
 
+INSTALLED_APPS = ["admin_confirm",
+                  ''
+                  "unfold",  # before django.contrib.admin
+                  "unfold.contrib.filters",  # optional, if special filters are needed
+                  "unfold.contrib.forms",  # optional, if special form elements are needed
+                  "unfold.contrib.import_export",  # optional, if django-import-export package is used
+                  "unfold.contrib.guardian",  # optional, if django-guardian package is used
+                  "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
+                  # "django.contrib.admin",  # required
 
-INSTALLED_APPS = [
-    "unfold",  # before django.contrib.admin
-    "unfold.contrib.filters",  # optional, if special filters are needed
-    "unfold.contrib.forms",  # optional, if special form elements are needed
-    "unfold.contrib.import_export",  # optional, if django-import-export package is used
-    "unfold.contrib.guardian",  # optional, if django-guardian package is used
-    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
-    # "django.contrib.admin",  # required
+                  # 'django_admin_bootstrapped',
+                  # 'admin_tools',
+                  # 'admin_tools.dashboard',
+                  'django_static_fontawesome',
+                  'django_static_jquery3',
+                  # 'django_admin_global_sidebar',
+                  # 'admin_interface',
+                  'colorfield',
+                  'widget_tweaks',
+                  'django.contrib.admin',
+                  'sass_processor',
+                  'django.contrib.auth',
+                  'django.contrib.contenttypes',
+                  'django.contrib.sessions',
+                  'django.contrib.messages',
+                  'django.contrib.staticfiles',
+                  'useraccount',
+                  'rest_framework',
+                  'rest_framework.authtoken',
+                  'djoser',
+                  'django.contrib.sites',
+                  'actstream',
 
-    # 'django_admin_bootstrapped',
-    # 'admin_tools',
-    # 'admin_tools.dashboard',
-    'django_static_fontawesome',
-    'django_static_jquery3',
-    # 'django_admin_global_sidebar',
-    # 'admin_interface',
-    'colorfield',
-    'widget_tweaks',
-    'django.contrib.admin',
-    'sass_processor',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'useraccount',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'djoser',
-    'drf_spectacular',
-    'space',
-    'blog',
-    'ckeditor',
-    'course'
+                  'core',
+                  'drf_spectacular',
+                  'space',
+                  'blog',
+                  'ckeditor',
+                  'course',
+                  'commentable', 'likable',
+                  'django_quill'
 
-]
+                  ]
 ADMIN_INTERFACE_SETTING = {
     'show_sidebar': False,
     'show_topbar': True,
@@ -108,15 +113,21 @@ ADMIN_INTERFACE_SETTING = {
     'title': 'Your Admin Panel Title',
     'favicon': '/static/admin_interface/img/favicon.ico',
 }
+SITE_ID = 1
 
 AUTH_USER_MODEL = 'useraccount.UserAccount'
+# ACTSTREAM_SETTINGS = {
+#     'MANAGER': 'useraccount.managers.MyActionManager',
+#     'FETCH_RELATIONS': True,
+#     'USE_PREFETCH': True,
+#     'USE_JSONFIELD': True,
+#     'GFK_FETCH_DEPTH': 1,
+# }
 
 # REST_FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
@@ -140,29 +151,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 TEMPLATES = [
-
     {
-
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'templates',  # Global templates directory
-        ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-TEMPLATES = [
-    # admin_tools.template_loaders.Loader
-    {
-
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',  # Global templates directory
@@ -197,6 +186,12 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": "mydatabase",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -215,7 +210,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -240,7 +234,6 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # settings.py
 
 # Activate internationalization
@@ -264,14 +257,13 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),  # Change 'locale' to the directory you choose
 ]
 
-
 DJANGO_ADMIN_GLOBAL_SIDEBAR_MENUS = [
 
     {
         "title": "Home",
         "icon": "fa fa-home",
         "url": "/admin/",
-    },{
+    }, {
         "title": "Manage Books",
         "icon": "fa fa-book",
         "children": [
@@ -282,7 +274,7 @@ DJANGO_ADMIN_GLOBAL_SIDEBAR_MENUS = [
                 # "permissions": ["django_admin_global_sidebar_example.view_category"],
             }
         ]
-    },{
+    }, {
         "title": "Authenticate",
         "icon": "fa fa-cogs",
         "children": [
@@ -302,7 +294,6 @@ UNFOLD = {
     "SHOW_HEADER": False,  # show/hide header, default: True
     "SIDEBAR": {
 
-
         "title": "Orthoaca",
         # "image": "https://www.orthoaca.com/wp-content/uploads/2021/09/Orthoaca-Logo-1.png",
         "show_on_all_pages": True,  # show/hide sidebar on all pages, default: True
@@ -316,7 +307,7 @@ UNFOLD = {
                 # "separator": True,  # Top border
                 "items": [
                     {
-                        "title":"Dashboard",
+                        "title": "Dashboard",
                         "icon": "dashboard",  # Supported icon set: https://fonts.google.com/icons
                         "link": reverse_lazy("admin:index"),
                         # "badge": "sample_app.badge_callback",
@@ -333,7 +324,8 @@ UNFOLD = {
                         "icon": "diversity_2",
                         "link": reverse_lazy("admin:space_space_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "space.view_space") or request.user.has_perm("space.change_space") or request.user.is_superuser,
+                            "space.view_space") or request.user.has_perm(
+                            "space.change_space") or request.user.is_superuser,
                     },
 
                     {
@@ -341,7 +333,8 @@ UNFOLD = {
                         "icon": "school",
                         "link": reverse_lazy("admin:course_course_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "course.view_course") or request.user.has_perm("course.change_course") or request.user.is_superuser,
+                            "course.view_course") or request.user.has_perm(
+                            "course.change_course") or request.user.is_superuser,
                     },
 
                 ],

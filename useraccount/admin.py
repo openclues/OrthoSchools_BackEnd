@@ -1,5 +1,18 @@
+from actstream.models import Action
 from django.contrib import admin
 from django.shortcuts import render
+from django.contrib import admin
+from django.http import HttpRequest
+from django.utils import timezone
+from django.utils.html import format_html
+from unfold.decorators import action
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+from unfold.admin import ModelAdmin
+from space.models import Space
+from .models import UserAccount, ProfileModel, Certificate, Category
+from django.contrib.auth.admin import UserAdmin
 
 
 class CustomAdminIndexView(admin.AdminSite):
@@ -20,16 +33,6 @@ class CustomAdminIndexView(admin.AdminSite):
 
 # Register the custom admin site
 custom_admin_site = CustomAdminIndexView(name='custom_admin')
-
-from django.contrib import admin
-from django.http import HttpRequest
-from django.utils import timezone
-from django.utils.html import format_html
-from unfold.decorators import action
-
-from space.models import Space
-from .models import UserAccount, ProfileModel, Certificate
-from django.contrib.auth.admin import UserAdmin
 
 
 class CertificateInline(admin.StackedInline):
@@ -78,11 +81,7 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(UserAccount, CustomUserAdmin)
 
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
 
-from unfold.admin import ModelAdmin
 
 admin.site.unregister(UserAccount)
 
@@ -113,3 +112,11 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                 user.is_suspend = True
                 user.save()
                 self.message_user(request, "User Suspended Successfully.")
+
+@admin.register(Category)
+class CategoryAdmin(ModelAdmin):
+    list_display = ('id', 'name')
+
+
+
+

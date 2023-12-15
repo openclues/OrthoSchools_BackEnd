@@ -17,3 +17,5 @@ class ShowProfileView(LoginRequiredMixin, View):
         profile = ProfileModel.objects.get(user=user)
         return render(request, 'profile/settings.html', {'profile': profile, 'user': user, 'request': request, 'form': form})
 
+
+
