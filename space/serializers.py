@@ -90,8 +90,8 @@ class ActivitySerializer(serializers.ModelSerializer):
             return Space.objects.get(id=obj.target_object_id).name
 
     def get_action_object(self, obj):
-        if obj.action_object_content_type == 'space':
-            return Space.objects.get(id=obj.action_object_object_id).name
+        if obj.target_content_type.name == 'space':
+            return Space.objects.get(id=obj.target_object_id).name
 
     def get_verb(self, obj):
 

@@ -19,5 +19,7 @@ a
 1useraccount/templates/Modified_files/sign-up.html,1\4\14c4334f6846f47750c4d6acdd9cc9e77c0dcf16
 P
  useraccount/static/css/style.css,4\d\4d9cb268fabf25b5c32f1bd41b43b6f71d78a170
-D
-useraccount/admin.py,1\0\100dc719e113ecb1641aa5331ab95e65cd79ffcf
+B
+activity/models.py,7\6\7663ec266a68163aeafe8a764c08bd03fa6eb68c
+@
+activity/apps.py,6\0\608ce0be85873ec921ca29411e444d7d61cfe307

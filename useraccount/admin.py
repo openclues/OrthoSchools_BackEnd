@@ -11,7 +11,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from unfold.admin import ModelAdmin
 from space.models import Space
-from .models import UserAccount, ProfileModel, Certificate, Category
+from .models import UserAccount, ProfileModel, Certificate, Category, VerificationProRequest
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -81,8 +81,6 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(UserAccount, CustomUserAdmin)
 
-
-
 admin.site.unregister(UserAccount)
 
 
@@ -113,10 +111,17 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                 user.save()
                 self.message_user(request, "User Suspended Successfully.")
 
+
 @admin.register(Category)
 class CategoryAdmin(ModelAdmin):
     list_display = ('id', 'name')
 
 
+class UserInline(admin.StackedInline):
+    model = UserAccount
+    can_delete = False
+    verbose_name_plural = 'User'
 
-
+@admin.register(VerificationProRequest)
+class VerificationProRequestAdmin(ModelAdmin):
+    pass

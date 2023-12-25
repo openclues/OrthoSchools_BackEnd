@@ -49,13 +49,15 @@ class SpacePostAdmin(AdminConfirmMixin, ModelAdmin):
 
 @admin.register(Space)
 class SpaceAdmin(AdminConfirmMixin, ModelAdmin):
-    # confirmation_fields = ['name', 'description', 'cover', 'created_at', 'updated_at']
 
-    list_display_links = ["name", "description"]
+    # # confirmation_fields = ['name', 'description', 'cover', 'created_at', 'updated_at']
+    #
+    list_display_links = ["name"]
+    #
+    # inlines = [PostInline]
+    # ordering = ['-created_at']
+    list_display = ['name', 'description']
 
-    inlines = [PostInline]
-    ordering = ['-created_at']
-    list_display = ['name', 'description', 'created_at']
 
     # custom change page
     # change_form_template = 'admin/space_change_form.html'

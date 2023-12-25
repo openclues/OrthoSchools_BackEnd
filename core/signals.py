@@ -69,7 +69,6 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Action)
 def send_notification_on_action_with_target_post_in_users_space(sender, instance, created, **kwargs):
     if created and instance.target_content_type.name == 'space' and instance.verb == 'joined':
-        print("action created")
         space = Space.objects.filter(id=instance.target_object_id).first()
         if space is not None:
             users = space.include_users.all()

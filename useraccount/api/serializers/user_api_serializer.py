@@ -1,3 +1,6 @@
+from base64 import b64decode
+
+from django.core.files.base import ContentFile
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -51,11 +54,16 @@ class CreateProfileRequestSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(max_length=20, required=False)
     title = serializers.CharField(max_length=100, required=False)
     address = serializers.CharField(max_length=100, required=False)
+    selfie = serializers.ImageField(required=False)
+    birth_date = serializers.DateField(required=False)
+    study_in = serializers.CharField(max_length=100, required=False)
+    id_card = serializers.FileField(required=False)
+
 
     class Meta:
         model = ProfileModel
         fields = ['bio', 'profileImage', 'place_of_work', 'speciality', 'cover', 'first_name', 'last_name', 'email',
-                  'phone', 'address', 'title', 'birth_date', 'study_in']
+                  'phone', 'address', 'title', 'birth_date', 'study_in', 'selfie','id_card']
 
     def create(self, validated_data):
         return ProfileModel.objects.create(**validated_data)
@@ -76,7 +84,8 @@ class CreateProfileRequestSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get('title', instance.title)
         instance.birth_date = validated_data.get('birth_date', instance.birth_date)
         instance.study_in = validated_data.get('study_in', instance.study_in)
-
+        instance.id_card = validated_data.get('id_card', instance.id_card)
+        instance.selfie = validated_data.get('selfie', instance.selfie)
         instance.save()
         return instance
 

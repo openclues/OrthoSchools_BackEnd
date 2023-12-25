@@ -63,7 +63,7 @@ class UserAccount(AbstractUser):
 class Certificate(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     certificateFile = models.FileField(upload_to='certificateFile', blank=True, null=True)
-    profile = models.ForeignKey("useraccount.ProfileModel", on_delete=models.CASCADE, blank=True, null=True)
+    profile = models.ForeignKey("useraccount.ProfileModel", on_delete=models.CASCADE, blank=True, null=True,)
 
     def __str__(self):
         return self.profile.user.email
@@ -75,6 +75,7 @@ class ProfileModel(models.Model):
     bio = models.TextField(max_length=500, blank=True, null=True)
     study_in = models.CharField(max_length=100, blank=True, null=True)
     cover = models.ImageField(upload_to='cover', blank=True, null=True)
+    id_card = models.FileField(upload_to='id_card', blank=True, null=True)
     profileImage = models.ImageField(upload_to='profileImage', blank=True)
     birth_date = models.DateField(null=True, blank=True)
     place_of_work = models.CharField(max_length=100, blank=True, null=True)
@@ -87,8 +88,6 @@ class ProfileModel(models.Model):
 
     @staticmethod
     def recommended_spaces(self):
-        # wait untill model is ready
-        # return Space.objects.all()
         if len(self.interstes.all()) > 0:
             spaces = Space.objects.filter(category__in=self.interstes.all()).exclude(include_users=self.user)
             return spaces
@@ -108,3 +107,19 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class VerificationProRequest(models.Model):
+    requestStatus = (
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    )
+    requestStatus = models.CharField(max_length=100, choices=requestStatus, default='pending')
+    profile = models.ForeignKey('useraccount.ProfileModel', on_delete=models.CASCADE, related_name='verification_request')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    # def __str__(self):
+
+    def __str__(self):
+        return self.user.first_name + " " + self.user.last_name + " " + self.requestStatus

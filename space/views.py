@@ -1,9 +1,14 @@
+from django.db.models.functions import Coalesce, Greatest
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Space
+from blog.views import PaginationList
+from post.serializers import SpacePostSerializer
+from useraccount.serializers import RecommendedSpacesSerializer
+from .models import Space, SpacePost
 from .serializers import SpaceSerializer, JoinSpaceSerializer, LeaveSpaceSerializer
+from django.db.models import F, Max, Value, DateTimeField
 
 from django.shortcuts import render
 
@@ -13,12 +18,16 @@ from django.shortcuts import render
 
 
 class UserSpacesListView(generics.ListAPIView):
-    serializer_class = SpaceSerializer
+    serializer_class = RecommendedSpacesSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        user = self.request.user
-        return Space.objects.filter(include_users=user)
+        id = self.request.query_params.get('id', None)
+        print("dfsfdf")
+        if id is None:
+            return Space.objects.filter(include_users=self.request.user)
+        else:
+            return Space.objects.filter(include_users=id)
 
 
 class JoinSpaceApiView(generics.UpdateAPIView):
@@ -63,7 +72,7 @@ class LeaveSpaceApiView(generics.UpdateAPIView):
 
 
 class SpaceRetrieveApiView(generics.RetrieveAPIView):
-    serializer_class = SpaceSerializer
+    serializer_class = RecommendedSpacesSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
@@ -72,7 +81,33 @@ class SpaceRetrieveApiView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         # serializer = self.get_serializer(instance, context={'request': self.request})
-        return Response(SpaceSerializer(instance, many=False, context={'request': self.request}).data, )
+        return Response(RecommendedSpacesSerializer(instance, many=False, context={'request': self.request}).data, )
 
 
+class GetRecommendedSpacesApiView(generics.ListAPIView):
+    serializer_class = RecommendedSpacesSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = PaginationList
 
+    def get_queryset(self):
+        user = self.request.user
+        return Space.objects.order_by('?').exclude(include_users=user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True, context={'request': self.request})
+        return Response(serializer.data)
+
+
+class GetHomeSpacePostsApiView(generics.ListAPIView):
+    serializer_class = SpacePostSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = PaginationList
+
+    def get_queryset(self):
+        user = self.request.user
+        return SpacePost.objects.all() \
+            .annotate(
+            max_date=Coalesce(Max('comments__created_at'), Max('created_at'), Value('1970-01-01'),
+                              output_field=DateTimeField()
+                              )).order_by('-max_date')

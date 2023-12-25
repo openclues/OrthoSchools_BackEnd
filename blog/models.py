@@ -36,6 +36,7 @@ class BlogPost(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=100)
     is_banned = models.BooleanField(default=False)
+    category = models.ManyToManyField('useraccount.Category', related_name='categorie_posts')
     content = QuillField(
         blank=True,
         null=True

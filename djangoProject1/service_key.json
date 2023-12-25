@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "oorthoschools",
+  "private_key_id": "df55164b46584d519878d59be9dd14f16545461c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCg9vNGPWLRIx3C\nq/52jAF2XuWodxQtHRL8Goi1PKLfY/M8/toQTJMX1Wms02yWsr8E9EVxgNQS9WXj\nU+vKrXNC7Q9Ar8olELjzhAFTYr/d2+qKQspS1nbDxAezLWGwbeAQBmL83M1Q0ifg\nc+s64o3HmNtgNLL5RnmTceH/Hz6kxC39a6/Y9VSvqv4KyWrGNzoPznuJHFDdTRa4\nmLiF/GbFWK7A6SPIEuSGtzRhgqoiFUxhBKtLeMBXuto4ZV0gDsSb8IA1ZMQlIFT8\nXJ5TPXvZM/9K0z8UhYfL/buJAoqAejbeTCFLbiNyXaoWEQMx7qT0WAdi6b66zL1Z\nzaIRMI0pAgMBAAECggEAAtPbuanl5L0cbnlFftEeTHVFzQQMfW9jkDyqFp7yUIDJ\nutJSQ9OIiPRlhxTutSX+L4jX+HK2JwAbEld8zqJl4jDWYgFEiIqm6RYyTMPxEWVl\n1Rhvw+1DCFTW+smLDAWeGEH4dq8tRyRt8WYv5Wip623uup2qYDEh/RpUyT3EBLJr\nZDEO5QCfeBrHHVsEIhJYe3Tq3rtby/o0EsSdvuJMGX50SpYxqBhs5Bt3yreXD6x0\nRhUrnXA9N42EEYguhhJDiteQvUfGiFOQjo9F5m+1bR78O6yO0Apj3Sijkacs+Bbg\nDgVqm2Q6xOnvWcIu+/T78w4GgfMAZrn2U8halkpehQKBgQDX2ff7NxIk+wdHenmP\n93FLEKaICz6w4dcdpWPPUr4Mrbb3jmtZbEnpHJQ7VTPa036qkUvLm169zx63trtn\nEnNAsfJDjGE28P+/EASNVFNKv1t1ZIVQTiK7KikMLM6MeagU6mCqxekNi/YeH5MN\nSAgmHyrrMvxTsUFn9KIw94UOBQKBgQC+53rNW3Llt88U346CV3pfVgM+Vy257Kxi\n0R8drcIbp1MLocoQVvxoT8MLPbMXS5VBBJoy4nHPb3x54taWxKmqeJ4ZyGt+gTYg\nJvm8cyIJVcseLtexKEsjdKJS5tmg6DlyFWR1LKo9ncGaJrzymj6S1ksr3qZ18CtQ\nj1LUaR7H1QKBgFjWeA6nysr3mjZb/P44zCMl9jRV1HZ+bMfh0yN4HYogUQawUhRa\n0kykG4oT9iShGSfgZv6ksqiSP0VDavvwBwlgc6JDe5teMxQS5py4UROZkG3PcmLr\n1bWMk5pUMqp0Q65gDGscy19s9F3PhvlXZSszdrmYoWtcr9u2Pq7CoLt1AoGBAIDF\nhfll2VAJN79duTREq8AJNfDkP2ztr66MX0/WuFuM96CeBr4U3vfB7c/0U4zAKDKO\nVzFBvAFvs2hIUfWrPMNHz2WW4qOXpxnzEHxEsU3YuEVo1YejpWOKNkBzhZNbcfx5\nX6UGduNPOZuwy71dvB2yPUyfSGu/kIgr1XSAYAntAoGABBoeu/hvffC1zbvR7fCQ\nvzk1EoS2iEQYhI+X+8ykzxNH6Se0MsOwxf/daBOnyVde3PTzVSJteOZss+8lXC6a\nvLL6WKpnf+g4BlogoVaHtxE3N9YbWSe9xadWlgMNvdXy3acdyHwPgn5V2F/xU/pe\n4SAmUR82HyZ1HtmD4B0DaG8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-73p9f@oorthoschools.iam.gserviceaccount.com",
+  "client_id": "106584840643083409486",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-73p9f%40oorthoschools.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

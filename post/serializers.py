@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from commentable.serializers import CommentSerializer
 from space.models import SpacePost, Space, SpaceFile, ImageModel
 from useraccount.models import UserAccount, ProfileModel
 
@@ -36,25 +35,24 @@ class UserPostSerializer(serializers.ModelSerializer):
 
 
 class SpacePostSerializer(serializers.ModelSerializer):
-    comments = serializers.SerializerMethodField(read_only=True)
     post_files = PostFileSerializer(many=True)
     post_images = PostImageSerializer(many=True)
     user = UserPostSerializer(read_only=True, many=False)
     is_joined = serializers.SerializerMethodField(read_only=True)
     space_name = serializers.SerializerMethodField(read_only=True)
     is_allowed_to_join = serializers.SerializerMethodField(read_only=True)
+    comments_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = SpacePost
-        fields = ['id', 'content', 'space', 'user', 'comments', 'post_files', 'post_images', 'created_at',
-                  'is_joined', 'updated_at', 'created_at', 'space_name', 'is_allowed_to_join']
+        fields = ['id', 'content', 'space', 'user', 'post_files', 'post_images', 'created_at',
+                  'is_joined', 'updated_at', 'created_at', 'space_name', 'is_allowed_to_join', 'comments_count']
 
-    def get_comments(self, obj):
-        return CommentSerializer(obj.comments.all(), many=True, read_only=True).data
 
     def get_post_files(self, obj):
         return obj.post_files.all().values_list('file', flat=True)
-
+    def get_comments_count(self, obj):
+        return obj.comments.count()
     def get_post_images(self, obj):
         return obj.post_images.all().values_list('image', flat=True)
 
@@ -125,3 +123,5 @@ class DeletePostSerializer(serializers.ModelSerializer):
     def delete(self, instance):
         instance.delete()
         return instance
+
+

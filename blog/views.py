@@ -27,7 +27,6 @@ class BlogDetailView(View):
         blog = get_object_or_404(Blog, slug=slug)
         return render(request, self.template_name, {'blog': blog})
 
-
 class AdminHomeScreenView(View):
     template_name = 'admin/index.html'  # Adjust the template name as needed
 

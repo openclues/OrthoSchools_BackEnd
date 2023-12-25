@@ -22,14 +22,17 @@ from rest_framework.routers import DefaultRouter
 
 import useraccount.websiteViews.views
 from blog.views import BlogDetailView, BlogListView
+from commentable.views import GetSpacePostComments
 from djangoProject1 import settings
+from notifications.views import RegisterDeviceView
 from post.views import CreatePostApiView, GetPostApiView
 from space.models import Space
 from space.serializers import ActivityViewSet
-from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView, SpaceRetrieveApiView
+from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView, SpaceRetrieveApiView, \
+    GetRecommendedSpacesApiView, GetHomeSpacePostsApiView
 from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
     CustomTokenCreateView, GetProfileApiView, ProfileInterestsApiView, CategoriesApiView, HomeDataApiView, \
-    ProfileViewSet
+    ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
@@ -61,7 +64,6 @@ urlpatterns = [
     path('logout/', useraccount.websiteViews.views.logout_view, name='logout'),
     # blog
     path('blogs/<slug:slug>/', BlogDetailView.as_view(), name='blog-detail'),
-    path('blogs/<slug:slug>/', BlogDetailView.as_view(), name='blog-detail'),
     path('activate/<str:uidb64>/<str:token>/', email_verification, name='email_verification'),
     path('profile/edit/', profile_views.ShowProfileView.as_view(), name='edit_profile'),
     path('profile/update/', UpdateUserAndProfileApiView.as_view(), name='update_profile'),
@@ -69,6 +71,8 @@ urlpatterns = [
     path('categories/', CategoriesApiView.as_view(), name='categories'),
     path('myspaces/', UserSpacesListView.as_view(), name='my_spaces'),
     path('homedata/', HomeDataApiView.as_view(), name='home_data'),
+    path('register-device/', RegisterDeviceView.as_view(), name='register-device'),
+    path('myactivities/', MyActivities.as_view(), name='my_activities'),
     path('joinspace/', JoinSpaceApiView.as_view(), name='join_space'),
     path('leavespace/', LeaveSpaceApiView.as_view(), name='leave_space'),
     path('postcreate/', CreatePostApiView.as_view(), name='create_post'),
@@ -76,6 +80,13 @@ urlpatterns = [
     path('space/<int:pk>', SpaceRetrieveApiView.as_view(), name='space'),
     path('post/<int:pk>', GetPostApiView.as_view(), name='get_post'),
     path('blogs/', BlogListView.as_view(), name='blogs'),
+    path('myprofile/', MyProfileViewSet.as_view(), name='my_profile'),
+    # path('verify/pro', VerificationRequestViewSet.as_view(), name='send_verification_request'),
+    path('update/profile', UserUpdateApiView.as_view(), name='update_profile'),
+    path('api/spaces/', GetMySpaces.as_view(), name='get_my_spaces'),
+    path('api/recommended-spaces/', GetRecommendedSpacesApiView.as_view(), name='get_recommended_spaces'),
+    path('api/home-posts/', GetHomeSpacePostsApiView.as_view(), name='get_home_posts'),
+    path('api/post-comments/', GetSpacePostComments.as_view(), name='get_home_posts'),
 
 ]
 

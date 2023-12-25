@@ -30,7 +30,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
+firebaseConfig = {
+      "apiKey": "AIzaSyCiFOxhd2Q5lApWM_Q2t7YH69AwK-X2P6k",
+      "authDomain": "oorthoschools.firebaseapp.com",
+      "projectId": "oorthoschools",
+      "storageBucket": "oorthoschools.appspot.com",
+      "messagingSenderId": "266788630014",
+      "appId": "1:266788630014:web:8c1a4e24cb80c17ee4a4af",
+      "measurementId": "G-FWLKR2ZNC2"
+}
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'common_static', 'css')
 SASS_PROCESSOR_INCLUDE_DIRS = [
     os.path.join(BASE_DIR, 'common_static', 'css'),
@@ -64,7 +72,7 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = 'auth@orthoschools.com'
 
 INSTALLED_APPS = ["admin_confirm",
-                  ''
+
                   "unfold",  # before django.contrib.admin
                   "unfold.contrib.filters",  # optional, if special filters are needed
                   "unfold.contrib.forms",  # optional, if special form elements are needed
@@ -94,17 +102,15 @@ INSTALLED_APPS = ["admin_confirm",
                   'rest_framework.authtoken',
                   'djoser',
                   'django.contrib.sites',
-                  'actstream',
-
-                  'core',
+                  'actstream',                  'core',
                   'drf_spectacular',
                   'space',
                   'blog',
                   'ckeditor',
                   'course',
                   'commentable', 'likable',
-                  'django_quill'
-
+                  'django_quill',
+                  'notifications'
                   ]
 ADMIN_INTERFACE_SETTING = {
     'show_sidebar': False,
@@ -231,6 +237,7 @@ USE_TZ = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
