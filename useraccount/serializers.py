@@ -1,6 +1,7 @@
 from actstream.models import Action
 from rest_framework import serializers
 
+from blog.models import Blog
 from course.serializers import CourseSerializer
 from post.serializers import SpacePostSerializer
 from space.models import Space, SpacePost
@@ -62,7 +63,6 @@ class RecommendedSpacesSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=True, read_only=True)
     joined = serializers.SerializerMethodField()
 
-
     class Meta:
         model = Space
         fields = ['id', 'name', 'description', 'cover', 'is_allowed_to_join', 'members_count', 'category',
@@ -84,8 +84,6 @@ class RecommendedSpacesSerializer(serializers.ModelSerializer):
                 return False
         else:
             return False
-
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -116,11 +114,12 @@ class UserSerializer(serializers.ModelSerializer):
 class FullUserSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     is_me = serializers.SerializerMethodField()
+    blog = serializers.SerializerMethodField()
 
     class Meta:
         model = ProfileModel
         fields = ['title', 'bio', 'study_in', 'cover', 'profileImage', 'birth_date', 'place_of_work', 'speciality',
-                  'user', 'is_me', 'id_card', 'selfie']
+                  'user', 'is_me', 'id_card', 'selfie', 'blog']
 
     def get_is_me(self, obj):
         user = self.context['request'].user
@@ -135,7 +134,15 @@ class FullUserSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         return UserSerializer(obj.user, many=False, read_only=True).data
 
-    # def get_user(self, obj):
+    def get_blog(self, obj):
+        blog = Blog.objects.filter(user=obj.user).first()
+        if blog:
+            from blog.serializers import BlogInsideArticlesSerializer
+
+            return BlogInsideArticlesSerializer(blog, many=False, read_only=True).data
+        else:
+            return None
+        # def get_user(self, obj):
     #     context = self.context
     #     return UserSerializer(obj.user, many=False, read_only=True, context=context).data
     #
@@ -209,3 +216,7 @@ class SpaceSerializerJustName(serializers.ModelSerializer):
     class Meta:
         model = Space
         fields = ['id', 'name', 'description', 'cover']
+
+
+class EmailVerificationSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=100, required=True)

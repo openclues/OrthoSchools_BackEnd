@@ -21,18 +21,23 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 from rest_framework.routers import DefaultRouter
 
 import useraccount.websiteViews.views
-from blog.views import BlogDetailView, BlogListView
-from commentable.views import GetSpacePostComments
+from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, GetBlogPostsComments, \
+    LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView
+from commentable.views import GetSpacePostComments, MakePostComment, MakeAreplayOnAComment, MakeBlogPostComment, \
+    LikeAndUnlikeComment
 from djangoProject1 import settings
 from notifications.views import RegisterDeviceView
 from post.views import CreatePostApiView, GetPostApiView
+from saveditem.views import GetSaved, SaveAndUnsavePost
 from space.models import Space
 from space.serializers import ActivityViewSet
 from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView, SpaceRetrieveApiView, \
-    GetRecommendedSpacesApiView, GetHomeSpacePostsApiView
+    GetRecommendedSpacesApiView, GetHomeSpacePostsApiView, GETSPACESANDBLOGSWITHCATEGORYNAME, LikeAndUnlikePost, \
+    SpacePostsListView, FilterSpacesAndArticlesWithCategoryName
 from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
     CustomTokenCreateView, GetProfileApiView, ProfileInterestsApiView, CategoriesApiView, HomeDataApiView, \
-    ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities
+    ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities, GenerateAndSendEmailCode, \
+    VerifyEmailCode, GetUsersNoticiations, ViewNotification, SendPremiumRequest
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
@@ -78,8 +83,10 @@ urlpatterns = [
     path('postcreate/', CreatePostApiView.as_view(), name='create_post'),
     path('activity/', include(router.urls)),
     path('space/<int:pk>', SpaceRetrieveApiView.as_view(), name='space'),
+    path('filter/category/',GETSPACESANDBLOGSWITHCATEGORYNAME.as_view(), name='filter_category'),
     path('post/<int:pk>', GetPostApiView.as_view(), name='get_post'),
     path('blogs/', BlogListView.as_view(), name='blogs'),
+    path('article/', FilteredArticlesListView.as_view(), name='articles'),
     path('myprofile/', MyProfileViewSet.as_view(), name='my_profile'),
     # path('verify/pro', VerificationRequestViewSet.as_view(), name='send_verification_request'),
     path('update/profile', UserUpdateApiView.as_view(), name='update_profile'),
@@ -87,6 +94,29 @@ urlpatterns = [
     path('api/recommended-spaces/', GetRecommendedSpacesApiView.as_view(), name='get_recommended_spaces'),
     path('api/home-posts/', GetHomeSpacePostsApiView.as_view(), name='get_home_posts'),
     path('api/post-comments/', GetSpacePostComments.as_view(), name='get_home_posts'),
+    path('api/post/comment', MakePostComment.as_view(), name='make_comment'),
+    path('api/article/comment', MakeBlogPostComment.as_view(), name='make_comment_on_blog_post'),
+    path('api/post/replay', MakeAreplayOnAComment.as_view(), name='make_replay'),
+    path('post/interact', LikeAndUnlikePost.as_view(), name='like_and_unlike_post'),
+    path('comment/interact/', LikeAndUnlikeComment.as_view(), name='like_and_unlike_comment'),
+    path('article/interact/', LikeAndUnlikeArticle.as_view(), name='like_and_unlike_post'),
+    path('space/posts/', SpacePostsListView.as_view(), name='space_posts'),
+    path('sendemailcode/', GenerateAndSendEmailCode.as_view(), name='send_email_code'),
+    path('verify/email/', VerifyEmailCode.as_view(), name='verify_email_code'),
+    path('notifications/', GetUsersNoticiations.as_view(), name='get_notifications'),
+    path('read/notification', ViewNotification.as_view(), name='read_notification'),
+    path('saved', GetSaved.as_view(), name='get_saved'),
+    path('save/post', SaveAndUnsavePost.as_view(), name='get_saved'),
+    path('api/article/comments/', GetBlogPostsComments.as_view(), name='token_obtain_pair'),
+    path('get/blog/', BlogScreenView.as_view(), name='get_blog'),
+    path('send/premium/', SendPremiumRequest.as_view(), name='send_premium_request'),
+    path('send/premium/', MakeBlogPostComment.as_view(), name='send_premium_request'),
+    path('blog/create', BlogCreateAPIView.as_view(), name='create_blog'),
+    path('filter/', FilterSpacesAndArticlesWithCategoryName.as_view(), name='filter_spaces_and_articles_with_category_name'),
+    path('blog/followunfollow/', FollowUnfollowBlogApiView.as_view(), name='follow_unfollow_blog'),
+
+
+
 
 ]
 

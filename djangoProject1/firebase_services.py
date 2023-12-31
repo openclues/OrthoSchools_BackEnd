@@ -139,6 +139,7 @@ class FirebaseServices:
 
         # Send the FCM messages
         messaging.send_each(fcm_messages)
+        FirebaseServices.SaveMessage(title, message, data, recipients)
 
     @staticmethod
     def SaveMessage(title, message, data, recipients):

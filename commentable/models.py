@@ -12,6 +12,7 @@ class Comment(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     text = models.TextField()
+    likes = GenericRelation('likable.Like')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey('useraccount.UserAccount', on_delete=models.CASCADE)  # Replace with your actual user model
     comments = GenericRelation('commentable.Comment')

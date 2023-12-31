@@ -29,15 +29,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+
+
 # Application definition
 firebaseConfig = {
-      "apiKey": "AIzaSyCiFOxhd2Q5lApWM_Q2t7YH69AwK-X2P6k",
-      "authDomain": "oorthoschools.firebaseapp.com",
-      "projectId": "oorthoschools",
-      "storageBucket": "oorthoschools.appspot.com",
-      "messagingSenderId": "266788630014",
-      "appId": "1:266788630014:web:8c1a4e24cb80c17ee4a4af",
-      "measurementId": "G-FWLKR2ZNC2"
+    "apiKey": "AIzaSyCiFOxhd2Q5lApWM_Q2t7YH69AwK-X2P6k",
+    "authDomain": "oorthoschools.firebaseapp.com",
+    "projectId": "oorthoschools",
+    "storageBucket": "oorthoschools.appspot.com",
+    "messagingSenderId": "266788630014",
+    "appId": "1:266788630014:web:8c1a4e24cb80c17ee4a4af",
+    "measurementId": "G-FWLKR2ZNC2"
 }
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'common_static', 'css')
 SASS_PROCESSOR_INCLUDE_DIRS = [
@@ -63,7 +65,12 @@ DJOSER = {
     }
 
 }
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/'  # Redirect after confirmation
+# ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'  # Redirect after confirmation
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = 'mail.orthoschools.com'
 EMAIL_HOST_USER = 'auth@orthoschools.com'
 EMAIL_HOST_PASSWORD = 'Java456!@'
@@ -102,7 +109,7 @@ INSTALLED_APPS = ["admin_confirm",
                   'rest_framework.authtoken',
                   'djoser',
                   'django.contrib.sites',
-                  'actstream',                  'core',
+                  'actstream', 'core',
                   'drf_spectacular',
                   'space',
                   'blog',
@@ -110,7 +117,10 @@ INSTALLED_APPS = ["admin_confirm",
                   'course',
                   'commentable', 'likable',
                   'django_quill',
-                  'notifications'
+                  'notifications',
+                  'saveditem',
+
+
                   ]
 ADMIN_INTERFACE_SETTING = {
     'show_sidebar': False,
@@ -146,6 +156,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -182,22 +193,22 @@ WSGI_APPLICATION = 'djangoProject1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
-        'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
-        'USER': 'orthosch_myad',  # <-- UPDATED line
-        'PASSWORD': 'Java2992!',  # <-- UPDATED line
-        'HOST': '108.61.198.173',  # <-- UPDATED line
-        'PORT': '3306',
-    }
-}
 # DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": "mydatabase",
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
+#         'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
+#         'USER': 'orthosch_myad',  # <-- UPDATED line
+#         'PASSWORD': 'Java2992!',  # <-- UPDATED line
+#         'HOST': '108.61.198.173',  # <-- UPDATED line
+#         'PORT': '3306',
 #     }
 # }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "mydatabase",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

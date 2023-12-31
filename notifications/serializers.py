@@ -6,8 +6,6 @@ from useraccount.models import UserAccount
 
 class MessageSerializer(serializers.ModelSerializer):
     is_read = serializers.SerializerMethodField()
-    read_by = serializers.PrimaryKeyRelatedField(queryset=UserAccount.objects.all(), write_only=True)
-    recipients = serializers.HiddenField(default='recipients')
 
     class Meta:
         model = Message

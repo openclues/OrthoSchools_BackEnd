@@ -17,6 +17,7 @@ class Blog(models.Model):
     description = models.CharField(max_length=100)
     cover = models.ImageField(upload_to='images/')
     created_at = models.DateTimeField(auto_now_add=True)
+    color = models.CharField(max_length=100, default="#000000", blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
     slug = models.SlugField(unique=True, max_length=255, blank=True, null=True)
@@ -33,6 +34,7 @@ class Blog(models.Model):
 
 
 class BlogPost(models.Model):
+    is_featured = models.BooleanField(default=False)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=100)
     is_banned = models.BooleanField(default=False)

@@ -5,11 +5,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from notifications.models import Message
+from notifications.serializers import MessageSerializer
 from space.models import Space
 from space.serializers import ActivitySerializer
 from useraccount.api.serializers.user_api_serializer import RegisterRequestSerializer, CreateProfileRequestSerializer, \
     CreateProfileResponseSerializer, ProfileFullDataSerializer, ProfileInterestesSerializer, CategorySerializer
-from useraccount.models import ProfileModel, Category, UserAccount
+from useraccount.models import ProfileModel, Category, UserAccount, PremiumRequest
 from djoser.views import UserViewSet, TokenCreateView
 
 # login even if the user is inactive
@@ -18,7 +20,8 @@ from djoser.views import TokenCreateView
 from rest_framework.response import Response
 
 from useraccount.serializers import HomeDataSerializer, FullUserSerializer, VisitorProfileSerializer, \
-    VerifyUserSerializer, UserUpdateSerializer, SpaceSerializerJustName, RecommendedSpacesSerializer
+    VerifyUserSerializer, UserUpdateSerializer, SpaceSerializerJustName, RecommendedSpacesSerializer, \
+    EmailVerificationSerializer
 
 
 class CustomTokenCreateView(TokenCreateView):
@@ -268,3 +271,72 @@ class MyActivities(generics.ListAPIView):
 
     def get_queryset(self):
         return Action.objects.filter(actor_object_id=self.request.user.id).order_by('-timestamp')
+
+
+class GenerateAndSendEmailCode(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        user.generate_email_verification_code()
+        # try catch
+
+        try:
+            user.send_email_verification()
+            return Response({'message': 'Email sent successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class VerifyEmailCode(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EmailVerificationSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        code = request.data.get('code', None)
+        if code is None:
+            return Response({'message': 'code is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if code == user.email_verification_code:
+            user.email_verified = True
+            user.email_verification_code = None
+            user.save()
+            return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Wrong code'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetUsersNoticiations(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        return Message.objects.filter(recipients__in=[self.request.user]).order_by('-created_at')
+
+
+class ViewNotification(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        notification_id = request.query_params.get('notification_id', None)
+        notification = Message.objects.get(id=notification_id)
+        notification.read_by.add(request.user)
+        notification.save()
+        return Response({'message': 'Notification viewed successfully'}, status=status.HTTP_200_OK)
+
+
+class SendPremiumRequest(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        if user.userRole == 2:
+            return Response({'message': 'You are already a premium user'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if PremiumRequest.objects.filter(
+                    profile=user.profilemodel).filter(requestStatus='pending').filter(
+            ).exists():
+                return Response({'message': 'You already have a pending request'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                PremiumRequest.objects.create(profile=user.profilemodel)
+                return Response({'message': 'Request sent successfully'}, status=status.HTTP_200_OK)

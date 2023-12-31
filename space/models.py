@@ -54,6 +54,7 @@ class SpaceFile(models.Model):
 
 class SpacePost(models.Model):
     title = models.CharField(max_length=100)
+    blogPost = models.ForeignKey("blog.BlogPost", on_delete=models.CASCADE, blank=True, null=True, related_name='space_posts')
     content = models.TextField()
     space = models.ForeignKey(Space, on_delete=models.CASCADE, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)

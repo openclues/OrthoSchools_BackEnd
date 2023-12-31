@@ -11,7 +11,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from unfold.admin import ModelAdmin
 from space.models import Space
-from .models import UserAccount, ProfileModel, Certificate, Category, VerificationProRequest
+from .models import UserAccount, ProfileModel, Certificate, Category, VerificationProRequest, PremiumRequest
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -122,6 +122,31 @@ class UserInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'User'
 
+
 @admin.register(VerificationProRequest)
 class VerificationProRequestAdmin(ModelAdmin):
     pass
+
+
+@admin.register(PremiumRequest)
+class PremiumRequestAdmin(ModelAdmin):
+    pass
+    # add action button
+    # actions_submit_line = ["submit_line_action_activate"]
+    # list_display = ('user_first_name',)
+
+    # def queryset(self, request):
+    #     qs = super(PremiumRequestAdmin, self).queryset(request)
+    #     self.request = request
+    #     return qs
+    #
+    # @action(description="Accept Request")
+    # def submit_line_action_activate(self, request, queryset):
+    #     requests = self.get_object(
+    #         request, queryset
+    #
+    #     )
+    #     requests.requestStatus = 'accepted'
+
+    # def get_user_first_name(self, obj):
+    #     return obj.profile.user.first_name
