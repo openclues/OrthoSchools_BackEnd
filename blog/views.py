@@ -203,7 +203,9 @@ class BlogCreateAPIView(APIView):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(BlogSerializer(
+                Blog.objects.get(id=serializer.data.get('id'), ), context={'request': request}
+            ).data, status=status.HTTP_201_CREATED)
         else:
             print(
                 serializer.errors
@@ -225,7 +227,7 @@ class FollowUnfollowBlogApiView(APIView):
             message = Message.objects.create(
                 message=f"{request.user.username} followed you",
                 title="New Follower",
-               data={
+                data={
                     'type': 'follow',
                     'user': request.user.id
                 }
@@ -233,3 +235,25 @@ class FollowUnfollowBlogApiView(APIView):
             message.recipients.set([request.user.id])
             message.save()
             return Response({'message': 'followed', 'is_followed': True})
+
+
+class UpdateBlogPatchApiView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BlogSerializer
+
+    def get_queryset(self):
+        return Blog.objects.all()
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.serializer_class(instance, data=request.data, context={'request': request}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(BlogSerializer(
+                Blog.objects.get(id=serializer.data.get('id'), ), context={'request': request}
+            ).data, status=status.HTTP_201_CREATED)
+        else:
+            print(
+                serializer.errors
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

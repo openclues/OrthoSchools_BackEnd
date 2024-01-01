@@ -87,14 +87,14 @@ class UserAccount(AbstractUser):
 class Certificate(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     certificateFile = models.FileField(upload_to='certificateFile', blank=True, null=True)
-    profile = models.ForeignKey("useraccount.ProfileModel", on_delete=models.CASCADE, blank=True, null=True, )
+    profile = models.ForeignKey("useraccount.ProfileModel", on_delete=models.CASCADE, blank=True, null=True,
+                                related_name='certificates')
 
     def __str__(self):
         return self.profile.user.email
 
 
 class ProfileModel(models.Model):
-
     title = models.CharField(max_length=100, blank=True, null=True)
     user = models.OneToOneField('useraccount.UserAccount', on_delete=models.CASCADE, related_name='profilemodel')
     bio = models.TextField(max_length=500, blank=True, null=True)
@@ -149,7 +149,23 @@ class VerificationProRequest(models.Model):
     # def __str__(self):
 
     def __str__(self):
-        return self.user.first_name + " " + self.user.last_name + " " + self.requestStatus
+        return self.profile.user.first_name + " " + self.profile.user.last_name + " " + self.requestStatus
+
+
+@receiver( post_save , sender=VerificationProRequest)
+def make_user_verifiedPro(sender, instance, **kwargs):
+    print(instance.requestStatus)
+    if instance.requestStatus == 'accepted':
+        print(instance.profile.user.id)
+        instance.profile.user.is_verified_pro = True
+        instance.profile.user.is_verified = True
+        instance.profile.user.save()
+
+        message = Message.objects.create(title='Premium Request Accepted',
+                                         message='Your premium request has been accepted',
+                                         data={'type': 'premium_request_accepted', 'id': instance.id})
+        message.recipients.set([instance.profile.user.id])
+        message.save()
 
 
 class PremiumRequest(models.Model):

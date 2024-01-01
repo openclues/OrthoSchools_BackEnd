@@ -25,6 +25,7 @@ from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, G
     LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView
 from commentable.views import GetSpacePostComments, MakePostComment, MakeAreplayOnAComment, MakeBlogPostComment, \
     LikeAndUnlikeComment
+from course.views import CourseApiListView
 from djangoProject1 import settings
 from notifications.views import RegisterDeviceView
 from post.views import CreatePostApiView, GetPostApiView
@@ -37,7 +38,8 @@ from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView,
 from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
     CustomTokenCreateView, GetProfileApiView, ProfileInterestsApiView, CategoriesApiView, HomeDataApiView, \
     ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities, GenerateAndSendEmailCode, \
-    VerifyEmailCode, GetUsersNoticiations, ViewNotification, SendPremiumRequest
+    VerifyEmailCode, GetUsersNoticiations, ViewNotification, SendPremiumRequest, UploadUserCardId, UploadCertificate, \
+    UploadSelfie, RemoveCertificate, RemoveCardId, RemoveSelfie, CreateAverificationRequest
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
@@ -97,7 +99,7 @@ urlpatterns = [
     path('api/post/comment', MakePostComment.as_view(), name='make_comment'),
     path('api/article/comment', MakeBlogPostComment.as_view(), name='make_comment_on_blog_post'),
     path('api/post/replay', MakeAreplayOnAComment.as_view(), name='make_replay'),
-    path('post/interact', LikeAndUnlikePost.as_view(), name='like_and_unlike_post'),
+    path('post/interact/', LikeAndUnlikePost.as_view(), name='like_and_unlike_post'),
     path('comment/interact/', LikeAndUnlikeComment.as_view(), name='like_and_unlike_comment'),
     path('article/interact/', LikeAndUnlikeArticle.as_view(), name='like_and_unlike_post'),
     path('space/posts/', SpacePostsListView.as_view(), name='space_posts'),
@@ -114,6 +116,14 @@ urlpatterns = [
     path('blog/create', BlogCreateAPIView.as_view(), name='create_blog'),
     path('filter/', FilterSpacesAndArticlesWithCategoryName.as_view(), name='filter_spaces_and_articles_with_category_name'),
     path('blog/followunfollow/', FollowUnfollowBlogApiView.as_view(), name='follow_unfollow_blog'),
+    path('courses/', CourseApiListView.as_view(), name='courses'),
+    path('user/cardid/', UploadUserCardId.as_view(), name='upload_user_card_id'),
+    path('user/certficate/', UploadCertificate.as_view(), name='upload_certificate'),
+    path('user/selfie/', UploadSelfie.as_view(), name='upload_selfie'),
+    path('remove/certificate/', RemoveCertificate.as_view(), name='remove_certificate'),
+    path('remove/cardId/', RemoveCardId.as_view(), name='remove_cardId'),
+    path('remove/selfie/', RemoveSelfie.as_view(), name='remove_selfie'),
+    path('send/verification/request', CreateAverificationRequest.as_view(), name='send_verification_request'),
 
 
 

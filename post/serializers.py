@@ -6,11 +6,21 @@ from useraccount.models import UserAccount, ProfileModel
 
 
 class SimpleSpaceSerializer(serializers.ModelSerializer):
+    isJoined = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Space
-        fields = ['id', 'name', 'description', 'created_at', 'updated_at','cover']
+        fields = ['id', 'name', 'description', 'created_at', 'updated_at','cover', 'isJoined']
 
-
+    def get_isJoined(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            if user.spaces_included.filter(id=obj.id).exists():
+                return True
+            else:
+                return False
+        else:
+            return False
 class BlogPostSerializerForsPACEpOST(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
 

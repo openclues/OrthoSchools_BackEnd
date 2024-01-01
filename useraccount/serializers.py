@@ -7,7 +7,13 @@ from post.serializers import SpacePostSerializer
 from space.models import Space, SpacePost
 from space.serializers import SpaceSerializer, ActivitySerializer
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
-from useraccount.models import ProfileModel, UserAccount, VerificationProRequest
+from useraccount.models import ProfileModel, UserAccount, VerificationProRequest, Certificate
+
+
+class CertificateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Certificate
+        fields = '__all__'
 
 
 class HomeDataSerializer(serializers.Serializer):
@@ -115,11 +121,12 @@ class FullUserSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     is_me = serializers.SerializerMethodField()
     blog = serializers.SerializerMethodField()
+    certificates = serializers.SerializerMethodField()
 
     class Meta:
         model = ProfileModel
         fields = ['title', 'bio', 'study_in', 'cover', 'profileImage', 'birth_date', 'place_of_work', 'speciality',
-                  'user', 'is_me', 'id_card', 'selfie', 'blog']
+                  'user', 'is_me', 'id_card', 'selfie', 'blog', 'certificates']
 
     def get_is_me(self, obj):
         user = self.context['request'].user
@@ -130,6 +137,9 @@ class FullUserSerializer(serializers.ModelSerializer):
                 return False
         else:
             return False
+
+    def get_certificates(self, obj):
+        return CertificateSerializer(obj.certificates.all(), many=True, read_only=True).data
 
     def get_user(self, obj):
         return UserSerializer(obj.user, many=False, read_only=True).data

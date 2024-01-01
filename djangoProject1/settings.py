@@ -193,22 +193,22 @@ WSGI_APPLICATION = 'djangoProject1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
-        'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
-        'USER': 'orthosch_myad',  # <-- UPDATED line
-        'PASSWORD': 'Java2992!',  # <-- UPDATED line
-        'HOST': '108.61.198.173',  # <-- UPDATED line
-        'PORT': '3306',
-    }
-}
 # DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": "my",
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
+#         'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
+#         'USER': 'orthosch_myad',  # <-- UPDATED line
+#         'PASSWORD': 'Java2992!',  # <-- UPDATED line
+#         'HOST': '108.61.198.173',  # <-- UPDATED line
+#         'PORT': '3306',
 #     }
 # }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "my",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

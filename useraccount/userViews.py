@@ -11,7 +11,7 @@ from space.models import Space
 from space.serializers import ActivitySerializer
 from useraccount.api.serializers.user_api_serializer import RegisterRequestSerializer, CreateProfileRequestSerializer, \
     CreateProfileResponseSerializer, ProfileFullDataSerializer, ProfileInterestesSerializer, CategorySerializer
-from useraccount.models import ProfileModel, Category, UserAccount, PremiumRequest
+from useraccount.models import ProfileModel, Category, UserAccount, PremiumRequest, Certificate, VerificationProRequest
 from djoser.views import UserViewSet, TokenCreateView
 
 # login even if the user is inactive
@@ -340,3 +340,124 @@ class SendPremiumRequest(APIView):
             else:
                 PremiumRequest.objects.create(profile=user.profilemodel)
                 return Response({'message': 'Request sent successfully'}, status=status.HTTP_200_OK)
+
+
+class UploadUserCardId(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+
+        # Check if 'cardId' is in the uploaded files
+        if 'cardId' in request.FILES:
+            user.profilemodel.id_card = request.FILES['cardId']
+            print(user.profilemodel.id_card)
+            user.profilemodel.save()
+            return Response({'message': 'Card Id image uploaded successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Card Id image not found in the request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadCertificate(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+
+        # Check if 'cardId' is in the uploaded files
+        if 'certificate' in request.FILES:
+
+            crt = Certificate.objects.create(profile=user.profilemodel, certificateFile=request.FILES['certificate'],
+                                             title=str(request.FILES['certificate']))
+            return Response({'certificate': crt.title}, status=status.HTTP_200_OK)
+            # user.profilemodel.certificate = request.FILES['certificate']
+            # print(user.profilemodel.certificate)
+        else:
+            return Response({'message': 'Certificate not found in the request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadSelfie(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+
+        # Check if 'cardId' is in the uploaded files
+        if 'selfie' in request.FILES:
+            user.profilemodel.selfie = request.FILES['selfie']
+            print(user.profilemodel.selfie)
+            user.profilemodel.save()
+            return Response({'message': 'Selfie image uploaded successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Selfie image not found in the request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class SearchSpacesBlogsPostsArticles(APIView):
+#     permission_classes = (IsAuthenticated,)
+#
+#     def get(self, request, *args, **kwargs):
+#         # Assuming your User model has a 'card_id_image' field
+#         user = self.request.user
+#         query = request.query_params.get('query', None)
+#         if query is None:
+#             return Response({'message': 'query is required'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             spaces = Space.objects.filter(name__icontains=query)
+#             blogs = Blog.objects.filter(title__icontains=query)
+#             posts = BlogPost.objects.filter(title__icontains=query)
+#             articles = Article.objects.filter(title__icontains=query)
+#             return Response({'spaces': SpaceSerializerJustName(spaces, many=True).data,
+#                              'blogs': BlogSerializerJustName(blogs, many=True).data,
+#                              'posts': BlogPostSerializerJustName(posts, many=True).data,
+#                              'articles': ArticleSerializerJustName(articles, many=True).data,
+#                              }, status=status.HTTP_200_OK
+
+
+class RemoveCertificate(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+        certificate_id = request.data.get('certificate_id', None)
+        if certificate_id is None:
+            return Response({'message': 'certificate_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            certificate = Certificate.objects.get(id=certificate_id)
+            certificate.delete()
+            return Response({'message': 'Certificate deleted successfully'}, status=status.HTTP_200_OK)
+
+
+class RemoveCardId(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+        user.profilemodel.id_card = None
+        user.profilemodel.save()
+        return Response({'message': 'Card Id deleted successfully'}, status=status.HTTP_200_OK)
+
+
+class RemoveSelfie(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+        user.profilemodel.selfie = None
+        user.profilemodel.save()
+        return Response({'message': 'Selfie deleted successfully'}, status=status.HTTP_200_OK)
+
+
+class CreateAverificationRequest(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+       user = self.request.user
+       VerificationProRequest.objects.create(profile=user.profilemodel)
+       return Response({'message': 'Verification request sent successfully'}, status=status.HTTP_200_OK)

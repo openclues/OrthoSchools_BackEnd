@@ -16,9 +16,13 @@ class BlogSerializer(serializers.ModelSerializer):
     # posts = serializers.SerializerMethodField()
     user = VisitorProfileSerializer(read_only=True)
     category = CategorySerializer(many=True, read_only=True)
-    is_followed = serializers.SerializerMethodField()
-    articles_count = serializers.SerializerMethodField()
-    followers_count = serializers.SerializerMethodField()
+    is_followed = serializers.SerializerMethodField( read_only=True)
+    articles_count = serializers.SerializerMethodField(
+        read_only=True
+    )
+    followers_count = serializers.SerializerMethodField(
+        read_only=True
+    )
 
     class Meta:
         model = Blog

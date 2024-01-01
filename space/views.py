@@ -16,7 +16,7 @@ from post.serializers import SpacePostSerializer
 from useraccount.models import Category
 from useraccount.serializers import RecommendedSpacesSerializer
 from .models import Space, SpacePost
-from .serializers import SpaceSerializer, JoinSpaceSerializer, LeaveSpaceSerializer
+from .serializers import SpaceSerializer, JoinSpaceSerializer, LeaveSpaceSerializer, SimpleSpaceSerializer
 from django.db.models import F, Max, Value, DateTimeField
 
 from django.shortcuts import render
@@ -39,47 +39,53 @@ class UserSpacesListView(generics.ListAPIView):
             return Space.objects.filter(include_users=id)
 
 
-class JoinSpaceApiView(generics.UpdateAPIView):
-    serializer_class = JoinSpaceSerializer
+class JoinSpaceApiView(APIView):
+    # serializer_class = JoinSpaceSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        return Space.objects.all()
+    def post (self, request):
+        space_id = request.query_params.get('space_id', None)
+        space = Space.objects.get(id=space_id)
+        if space.is_allowed_to_join(space, request.user):
+            space.include_users.add(request.user)
+            return Response( SimpleSpaceSerializer (space, many=False, context={'request': self.request}).data,
+                            status=status.HTTP_200_OK, )
+        else:
+            return Response({"message": "You are not allowed to join this space"},
+                            status=status.HTTP_400_BAD_REQUEST, )
 
-    def get_object(self):
-        queryset = self.get_queryset()
-        obj = generics.get_object_or_404(queryset, id=4)
-        return obj
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data={'id': instance.id})
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(SpaceSerializer(self.get_object(), many=False, context={'request': self.request}).data,
-                        status=status.HTTP_200_OK, )
+    # serializer_class = JoinSpaceSerializer
+    # permission_classes = (IsAuthenticated,)
+    #
+    # def get_queryset(self):
+    #     return Space.objects.all()
+    #
+    # def get_object(self):
+    #     queryset = self.get_queryset()
+    #     obj = generics.get_object_or_404(queryset, id=4)
+    #     return obj
+    #
+    # def update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data={'id': instance.id})
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_update(serializer)
+    #     return Response(SpaceSerializer(self.get_object(), many=False, context={'request': self.request}).data,
+    #                     status=status.HTTP_200_OK, )
 
 
 # class JoinSpace(ApiView):
 
-class LeaveSpaceApiView(generics.UpdateAPIView):
-    serializer_class = LeaveSpaceSerializer
+class LeaveSpaceApiView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        return Space.objects.all()
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        obj = generics.get_object_or_404(queryset, id=self.request.data.get('id'))
-        return obj
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data={'id': instance.id})
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response("", status=status.HTTP_204_NO_CONTENT)
+    def post(self, request):
+        space_id = request.query_params.get('space_id', None)
+        space = Space.objects.get(id=space_id)
+        space.include_users.remove(request.user)
+        return Response(SimpleSpaceSerializer(space, many=False, context={'request': self.request}).data,
+                        status=status.HTTP_200_OK, )
 
 
 # class GetSpace(APIView):

@@ -7,8 +7,6 @@ R
 "useraccount/templates/sign-in.html,b\d\bda4241b02e7bc2e7bb82f66f9c2d920ac32e37c
 Q
 !templates/parts/loading_part.html,4\2\42ac4a90b4ecbb6ac0f13257917ea82fd98fd64d
-D
-static/css/style.css,3\6\36e68d0961b94e1750624bc9e2f66c060d73b91b
 v
 Fstatic/django-admin-global-sidebar/css/django-admin-global-sidebar.css,7\a\7ac81fb47616c5a14b9d9db404084a02efc96f6a
 G
