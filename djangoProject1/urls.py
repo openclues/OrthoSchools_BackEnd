@@ -22,9 +22,10 @@ from rest_framework.routers import DefaultRouter
 
 import useraccount.websiteViews.views
 from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, GetBlogPostsComments, \
-    LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView
-from commentable.views import GetSpacePostComments, MakePostComment, MakeAreplayOnAComment, MakeBlogPostComment, \
-    LikeAndUnlikeComment
+    LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView, CreateBlogPost, \
+    GetArticlesByCategory, RecommendedBlogListView
+from commentable.views import GetSpacePostComments, MakeAreplayOnAComment, MakeBlogPostComment, \
+    LikeAndUnlikeComment, GetSinglePostComment
 from course.views import CourseApiListView
 from djangoProject1 import settings
 from notifications.views import RegisterDeviceView
@@ -34,12 +35,14 @@ from space.models import Space
 from space.serializers import ActivityViewSet
 from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView, SpaceRetrieveApiView, \
     GetRecommendedSpacesApiView, GetHomeSpacePostsApiView, GETSPACESANDBLOGSWITHCATEGORYNAME, LikeAndUnlikePost, \
-    SpacePostsListView, FilterSpacesAndArticlesWithCategoryName
+    SpacePostsListView, FilterSpacesAndArticlesWithCategoryName, MakePostComment, MakeAreplyOnComment, \
+    DiscoverPopularSpacesAndBlogs, LikeUnLikeReply
 from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
     CustomTokenCreateView, GetProfileApiView, ProfileInterestsApiView, CategoriesApiView, HomeDataApiView, \
     ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities, GenerateAndSendEmailCode, \
     VerifyEmailCode, GetUsersNoticiations, ViewNotification, SendPremiumRequest, UploadUserCardId, UploadCertificate, \
-    UploadSelfie, RemoveCertificate, RemoveCardId, RemoveSelfie, CreateAverificationRequest
+    UploadSelfie, RemoveCertificate, RemoveCardId, RemoveSelfie, CreateAverificationRequest, UploadProfileImage, \
+    UpadateProfile, ChangePassword, SendCodeForResetPassword, ResetPassword, UploadCoverImage, MakePremium
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
@@ -94,11 +97,13 @@ urlpatterns = [
     path('update/profile', UserUpdateApiView.as_view(), name='update_profile'),
     path('api/spaces/', GetMySpaces.as_view(), name='get_my_spaces'),
     path('api/recommended-spaces/', GetRecommendedSpacesApiView.as_view(), name='get_recommended_spaces'),
+    path('api/recommended-blogs/', RecommendedBlogListView.as_view(), name='get_recommended_blogs'),
     path('api/home-posts/', GetHomeSpacePostsApiView.as_view(), name='get_home_posts'),
     path('api/post-comments/', GetSpacePostComments.as_view(), name='get_home_posts'),
+    path('api/comment/<int:pk>', GetSinglePostComment.as_view(), name='get_single_comment'),
     path('api/post/comment', MakePostComment.as_view(), name='make_comment'),
     path('api/article/comment', MakeBlogPostComment.as_view(), name='make_comment_on_blog_post'),
-    path('api/post/replay', MakeAreplayOnAComment.as_view(), name='make_replay'),
+    path('api/post/replay', MakeAreplyOnComment.as_view(), name='make_replay'),
     path('post/interact/', LikeAndUnlikePost.as_view(), name='like_and_unlike_post'),
     path('comment/interact/', LikeAndUnlikeComment.as_view(), name='like_and_unlike_comment'),
     path('article/interact/', LikeAndUnlikeArticle.as_view(), name='like_and_unlike_post'),
@@ -124,6 +129,17 @@ urlpatterns = [
     path('remove/cardId/', RemoveCardId.as_view(), name='remove_cardId'),
     path('remove/selfie/', RemoveSelfie.as_view(), name='remove_selfie'),
     path('send/verification/request', CreateAverificationRequest.as_view(), name='send_verification_request'),
+    path('upload/profile/image', UploadProfileImage.as_view(), name='upload_profile_image'),
+    path('upload/cover/image', UploadCoverImage.as_view(), name='upload_cover_image'),
+    path('update/profile/', UpadateProfile.as_view(), name='yupdate_profile'),
+    path('change/password/', ChangePassword.as_view(), name='change_password'),
+    path('sendCodeForResetPassword/', SendCodeForResetPassword.as_view(), name='reset_password_code'),
+    path('resetPassword/', ResetPassword.as_view(), name='reset_password'),
+    path('create/article', CreateBlogPost.as_view(), name='create_article'),
+    path('discover/screen',DiscoverPopularSpacesAndBlogs.as_view(), name='discover_screen'),
+    path('replay/interact/',LikeUnLikeReply.as_view(), name='replay_interact'),
+    path('premieum/',MakePremium.as_view(), name='make_premieum'),
+    path('read/articles/',GetArticlesByCategory.as_view(), name='read-articles'),
 
 
 

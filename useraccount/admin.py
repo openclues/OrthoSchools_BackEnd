@@ -11,7 +11,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from unfold.admin import ModelAdmin
 from space.models import Space
-from .models import UserAccount, ProfileModel, Certificate, Category, VerificationProRequest, PremiumRequest
+from .models import UserAccount, ProfileModel, Certificate, Category, VerificationProRequest, PremiumRequest, Premium
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -127,7 +127,9 @@ class UserInline(admin.StackedInline):
 class VerificationProRequestAdmin(ModelAdmin):
     pass
 
-
+@admin.register(Premium)
+class PremiumAdmin(ModelAdmin):
+    pass
 @admin.register(PremiumRequest)
 class PremiumRequestAdmin(ModelAdmin):
     pass

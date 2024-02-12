@@ -1,3 +1,5 @@
+import string
+
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -68,8 +70,7 @@ class UserAccount(AbstractUser):
 
     def generate_email_verification_code(self):
         import random
-        import string
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        code = ''.join(random.choices(string.digits, k=6))
         self.email_verification_code = code
         self.save()
         return code
@@ -80,8 +81,9 @@ class UserAccount(AbstractUser):
         plain_message = "Verify your email"
         from_email = 'auth@orthoschools.com'
         recipient_list = [self.email, ]
+        html_message = render_to_string('email_verification_template.html', {'verification_code': self.email_verification_code})
 
-        send_mail(subject, plain_message, from_email, recipient_list, html_message=message)
+        send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
 
 
 class Certificate(models.Model):
@@ -107,6 +109,9 @@ class ProfileModel(models.Model):
     speciality = models.CharField(max_length=100, blank=True, null=True)
     selfie = models.ImageField(upload_to='selfie', blank=True, null=True)
     interstes = models.ManyToManyField("useraccount.Category", blank=True, null=True, related_name='interests')
+    country = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -152,7 +157,7 @@ class VerificationProRequest(models.Model):
         return self.profile.user.first_name + " " + self.profile.user.last_name + " " + self.requestStatus
 
 
-@receiver( post_save , sender=VerificationProRequest)
+@receiver(post_save, sender=VerificationProRequest)
 def make_user_verifiedPro(sender, instance, **kwargs):
     print(instance.requestStatus)
     if instance.requestStatus == 'accepted':
@@ -166,6 +171,44 @@ def make_user_verifiedPro(sender, instance, **kwargs):
                                          data={'type': 'premium_request_accepted', 'id': instance.id})
         message.recipients.set([instance.profile.user.id])
         message.save()
+
+
+class Premium(models.Model):
+    requestStatus = (
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    )
+    requestStatus = models.CharField(max_length=100, choices=requestStatus, default='pending')
+
+    user = models.ForeignKey('useraccount.UserAccount', on_delete=models.CASCADE, related_name='premium')
+    full_name = models.CharField(max_length=255)
+    professional_title = models.CharField(max_length=255)
+    license_number = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=20)
+    email_address = models.EmailField()
+    clinic_name = models.CharField(max_length=255)
+    clinic_address = models.TextField()
+    education = models.TextField()
+    graduation_year = models.IntegerField()
+    certifications = models.TextField()
+    experience = models.TextField()
+
+    def __str__(self):
+        return self.full_name
+
+    def save(self, *args, **kwargs):
+        if self.requestStatus == 'accepted':
+            self.user.is_verified_pro = True
+            self.user.userRole = 2
+            self.user.is_verified = True
+            self.user.save()
+            message = Message.objects.create(title='Premium Request Accepted',
+                                             message='Your premium request has been accepted',
+                                             data={'type': 'premium_request_accepted', 'id': self.id})
+            message.recipients.set([self.user.id])
+            message.save()
+        super().save(*args, **kwargs)
 
 
 class PremiumRequest(models.Model):

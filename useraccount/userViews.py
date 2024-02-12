@@ -5,13 +5,15 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from home.serializers import HomeDataSerializer
 from notifications.models import Message
 from notifications.serializers import MessageSerializer
 from space.models import Space
 from space.serializers import ActivitySerializer
 from useraccount.api.serializers.user_api_serializer import RegisterRequestSerializer, CreateProfileRequestSerializer, \
     CreateProfileResponseSerializer, ProfileFullDataSerializer, ProfileInterestesSerializer, CategorySerializer
-from useraccount.models import ProfileModel, Category, UserAccount, PremiumRequest, Certificate, VerificationProRequest
+from useraccount.models import ProfileModel, Category, UserAccount, PremiumRequest, Certificate, VerificationProRequest, \
+    Premium
 from djoser.views import UserViewSet, TokenCreateView
 
 # login even if the user is inactive
@@ -19,7 +21,7 @@ from djoser.views import UserViewSet, TokenCreateView
 from djoser.views import TokenCreateView
 from rest_framework.response import Response
 
-from useraccount.serializers import HomeDataSerializer, FullUserSerializer, VisitorProfileSerializer, \
+from useraccount.serializers import FullUserSerializer, VisitorProfileSerializer, \
     VerifyUserSerializer, UserUpdateSerializer, SpaceSerializerJustName, RecommendedSpacesSerializer, \
     EmailVerificationSerializer
 
@@ -193,7 +195,6 @@ class MyProfileViewSet(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = ProfileModel.objects.get(user_id=request.user.id)
         serializer = FullUserSerializer(instance, context={'request': request})
-        print(serializer.data)
         return Response(serializer.data)
 
 
@@ -299,6 +300,7 @@ class VerifyEmailCode(APIView):
             return Response({'message': 'code is required'}, status=status.HTTP_400_BAD_REQUEST)
         if code == user.email_verification_code:
             user.email_verified = True
+            user.is_active = True
             user.email_verification_code = None
             user.save()
             return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
@@ -311,7 +313,9 @@ class GetUsersNoticiations(generics.ListAPIView):
     serializer_class = MessageSerializer
 
     def get_queryset(self):
-        return Message.objects.filter(recipients__in=[self.request.user]).order_by('-created_at')
+        messages = Message.objects.filter(recipients__in=[self.request.user]).order_by('-created_at')
+        print(len(messages))
+        return messages
 
 
 class ViewNotification(APIView):
@@ -458,6 +462,163 @@ class CreateAverificationRequest(APIView):
 
     def post(self, request, *args, **kwargs):
         # Assuming your User model has a 'card_id_image' field
-       user = self.request.user
-       VerificationProRequest.objects.create(profile=user.profilemodel)
-       return Response({'message': 'Verification request sent successfully'}, status=status.HTTP_200_OK)
+        user = self.request.user
+        VerificationProRequest.objects.create(profile=user.profilemodel)
+        return Response({'message': 'Verification request sent successfully'}, status=status.HTTP_200_OK)
+
+
+class UploadProfileImage(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+
+        # Check if 'cardId' is in the uploaded files
+        if 'profileImage' in request.FILES:
+            user.profilemodel.profileImage = request.FILES['profileImage']
+            print(user.profilemodel.profileImage)
+            user.profilemodel.save()
+            return Response({'message': 'Profile image uploaded successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Profile image not found in the request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadCoverImage(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        # Assuming your User model has a 'card_id_image' field
+        user = self.request.user
+
+        # Check if 'cardId' is in the uploaded files
+        if 'coverImage' in request.FILES:
+            user.profilemodel.cover = request.FILES['coverImage']
+            print(user.profilemodel.cover)
+            user.profilemodel.save()
+            return Response({'message': 'Cover image uploaded successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Cover image not found in the request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpadateProfile(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        title = request.data.get('title', None)
+        bio = request.data.get('bio', None)
+        place_of_work = request.data.get('place_of_work', None)
+        country = request.data.get('country', None)
+        city = request.data.get('city', None)
+        state = request.data.get('state', None)
+        speciality = request.data.get('speciality', None)
+        study_in = request.data.get('study_in', None)
+        phone = request.data.get('phone', None)
+        first_name = request.data.get('first_name', None)
+        last_name = request.data.get('last_name', None)
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.phone = phone
+        user.save()
+        user.profilemodel.title = title
+        user.profilemodel.bio = bio
+        user.profilemodel.place_of_work = place_of_work
+        user.profilemodel.speciality = speciality
+        user.profilemodel.study_in = study_in
+        user.profilemodel.save()
+
+        return Response(FullUserSerializer(
+            user.profilemodel, many=False, context={'request': self.request}).data, status=status.HTTP_200_OK)
+
+
+
+class ChangePassword(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        old_password = request.data.get('old_password', None)
+        new_password = request.data.get('new_password', None)
+        if user.check_password(old_password):
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Wrong password'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendCodeForResetPassword(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email', None)
+        user = UserAccount.objects.get(email=email)
+
+        if user is not None:
+            try:
+                user.generate_email_verification_code()
+                user.send_email_verification()
+                return Response({'message': 'Code sent successfully'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({'message': 'Wrong email'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPassword(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email', None)
+        code = request.data.get('code', None)
+        password = request.data.get('password', None)
+        user = UserAccount.objects.get(email=email)
+
+        if user is not None:
+            if code == user.email_verification_code:
+                user.email_verified = True
+                user.email_verification_code = None
+                user.set_password(password)
+                user.save()
+                return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Wrong code'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Wrong email'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MakePremium(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        full_name = request.data.get('full_name', None)
+        phone = request.data.get('phone', None)
+        email = request.data.get('email', None)
+        clinic_name = request.data.get('clinic_name', None)
+        clinic_address = request.data.get('clinic_address', None)
+        profissional_title = request.data.get('professional_title', "Dr")
+        license_number = request.data.get('license_number', None)
+        education = request.data.get('education', None)
+        graduation_year = request.data.get('graduation_year', None)
+        certifications = request.data.get('certifications', None)
+        experience = request.data.get('experience', None)
+
+        Premium.objects.create(
+            user=request.user,
+            full_name=full_name,
+            phone_number=phone,
+            email_address=email,
+            license_number=license_number,
+            professional_title=profissional_title,
+            clinic_name=clinic_name,
+            clinic_address=clinic_address,
+            education=education,
+            graduation_year=graduation_year,
+            certifications=certifications,
+            experience=experience
+
+        )
+
+        return Response({'message': 'Premium request sent successfully'}, status=status.HTTP_200_OK)

@@ -12,11 +12,13 @@ from blog.serializers import BlogSerializer
 from blog.views import PaginationList
 from commentable.models import Comment
 from likable.models import Like
+from notifications.models import Message
 from post.serializers import SpacePostSerializer
 from useraccount.models import Category
 from useraccount.serializers import RecommendedSpacesSerializer
-from .models import Space, SpacePost
-from .serializers import SpaceSerializer, JoinSpaceSerializer, LeaveSpaceSerializer, SimpleSpaceSerializer
+from .models import Space, SpacePost, PostComment, CommentReply, ReplyLike
+from .serializers import SpaceSerializer, JoinSpaceSerializer, LeaveSpaceSerializer, SimpleSpaceSerializer, \
+    MakePostCommentSerializer, PostCommentSerializer, ReplySerializer
 from django.db.models import F, Max, Value, DateTimeField
 
 from django.shortcuts import render
@@ -43,17 +45,16 @@ class JoinSpaceApiView(APIView):
     # serializer_class = JoinSpaceSerializer
     permission_classes = (IsAuthenticated,)
 
-    def post (self, request):
+    def post(self, request):
         space_id = request.query_params.get('space_id', None)
         space = Space.objects.get(id=space_id)
         if space.is_allowed_to_join(space, request.user):
             space.include_users.add(request.user)
-            return Response( SimpleSpaceSerializer (space, many=False, context={'request': self.request}).data,
+            return Response(SimpleSpaceSerializer(space, many=False, context={'request': self.request}).data,
                             status=status.HTTP_200_OK, )
         else:
             return Response({"message": "You are not allowed to join this space"},
                             status=status.HTTP_400_BAD_REQUEST, )
-
 
     # serializer_class = JoinSpaceSerializer
     # permission_classes = (IsAuthenticated,)
@@ -125,13 +126,24 @@ class GetRecommendedSpacesApiView(generics.ListAPIView):
 
 
 class GetHomeSpacePostsApiView(generics.ListAPIView):
-    serializer_class = SpacePostSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = PaginationList
 
+    # def get_serializer_class(self):
+    #         return SpacePostSerializer
+    #
+    def get_serializer(self, *args, **kwargs):
+    #     if self.request.user.userRole == 2:
+            return SpacePostSerializer(*args, **kwargs, context={'request': self.request})
+    #     else:
+    #         return SpacePostSerializer(*args, **kwargs, context={'request': self.request})
+
     def get_queryset(self):
         user = self.request.user
-        return SpacePost.objects.all()
+        if user.userRole == 2:
+            return SpacePost.objects.all().order_by('-created_at')
+        else:
+            return SpacePost.objects.all().order_by('-created_at')
 
 
 class GETSPACESANDBLOGSWITHCATEGORYNAME(APIView):
@@ -180,6 +192,7 @@ class LikeAndUnlikePost(APIView):
             like.save()
             return Response({"parent_likes_count": post.likes.count(), 'message': 'liked', 'isLiked': True},
                             status=status.HTTP_200_OK)
+
 
 # filter posts according to recent, popular, most commented
 class FilterPosts(APIView):
@@ -236,14 +249,9 @@ class SpacePostsListView(generics.ListAPIView):
                 return SpacePost.objects.filter(space=space_id).order_by('-created_at')
 
 
-
-
-
-
-
-
 class FilterSpacesAndArticlesWithCategoryName(APIView):
     permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         category_id = request.query_params.get('category_id', None)
         spaces = Space.objects.filter(
@@ -256,3 +264,94 @@ class FilterSpacesAndArticlesWithCategoryName(APIView):
         )
         blogsSerializer = BlogSerializer(blogs, many=True, context={'request': self.request}).data
         return Response({'spaces': spaces_serializer, 'blogs': blogsSerializer})
+
+
+class DiscoverPopularSpacesAndBlogs(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        # random spaces and random blogs
+        spaces = Space.objects.all().order_by('?')[:10]
+        spaces_serializer = RecommendedSpacesSerializer(spaces, many=True, context={'request': self.request}).data
+        blogs = Blog.objects.all().order_by('?')[:10]
+
+        blogsSerializer = BlogSerializer(blogs, many=True, context={'request': self.request}).data
+        return Response({'spaces': spaces_serializer, 'blogs': blogsSerializer})
+
+
+class MakePostComment(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = MakePostCommentSerializer
+
+    def post(self, request):
+        post_id = self.request.data.get('post', None)
+        text = self.request.data.get('content', None)
+        post = SpacePost.objects.get(id=post_id)
+        comment = PostComment.objects.create(
+            user=request.user,
+            post=post,
+            content=text
+        )
+        messgge = Message.objects.create(
+            title='New Comment',
+            message='You have a new comment on your post',
+            data={'type': 'new_comment', 'id': comment.id}
+
+        )
+        messgge.recipients.set([post.user.id])
+        messgge.save()
+        return Response(
+            PostCommentSerializer(
+                comment, context={
+                    'request': self.request
+                }
+            ).data
+        )
+
+
+class MakeAreplyOnComment(APIView):
+    def post(self, request):
+        comment_id = self.request.data.get('comment', None)
+        text = self.request.data.get('content', None)
+        comment = PostComment.objects.get(id=comment_id)
+        reply = CommentReply.objects.create(
+            user=request.user,
+            comment=comment,
+            content=text
+        )
+        return Response(
+            ReplySerializer(
+                reply, context={
+                    'request': self.request
+                }
+            ).data
+        )
+
+
+class LikeUnLikeReply(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        reply_id = request.query_params.get('reply_id', None)
+        reply = CommentReply.objects.get(id=reply_id)
+        if reply.likes.filter(
+                user=request.user
+
+        ).exists():
+            like = ReplyLike.objects.get(
+                user=request.user,
+                reply=reply
+            )
+            like.delete()
+
+            return Response({"parent_likes_count": reply.likes.count(), 'message': 'unliked', 'isLiked': False},
+                            status=status.HTTP_200_OK)
+
+        else:
+            like = ReplyLike.objects.create(
+                user=request.user,
+                reply=reply
+            )
+            like.save()
+            return Response({"parent_likes_count": reply.likes.count(), 'message': 'liked', 'isLiked': True},
+                            status=status.HTTP_200_OK)

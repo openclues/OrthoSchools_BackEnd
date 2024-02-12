@@ -1,16 +1,15 @@
+import json
+
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import render
-
-# Create your views here.
-
+from django.shortcuts import render, get_list_or_404
 from django.shortcuts import get_object_or_404, render
 from django.views import View
+from django_quill.quill import Quill
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from commentable.models import Comment
 from commentable.serializers import CommentSerializer, CommentOnPostCreateSerializer
 from likable.models import Like
@@ -24,7 +23,7 @@ from .serializers import BlogSerializer, BlogPostSerializer, BlogPostNewSerializ
 
 
 class PaginationList(PageNumberPagination):
-    page_size = 1000
+    page_size = 2
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -90,11 +89,20 @@ class FilteredArticlesListView(generics.ListAPIView):
         if category:
             queryset = queryset.filter(category__name=category)
         if following:
-            print("asdasdasd")
             queryset = queryset.filter(
                 blog__followers__in=[self.request.user])  # Assuming 'name' is a field in your Category model
 
         return queryset
+
+
+class RecommendedBlogListView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request):
+        blogs = Blog.objects.order_by('?').exclude(followers=request.user)[:5]
+        return Response(BlogSerializer(blogs, many=True, context= {
+            'request': request
+        }).data)
 
 
 class GetBlogPostsComments(APIView):
@@ -147,10 +155,16 @@ class BlogScreenView(APIView):
         blog_id = request.query_params.get('blog_id', None)
         blog = Blog.objects.get(id=blog_id)
         featured_posts = BlogPost.objects.filter(blog=blog, is_featured=True).order_by('-updated_at')[:5]
+        filter = request.query_params.get('filter', None)
+        if filter:
+            posts = BlogPost.objects.filter(blog=blog, is_banned=False, category__name=filter).order_by('-updated_at')
+        else:
+            posts = BlogPost.objects.filter(blog=blog, is_banned=False).order_by('-updated_at')
         return Response({
+            'posts': BlogPostNewSerializer(posts, many=True, context={'request': request}).data,
             'blog': BlogSerializer(blog, context={'request': request}).data,
             'is_followed': blog.followers.filter(id=request.user.id).exists(),
-            'featured_posts': BlogPostSerializer(featured_posts, many=True, context={'request': request}).data,
+            'featured_posts': BlogPostNewSerializer(featured_posts, many=True, context={'request': request}).data,
             'categories': CategorySerializer(Category.objects.filter(
                 id__in=BlogPost.objects.filter(blog=blog).values_list('category', flat=True).distinct(),
             ), many=True).data
@@ -195,16 +209,32 @@ class BlogCreateAPIView(APIView):
     serializer_class = CreateBlogSerializer
 
     def post(self, request, *args, **kwargs):
-        print(
-            request.data
-        )
+
         request.data['user'] = request.user.id
 
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
+            serializer.validated_data['user'] = request.user
             serializer.save()
+            instance = serializer.instance
+            #retireve list of integers from string list
+            category_ids = request.data.get('category', [])
+            # category_ids = list(map(int, category_ids))
+            print(category_ids)
+            # instance.category.set(Category.objects.filter(id__in=category_ids))
+            for category_id in category_ids:
+                try:
+                    if category_id.isdigit():
+                        category = Category.objects.get(id=category_id)
+                        instance.category.add(category)
+                    else:
+                        pass
+                except Category.DoesNotExist:
+                    # Handle the case where the category doesn't exist
+                    pass
+            instance.save()
             return Response(BlogSerializer(
-                Blog.objects.get(id=serializer.data.get('id'), ), context={'request': request}
+                instance, context={'request': request}
             ).data, status=status.HTTP_201_CREATED)
         else:
             print(
@@ -257,3 +287,74 @@ class UpdateBlogPatchApiView(generics.UpdateAPIView):
                 serializer.errors
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateBlogPost(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BlogPostNewSerializer
+
+    def post(self, request, *args, **kwargs):
+        # is_featured = models.BooleanField(default=False)
+        # blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts')
+        # title = models.CharField(max_length=100)
+        # is_banned = models.BooleanField(default=False)
+        # category = models.ManyToManyField('useraccount.Category', related_name='categorie_posts')
+        # content = QuillField(
+        #     blank=True,
+        #     null=True
+        # )
+        # cover = models.ImageField(upload_to='images/')
+
+        request.data['blog'] = request.data.get('blog_id')
+        category_ids = request.data.get('categories', [])
+        # category_ids.tolist
+        # category_ids = list(map(int, category_ids))
+        request.data['category'] = category_ids
+        request.data['is_featured'] = request.data.get('is_featured') == 'true'
+        request.data['is_banned'] = request.data.get('is_banned') == 'true'
+        request.data['content'] = request.data.get('content')
+        request.data['cover'] = request.data.get('cover')
+        request.data['title'] = request.data.get('title')
+        quill = Quill(
+            json_string=request.data.get('content')
+        )
+        post = BlogPost.objects.create(
+
+            blog=Blog.objects.get(id=request.data.get('blog_id')),
+            title=request.data.get('title'),
+            is_banned=request.data.get('is_banned'),
+            is_featured=request.data.get('is_featured'),
+            content=quill,
+            cover=request.data.get('cover'),
+        )
+        categories_str = request.data.get('categories', '[]')
+
+        # Use json.loads to convert the string into a Python list
+        category_ids = json.loads(categories_str)
+
+        # Ensure category_ids are integers
+        # category_ids = list(map(int, category_ids))
+
+        # Replace the loop with a single line using set()
+        # print(category_ids)
+        post.category.set(Category.objects.filter(id__in=category_ids))
+        # post.category.save()
+        # post.category.set(get_list_or_404(Category, id__in=category_ids))
+        # post.category.set([Category.objects.get(id=request.data.get('category_id'))])
+        post.content = quill
+        post.save()
+        print(BlogPostNewSerializer(post, context={"request": request}).data)
+
+        return Response({'message': 'created', "post": post.content.delta}, status=status.HTTP_201_CREATED)
+
+
+class GetArticlesByCategory(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        category_id = request.query_params.get('category_id', None)
+        category = Category.objects.get(id=category_id)
+        # randomly
+        posts = BlogPost.objects.filter(category=category, is_banned=False).order_by('?')
+        print(posts)
+        return Response(BlogPostSerializer(posts, many=True).data)

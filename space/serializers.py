@@ -5,9 +5,10 @@ from rest_framework import serializers, viewsets
 from djangoProject1.firebase_services import FirebaseServices
 from notifications.models import Message
 # from post.serializers import SpacePostSerializer
-from space.models import Space
+from space.models import Space, PostComment, CommentReply, CommentLike, ReplyLike, SpacePost
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
 from useraccount.models import UserAccount
+from useraccount.serializers import FullUserSerializer, SpaceUserSerializer
 
 
 class SimpleSpaceSerializer(serializers.ModelSerializer):
@@ -18,6 +19,7 @@ class SimpleSpaceSerializer(serializers.ModelSerializer):
 
 class SpaceSerializer(serializers.ModelSerializer):
     # posts = serializers.SerializerMethodField()
+    users = serializers.SerializerMethodField()
     category = CategorySerializer(many=True, read_only=True)
 
     class Meta:
@@ -27,6 +29,10 @@ class SpaceSerializer(serializers.ModelSerializer):
     # def get_posts(self, obj):
     #     request = self.context.get('request')
     #     return SpacePostSerializer(obj.posts.all(), many=True, read_only=True, context={'request': request}).data
+
+    def get_users(self, obj):
+        included_users = obj.include_users.all()
+        return SpaceUserSerializer(included_users, many=True).data
 
 
 class JoinSpaceSerializer(serializers.Serializer):
@@ -137,3 +143,101 @@ class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
         activities = Action.objects.filter(actor_object_id=user.id)
 
         return activities
+
+
+class PostlikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentLike
+        fields = '__all__'
+
+
+class PostCommentSerializer(serializers.ModelSerializer):
+    from post.serializers import UserPostSerializer
+
+    user = UserPostSerializer(read_only=True, many=False)
+    replies = serializers.SerializerMethodField(read_only=True)
+    likes = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = PostComment
+        fields = '__all__'
+
+    def get_replies(self, obj):
+        request = self.context.get('request')
+        return ReplySerializer(CommentReply.objects.filter(comment=obj)
+                               , many=True, context={
+                'request': request
+            }).data
+
+    def get_likes(self, obj):
+        return CommentLikeSerializer(obj.likes.all(), many=True).data
+
+
+class CommentLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentLike
+        fields = '__all__'
+
+
+class ReplyLikeSerializer(serializers.ModelSerializer):
+    is_liked = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ReplyLike
+        fields = '__all__'
+
+    def get_is_liked(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            if user in obj.likes.all():
+                return True
+            else:
+                return False
+
+
+class ReplySerializer(serializers.ModelSerializer):
+    from post.serializers import UserPostSerializer
+    # is_liked = serializers.SerializerMethodField(read_only=True)
+    user = UserPostSerializer(read_only=True, many=False)
+    # likes = serializers.SerializerMethodField(read_only=True)
+    comment_id = serializers.SerializerMethodField(read_only=True)
+    commet_user = serializers.SerializerMethodField(read_only=True)
+    comment_text = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = CommentReply
+        fields = '__all__'
+
+    # def get_is_liked(self, obj):
+    #     user = self.context['request'].user
+    #
+    #
+    #     if user.is_authenticated:
+    #         if user in obj.likes.all():
+    #             return True
+    #         else:
+    #             return False
+    # def get_likes(self, obj):
+    #     return CommentLikeSerializer(obj.likes.all(), many=True).data
+
+    def get_comments(self):
+        return
+
+    def get_comment_id(self, obj):
+        return obj.comment.id
+
+    def get_comment_text(self, obj):
+        return obj.comment.content
+
+    def get_commet_user(self, obj):
+        from post.serializers import UserPostSerializer
+        return UserPostSerializer(obj.comment.user, many=False).data
+
+    # def get_comment(self, obj):
+    #     return PostCommentSerializer(obj.comment).data
+
+
+class MakePostCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostComment
+        fields = ['content', 'post']

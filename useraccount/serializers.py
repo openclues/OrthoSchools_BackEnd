@@ -2,10 +2,7 @@ from actstream.models import Action
 from rest_framework import serializers
 
 from blog.models import Blog
-from course.serializers import CourseSerializer
-from post.serializers import SpacePostSerializer
 from space.models import Space, SpacePost
-from space.serializers import SpaceSerializer, ActivitySerializer
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
 from useraccount.models import ProfileModel, UserAccount, VerificationProRequest, Certificate
 
@@ -16,63 +13,25 @@ class CertificateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class HomeDataSerializer(serializers.Serializer):
-    recommended_spaces = serializers.SerializerMethodField()  # according to user's interests
-    latest_updated_posts_from_recommended = serializers.SerializerMethodField()  # according to user's interests
-    my_latest_updated_posts = serializers.SerializerMethodField()
-    user = serializers.SerializerMethodField()
-
-    # according to user's interests
-    def get_recommended_spaces(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            profile = ProfileModel.objects.filter(user=user).first()
-            spaces = profile.recommended_spaces(profile)
-            return RecommendedSpacesSerializer(spaces, many=True, context={'request': self.context['request']}).data
-
-    def get_latest_updated_posts_from_recommended(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            profile = ProfileModel.objects.filter(user=user).first()
-            spaces = profile.recommended_spaces(profile)
-            myspaces = user.spaces_included.all()
-            all_spaces = spaces | myspaces
-            posts_list = []
-            for space in all_spaces:
-                if space.is_allowed_to_join(space, user):
-                    posts = space.posts.all().order_by('-updated_at')
-                    for post in posts:
-                        posts_list.append(post)
-
-            return SpacePostSerializer(posts_list, many=True, context={'request': self.context['request']}).data
-
-    def get_my_latest_updated_posts(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            spaces = user.spaces_included.all()
-            if spaces.exists():
-                for space in spaces:
-                    posts = space.posts.all().order_by('-updated_at')
-                    return SpacePostSerializer(posts, many=True, context={'request': self.context['request']}).data
-            else:
-                return []
-
-    def get_user(self, obj):
-        user = self.context['request'].user
-        return FullUserSerializer(user.profilemodel, many=False, read_only=True,
-                                  context={'request': self.context['request']}).data
-
-
 class RecommendedSpacesSerializer(serializers.ModelSerializer):
     is_allowed_to_join = serializers.SerializerMethodField()
     members_count = serializers.SerializerMethodField()
     category = CategorySerializer(many=True, read_only=True)
     joined = serializers.SerializerMethodField()
+    users = serializers.SerializerMethodField()
+    posts_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Space
         fields = ['id', 'name', 'description', 'cover', 'is_allowed_to_join', 'members_count', 'category',
-                  'allowed_user_types', 'joined']
+                  'allowed_user_types', 'joined', 'users', 'posts_count']
+
+    def get_posts_count(self, obj):
+        return obj.posts.count()
+
+    def get_users(self, obj):
+        included_users = obj.include_users.all()[:5]
+        return SpaceUserSerializer(included_users, many=True).data
 
     def get_is_allowed_to_join(self, obj):
         user = self.context['request'].user
@@ -95,12 +54,24 @@ class RecommendedSpacesSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     # user_activities = serializers.SerializerMethodField()
     # courses = serializers.SerializerMethodField()
+    days_left = serializers.SerializerMethodField()
 
     class Meta:
         model = UserAccount
         fields = "__all__"
 
-    # def get_courses(self, obj):
+    def get_days_left(self, obj):
+        obj.date_joined
+        # check if user is not verified and 30 days from date joined
+        if obj.is_verified == False and obj.date_joined.day + 30 == obj.date_joined.day:
+            days_left = 30 - obj.date_joined.day
+            return days_left
+        elif obj.is_verified == True:
+            return 0
+
+        else:
+            return -1
+            # def get_courses(self, obj):
     #     user = self.context['request'].user
     #     if user.userRole == 2:
     #         return CourseSerializer(obj.courses.all(), many=True, context={'request': self.context['request']}).data
@@ -117,16 +88,30 @@ class UserSerializer(serializers.ModelSerializer):
     # return ActivitySerializer(activities, many=True, read_only=True).data
 
 
+class SpaceUserSerializer(serializers.ModelSerializer):
+    profileImage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserAccount
+        fields = ['id', 'first_name', 'last_name', 'profileImage']
+
+    def get_profileImage(self, obj):
+        profile = ProfileModel.objects.filter(user=obj).first()
+        return str(profile.profileImage)
+
+
 class FullUserSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     is_me = serializers.SerializerMethodField()
     blog = serializers.SerializerMethodField()
     certificates = serializers.SerializerMethodField()
 
+    # verified_pro_request = serializers.SerializerMethodField()
+
     class Meta:
         model = ProfileModel
         fields = ['title', 'bio', 'study_in', 'cover', 'profileImage', 'birth_date', 'place_of_work', 'speciality',
-                  'user', 'is_me', 'id_card', 'selfie', 'blog', 'certificates']
+                  'user', 'is_me', 'id_card', 'selfie', 'blog', 'certificates', 'country', 'city', 'state']
 
     def get_is_me(self, obj):
         user = self.context['request'].user
@@ -152,10 +137,6 @@ class FullUserSerializer(serializers.ModelSerializer):
             return BlogInsideArticlesSerializer(blog, many=False, read_only=True).data
         else:
             return None
-        # def get_user(self, obj):
-    #     context = self.context
-    #     return UserSerializer(obj.user, many=False, read_only=True, context=context).data
-    #
 
 
 class VisitorUserSerializer(serializers.ModelSerializer):
@@ -171,7 +152,7 @@ class VisitorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
         fields = ['title', 'bio', 'study_in', 'cover', 'profileImage', 'birth_date', 'place_of_work', 'speciality',
-                  'user_account']
+                  'user_account', 'id']
 
     def get_user_account(self, obj):
         return VisitorUserSerializer(obj, many=False, read_only=True).data

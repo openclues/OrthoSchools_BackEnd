@@ -23,7 +23,3 @@ B
 activity/apps.py,6\0\608ce0be85873ec921ca29411e444d7d61cfe307
 =
 post/admin.py,4\6\46441ef61f76c19d55f26eb332a1b63b4eb3de4a
-b
-2useraccount/api/serializers/user_api_serializer.py,b\2\b2ad44faa3cecd561993f3f6dcfa7cd8d4ecf5e6
-9
-	manage.py,3\1\3156ad13e4d695cd526bbb7b031016ecba842270

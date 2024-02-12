@@ -4,7 +4,7 @@ from unfold.admin import ModelAdmin, TabularInline as Tub
 from django.contrib import admin
 
 from commentable.models import Comment
-from .models import Space, SpaceFile, SpacePost, ImageModel
+from .models import Space, SpaceFile, SpacePost, ImageModel, PostComment, CommentReply
 
 
 # Register your models here.
@@ -42,14 +42,15 @@ class CommentAdmin(ModelAdmin):
     pass
 
 
-@admin.register(SpacePost)
-class SpacePostAdmin(AdminConfirmMixin, ModelAdmin):
-    inlines = [ImageInline]
+# @admin.register(SpacePost)
+# class SpacePostAdmin(AdminConfirmMixin, ModelAdmin):
+#     inlines = [ImageInline]
+
+admin.site.register(SpacePost)
 
 
 @admin.register(Space)
 class SpaceAdmin(AdminConfirmMixin, ModelAdmin):
-
     # # confirmation_fields = ['name', 'description', 'cover', 'created_at', 'updated_at']
     #
     list_display_links = ["name"]
@@ -57,7 +58,6 @@ class SpaceAdmin(AdminConfirmMixin, ModelAdmin):
     # inlines = [PostInline]
     # ordering = ['-created_at']
     list_display = ['name', 'description']
-
 
     # custom change page
     # change_form_template = 'admin/space_change_form.html'
@@ -69,6 +69,7 @@ class SpaceAdmin(AdminConfirmMixin, ModelAdmin):
     # search_fields = ('name', 'description', 'cover', 'created_at', 'updated_at')
     # readonly_fields = ('created_at', 'updated_at')
 
+
 # name = models.CharField(max_length=100)
 # description = models.CharField(max_length=100)
 # cover = models.ImageField(upload_to='images/')
@@ -76,3 +77,18 @@ class SpaceAdmin(AdminConfirmMixin, ModelAdmin):
 # updated_at = models.DateTimeField(auto_now=True)
 
 # javescript
+
+@admin.register(PostComment)
+class SpacePostCommentAdmin(ModelAdmin):
+    list_display = ['content', 'post', 'user', 'created_at', 'updated_at']
+
+
+@admin.register(CommentReply)
+class CommentReplyAdmin(ModelAdmin):
+    list_display = [
+        'content',
+        'comment',
+        'user',
+        'created_at',
+        'updated_at',
+    ]

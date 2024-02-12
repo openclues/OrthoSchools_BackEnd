@@ -70,7 +70,7 @@ DJOSER = {
 # ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/'  # Redirect after confirmation
 # ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'  # Redirect after confirmation
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'mail.orthoschools.com'
 EMAIL_HOST_USER = 'auth@orthoschools.com'
 EMAIL_HOST_PASSWORD = 'Java456!@'
@@ -185,6 +185,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -193,22 +195,25 @@ WSGI_APPLICATION = 'djangoProject1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
-        'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
-        'USER': 'orthosch_myad',  # <-- UPDATED line
-        'PASSWORD': 'Java2992!',  # <-- UPDATED line
-        'HOST': '108.61.198.173',  # <-- UPDATED line
-        'PORT': '3306',
-    }
-}
 # DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": "my",
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # <-- UPDATED line
+#         'NAME': 'orthosch_orthoaca',  # <-- UPDATED line
+#         'USER': 'orthosch_myad',  # <-- UPDATED line
+#         'PASSWORD': 'Java2992!',  # <-- UPDATED line
+#         'HOST': '108.61.198.173',  # <-- UPDATED line
+#         'PORT': '3306',
 #     }
 # }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "new",
+
+
+    },
+
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -373,3 +378,6 @@ UNFOLD = {
         },
     },
 }
+
+
+

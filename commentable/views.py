@@ -12,11 +12,20 @@ from blog.views import PaginationList
 from commentable.models import Comment
 from commentable.serializers import CommentSerializer, CommentOnPostCreateSerializer
 from likable.models import Like
-from space.models import SpacePost
+from space.models import SpacePost, PostComment
+from space.serializers import PostCommentSerializer
 
+
+class GetSinglePostComment(generics.RetrieveAPIView):
+    serializer_class = PostCommentSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return PostComment.objects.all()
 
 class GetSpacePostComments(generics.ListAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = PostCommentSerializer
+
     # pagination_class = PaginationList
 
     def get_queryset(self):
