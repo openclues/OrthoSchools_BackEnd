@@ -16,10 +16,11 @@ from likable.models import Like
 from notifications.models import Message
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
 from useraccount.models import Category
-from .models import Blog, BlogPost
+from .models import Blog, BlogPost, ArticleComment
 from rest_framework import generics, status
 
-from .serializers import BlogSerializer, BlogPostSerializer, BlogPostNewSerializer, CreateBlogSerializer
+from .serializers import BlogSerializer, BlogPostSerializer, BlogPostNewSerializer, CreateBlogSerializer, \
+    BlogCommentSerializer
 
 
 class PaginationList(PageNumberPagination):
@@ -105,16 +106,16 @@ class RecommendedBlogListView(APIView):
         }).data)
 
 
-class GetBlogPostsComments(APIView):
-
-    def get(self, request):
-        post_id = self.request.query_params.get('id', None)
-        post = BlogPost.objects.get(id=post_id)
-        comments = post.comments.all()
-        likes = Like.objects.filter(content_type=ContentType.objects.get_for_model(BlogPost), object_id=post_id)
-
-        return Response({'comments': CommentSerializer(comments, many=True).data, 'parent_likes_count': likes.count(),
-                         'isLiked': likes.filter(user=request.user).exists()})
+# class GetBlogPostsComments(APIView):
+#
+#     def get(self, request):
+#         post_id = self.request.query_params.get('id', None)
+#         post = BlogPost.objects.get(id=post_id)
+#         comments = post.comments.all()
+#         likes = Like.objects.filter(content_type=ContentType.objects.get_for_model(BlogPost), object_id=post_id)
+#
+#         return Response({'comments': CommentSerializer(comments, many=True).data, 'parent_likes_count': likes.count(),
+#                          'isLiked': likes.filter(user=request.user).exists()})
 
 
 class LikeAndUnlikeArticle(APIView):
@@ -358,3 +359,16 @@ class GetArticlesByCategory(APIView):
         posts = BlogPost.objects.filter(category=category, is_banned=False).order_by('?')
         print(posts)
         return Response(BlogPostSerializer(posts, many=True).data)
+
+
+class GetArticleComments(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        post_id = request.query_params.get('post_id', None)
+        post = BlogPost.objects.get(id=post_id)
+        comments = ArticleComment.objects.filter(post=post)
+
+        return Response(
+            BlogCommentSerializer(comments, many=True).data
+        )

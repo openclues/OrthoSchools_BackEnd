@@ -21,9 +21,9 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 from rest_framework.routers import DefaultRouter
 
 import useraccount.websiteViews.views
-from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, GetBlogPostsComments, \
+from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, \
     LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView, CreateBlogPost, \
-    GetArticlesByCategory, RecommendedBlogListView
+    GetArticlesByCategory, RecommendedBlogListView, GetArticleComments
 from commentable.views import GetSpacePostComments, MakeAreplayOnAComment, MakeBlogPostComment, \
     LikeAndUnlikeComment, GetSinglePostComment
 from course.views import CourseApiListView
@@ -62,6 +62,9 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
     path('user/info', GetProfileApiView.as_view()),
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
@@ -114,7 +117,7 @@ urlpatterns = [
     path('read/notification', ViewNotification.as_view(), name='read_notification'),
     path('saved', GetSaved.as_view(), name='get_saved'),
     path('save/post', SaveAndUnsavePost.as_view(), name='get_saved'),
-    path('api/article/comments/', GetBlogPostsComments.as_view(), name='token_obtain_pair'),
+    # path('api/article/comments/', GetBlogPostsComments.as_view(), name='token_obtain_pair'),
     path('get/blog/', BlogScreenView.as_view(), name='get_blog'),
     path('send/premium/', SendPremiumRequest.as_view(), name='send_premium_request'),
     path('send/premium/', MakeBlogPostComment.as_view(), name='send_premium_request'),
@@ -124,6 +127,7 @@ urlpatterns = [
     path('courses/', CourseApiListView.as_view(), name='courses'),
     path('user/cardid/', UploadUserCardId.as_view(), name='upload_user_card_id'),
     path('user/certficate/', UploadCertificate.as_view(), name='upload_certificate'),
+    path('article/comments/', GetArticleComments.as_view(), name='get_article_comments'),
     path('user/selfie/', UploadSelfie.as_view(), name='upload_selfie'),
     path('remove/certificate/', RemoveCertificate.as_view(), name='remove_certificate'),
     path('remove/cardId/', RemoveCardId.as_view(), name='remove_cardId'),

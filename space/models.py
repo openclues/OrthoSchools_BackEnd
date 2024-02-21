@@ -67,9 +67,6 @@ def __str__(self):
     return self.title
 
 
-
-
-
 class ImageModel(models.Model):
     image = models.ImageField(upload_to='images/')
     post = models.ForeignKey(SpacePost, on_delete=models.CASCADE, blank=True, null=True, related_name='post_images')
@@ -82,6 +79,7 @@ class PostLike(models.Model):
     user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
 class PostComment(models.Model):
     content = models.TextField(
@@ -98,7 +96,7 @@ class PostComment(models.Model):
         ordering = ['-created_at']
 
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+            self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         super().save(force_insert, force_update, using, update_fields)
         message = Message.objects.create(
@@ -108,6 +106,8 @@ class PostComment(models.Model):
         )
         message.recipients.set([self.post.user.id])
         message.save()
+
+
 class CommentReply(models.Model):
     content = models.TextField(
     )
@@ -121,15 +121,6 @@ class CommentReply(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-
-
-
-
-
-
-
-
-
 
 
 class PostLike(models.Model):

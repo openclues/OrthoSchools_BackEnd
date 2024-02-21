@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from blog.models import Blog, BlogPost
+from blog.models import Blog, BlogPost, ArticleComment
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
 from useraccount.serializers import VisitorProfileSerializer
 
@@ -44,7 +44,12 @@ class BlogSerializer(serializers.ModelSerializer):
     def get_followers_count(self, obj):
         return obj.followers.count()
 
+class BlogCommentSerializer(serializers.ModelSerializer):
+    user = VisitorProfileSerializer(read_only=True)
 
+    class Meta:
+        model = ArticleComment
+        fields = ['id', 'content', 'user', 'created_at', 'updated_at']
 class BlogPostSerializer(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
 
@@ -97,7 +102,7 @@ class BlogPostNewSerializer(serializers.ModelSerializer):
         return obj.likes.count()
 
     def get_comments_count(self, obj):
-        return obj.comments.count()
+        return ArticleComment.objects.filter(post=obj).count()
 
     # def get_comments(self, obj):
     #     return CommentSerializer(obj.comments.all(), many=True, read_only=True).data

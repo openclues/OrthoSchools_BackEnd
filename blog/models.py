@@ -9,6 +9,7 @@ from django_quill.fields import QuillField
 
 from commentable.models import Comment
 from likable.models import Like
+from notifications.models import Message
 
 
 class Blog(models.Model):
@@ -51,3 +52,30 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return f"{self.blog.title} - {self.title}"
+
+
+class ArticleComment(models.Model):
+    content = models.TextField(
+    )
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.content
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def save(
+            self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        super().save(force_insert, force_update, using, update_fields)
+        message = Message.objects.create(
+            title="New Comment",
+            message="You have a new comment",
+            data={"type": "new_comment", "id": self.id},
+        )
+        message.recipients.set([self.post.blog.user.id])
+        message.save()
