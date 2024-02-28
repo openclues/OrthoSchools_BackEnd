@@ -132,36 +132,3 @@ class MakeBlogPostComment(APIView):
         return Response(another_serializer.data, status=status.HTTP_201_CREATED)
 
 
-class LikeAndUnlikeComment(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        comment_id = request.query_params.get('comment_id', None)
-        comment = Comment.objects.get(id=comment_id)
-
-        if comment.likes.filter(
-                user=request.user
-
-        ).exists():
-            like = Like.objects.get(
-                user=request.user,
-                object_id=comment_id,
-                content_type=ContentType.objects.get_for_model(comment)
-            )
-            like.delete()
-            return Response({"parent_likes_count": comment.likes.count(), 'message': 'unliked', 'isLiked': False},
-                            status=status.HTTP_200_OK)
-
-
-
-        else:
-            like = Like.objects.create(
-                user=request.user,
-                object_id=comment_id,
-                content_type=ContentType.objects.get_for_model(comment)
-            )
-            like.save()
-            print(comment.likes.count())
-
-            return Response({"parent_likes_count": comment.likes.count(), 'message': 'unliked', 'isLiked': True},
-                            status=status.HTTP_200_OK)

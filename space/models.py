@@ -22,7 +22,6 @@ class Space(models.Model):
         ('premium', 'Premium'),
     )
 
-    # Field to specify allowed user types in the space
     allowed_user_types = models.CharField(max_length=100, choices=USER_TYPES, default=1)
     exclude_users = models.ManyToManyField("useraccount.UserAccount", related_name='spaces_excluded', blank=True)
     include_users = models.ManyToManyField("useraccount.UserAccount", related_name='spaces_included', blank=True)
@@ -75,7 +74,7 @@ class ImageModel(models.Model):
 
 
 class PostLike(models.Model):
-    post = models.ForeignKey(SpacePost, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(SpacePost, on_delete=models.CASCADE, related_name='interactions')
     user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -95,18 +94,6 @@ class PostComment(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-    def save(
-            self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        super().save(force_insert, force_update, using, update_fields)
-        message = Message.objects.create(
-            title="New Comment",
-            message="You have a new comment",
-            data={"type": "new_comment", "id": self.id},
-        )
-        message.recipients.set([self.post.user.id])
-        message.save()
-
 
 class CommentReply(models.Model):
     content = models.TextField(
@@ -123,15 +110,17 @@ class CommentReply(models.Model):
         ordering = ['-created_at']
 
 
-class PostLike(models.Model):
-    post = models.ForeignKey(SpacePost, on_delete=models.CASCADE, related_name='likes')
-    user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class PostLike(models.Model):
+#     post = models.ForeignKey(SpacePost, on_delete=models.CASCADE, related_name='likes')
+#     user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
+
+# class CommentL
 
 class CommentLike(models.Model):
-    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE, related_name='likes')
+    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE, related_name='interActions')
     user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

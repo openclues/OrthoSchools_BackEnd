@@ -5,6 +5,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from djangoProject1 import settings
+from djangoProject1.send_notification_service import SendNotificationService
 from home.serializers import HomeDataSerializer
 from notifications.models import Message
 from notifications.serializers import MessageSerializer
@@ -53,8 +55,6 @@ class RegisterApiView(UserViewSet):
     serializer_class = RegisterRequestSerializer
 
     def perfrom_create(self, serializer):
-        print(self.serializer_class.fields)
-        print("asdasdasdas")
         user = self.serializer_class.save(
             first_name=serializer.validated_data.get('first_name', ''),
             last_name=serializer.validated_data.get('last_name', '')
@@ -533,7 +533,6 @@ class UpadateProfile(APIView):
             user.profilemodel, many=False, context={'request': self.request}).data, status=status.HTTP_200_OK)
 
 
-
 class ChangePassword(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -622,3 +621,99 @@ class MakePremium(APIView):
         )
 
         return Response({'message': 'Premium request sent successfully'}, status=status.HTTP_200_OK)
+
+
+class GetUsersListView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    # if user in a group:
+
+    serializer_class = FullUserSerializer
+    queryset = ProfileModel.objects.all()
+
+    def get_queryset(self):
+        return ProfileModel.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        # param
+        search = request.query_params.get('search', None)
+        if request.user.groups.filter(name__contains='users').exists():
+            if search is not None:
+                # search for name or email or phone number
+                users = ProfileModel.objects.filter(user__first_name__icontains=search) | ProfileModel.objects.filter(
+                    user__last_name__icontains=search) | ProfileModel.objects.filter(
+                    user__email__icontains=search) | ProfileModel.objects.filter(user__phone__icontains=search)
+                return Response(FullUserSerializer(users, many=True, context={
+                    'request': request
+                }).data, status=status.HTTP_200_OK)
+            else:
+                users = ProfileModel.objects.all()
+                return Response(FullUserSerializer(users, many=True,
+                                                   context={
+                                                       'request': request
+                                                   }
+                                                   ).data, status=status.HTTP_200_OK)
+
+
+class GetVerificationProRequestsForAdmin(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    # if user in a group:
+
+    def get(self, request, *args, **kwargs):
+        if request.user.groups.filter(name__contains=settings.VERIFICATIONREQUESTS).exists():
+            requests = VerificationProRequest.objects.filter(requestStatus='pending')
+            return Response(VerifyUserSerializer(requests, many=True, context={
+                'request': request
+            }).data, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'You are not allowed to access this resource'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+
+class ApproveOrDisApproveVerificationRequest(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        if request.user.groups.filter(name__contains=settings.VERIFICATIONREQUESTS).exists():
+            request_id = request.data.get('request_id', None)
+            requeestStatus = request.data.get('status', None)
+            if request_id is None:
+                return Response({'message': 'request_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                request = VerificationProRequest.objects.get(id=request_id)
+                if requeestStatus == 'approved':
+                    request.requestStatus = 'approved'
+                    UserAccount.objects.filter(id=request.profile.user.id).update(
+                        is_verified_pro=True
+                    )
+                    request.save()
+                    SendNotificationService.seneMessagewithPaylod(
+                        title='Verification Request',
+                        message='Your verification request has been approved',
+                        recipients=[request.profile.user.id],
+                        data={
+                            'type': 'verification',
+                        }
+
+                    )
+                    return Response({'message': 'Request approved successfully'}, status=status.HTTP_200_OK)
+                elif requeestStatus == 'rejected':
+                    request.requestStatus = 'rejected'
+                    request.save()
+                    UserAccount.objects.filter(id=request.profile.user.id).update(
+                        is_verified_pro=False
+                    )
+                    SendNotificationService.seneMessagewithPaylod(
+                        title='Verification Request',
+                        message='Your verification request has been rejected',
+                        recipients=[request.profile.user.id],
+                        data={
+                            'type': 'verification',
+                        }
+                    )
+                    return Response({'message': 'Request rejected successfully'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': 'status is required'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'You are not allowed to access this resource'},
+                            status=status.HTTP_403_FORBIDDEN)

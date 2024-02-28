@@ -23,30 +23,31 @@ from rest_framework.routers import DefaultRouter
 import useraccount.websiteViews.views
 from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, \
     LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView, CreateBlogPost, \
-    GetArticlesByCategory, RecommendedBlogListView, GetArticleComments
-from commentable.views import GetSpacePostComments, MakeAreplayOnAComment, MakeBlogPostComment, \
-    LikeAndUnlikeComment, GetSinglePostComment
+    GetArticlesByCategory, RecommendedBlogListView, GetArticleComments, CommentOnArticle, EditBlogView
+from commentable.views import GetSpacePostComments, MakeAreplayOnAComment, MakeBlogPostComment, GetSinglePostComment
 from course.views import CourseApiListView
 from djangoProject1 import settings
 from notifications.views import RegisterDeviceView
-from post.views import CreatePostApiView, GetPostApiView
+from post.views import CreatePostApiView, GetPostApiView, SearchBlogPostsApiView, BlogSearchApiView
 from saveditem.views import GetSaved, SaveAndUnsavePost
 from space.models import Space
 from space.serializers import ActivityViewSet
 from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView, SpaceRetrieveApiView, \
     GetRecommendedSpacesApiView, GetHomeSpacePostsApiView, GETSPACESANDBLOGSWITHCATEGORYNAME, LikeAndUnlikePost, \
     SpacePostsListView, FilterSpacesAndArticlesWithCategoryName, MakePostComment, MakeAreplyOnComment, \
-    DiscoverPopularSpacesAndBlogs, LikeUnLikeReply
+    DiscoverPopularSpacesAndBlogs, LikeUnLikeReply, LikeAndUnlikeComment
 from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
     CustomTokenCreateView, GetProfileApiView, ProfileInterestsApiView, CategoriesApiView, HomeDataApiView, \
     ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities, GenerateAndSendEmailCode, \
     VerifyEmailCode, GetUsersNoticiations, ViewNotification, SendPremiumRequest, UploadUserCardId, UploadCertificate, \
     UploadSelfie, RemoveCertificate, RemoveCardId, RemoveSelfie, CreateAverificationRequest, UploadProfileImage, \
-    UpadateProfile, ChangePassword, SendCodeForResetPassword, ResetPassword, UploadCoverImage, MakePremium
+    UpadateProfile, ChangePassword, SendCodeForResetPassword, ResetPassword, UploadCoverImage, MakePremium, \
+    GetUsersListView, GetVerificationProRequestsForAdmin, ApproveOrDisApproveVerificationRequest
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
 from useraccount.websiteViews.index_views import email_verification
+
 router = DefaultRouter()
 
 router.register(r'activity', ActivityViewSet, basename='activity')
@@ -91,7 +92,7 @@ urlpatterns = [
     path('postcreate/', CreatePostApiView.as_view(), name='create_post'),
     path('activity/', include(router.urls)),
     path('space/<int:pk>', SpaceRetrieveApiView.as_view(), name='space'),
-    path('filter/category/',GETSPACESANDBLOGSWITHCATEGORYNAME.as_view(), name='filter_category'),
+    path('filter/category/', GETSPACESANDBLOGSWITHCATEGORYNAME.as_view(), name='filter_category'),
     path('post/<int:pk>', GetPostApiView.as_view(), name='get_post'),
     path('blogs/', BlogListView.as_view(), name='blogs'),
     path('article/', FilteredArticlesListView.as_view(), name='articles'),
@@ -122,7 +123,8 @@ urlpatterns = [
     path('send/premium/', SendPremiumRequest.as_view(), name='send_premium_request'),
     path('send/premium/', MakeBlogPostComment.as_view(), name='send_premium_request'),
     path('blog/create', BlogCreateAPIView.as_view(), name='create_blog'),
-    path('filter/', FilterSpacesAndArticlesWithCategoryName.as_view(), name='filter_spaces_and_articles_with_category_name'),
+    path('filter/', FilterSpacesAndArticlesWithCategoryName.as_view(),
+         name='filter_spaces_and_articles_with_category_name'),
     path('blog/followunfollow/', FollowUnfollowBlogApiView.as_view(), name='follow_unfollow_blog'),
     path('courses/', CourseApiListView.as_view(), name='courses'),
     path('user/cardid/', UploadUserCardId.as_view(), name='upload_user_card_id'),
@@ -139,18 +141,20 @@ urlpatterns = [
     path('change/password/', ChangePassword.as_view(), name='change_password'),
     path('sendCodeForResetPassword/', SendCodeForResetPassword.as_view(), name='reset_password_code'),
     path('resetPassword/', ResetPassword.as_view(), name='reset_password'),
-    path('create/article', CreateBlogPost.as_view(), name='create_article'),
-    path('discover/screen',DiscoverPopularSpacesAndBlogs.as_view(), name='discover_screen'),
-    path('replay/interact/',LikeUnLikeReply.as_view(), name='replay_interact'),
-    path('premieum/',MakePremium.as_view(), name='make_premieum'),
-    path('read/articles/',GetArticlesByCategory.as_view(), name='read-articles'),
-
-
-
+    path('create/article/', CreateBlogPost.as_view(), name='create_article'),
+    path('article/comment/', CommentOnArticle.as_view(), name='comment_on_article'),
+    path('discover/screen', DiscoverPopularSpacesAndBlogs.as_view(), name='discover_screen'),
+    path('replay/interact/', LikeUnLikeReply.as_view(), name='replay_interact'),
+    path('premieum/', MakePremium.as_view(), name='make_premieum'),
+    path('read/articles/', GetArticlesByCategory.as_view(), name='read-articles'),
+    path('search/posts/', SearchBlogPostsApiView.as_view(), name='search_posts'),
+    path('search/blogs/', BlogSearchApiView.as_view(), name='search_blogs'),
+    path('manage/users/', GetUsersListView.as_view(), name='get_users'),
+    path('blog/edit/', EditBlogView.as_view(), name='edit_blog'),
+    path('verificationsRequests/', GetVerificationProRequestsForAdmin.as_view(), name='get_verification_requests'),
+    path('verificationRequest/interact/', ApproveOrDisApproveVerificationRequest.as_view(), name='approve_or_disapprove_verification_request'),
 
 ]
-
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

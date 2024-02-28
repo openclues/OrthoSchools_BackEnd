@@ -89,11 +89,11 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     actions_submit_line = ["submit_line_action_activate"]
 
     list_display = (
-        'first_name', 'last_name', 'userRole', 'email', 'created_since', 'is_verified', 'is_verified_pro', 'is_suspend')
+        'first_name', 'last_name', 'userRole', 'email', 'created_since', 'is_verified', 'is_verified_pro', 'is_suspend', 'email_verified', 'phone_verified',)
     list_filter = UserAdmin.list_filter + ('userRole',)
     fieldsets = UserAdmin.fieldsets + (
         ('User Role', {'fields': ('userRole',)}),
-        ('Verification', {'fields': ('is_verified', 'is_verified_pro', 'is_suspend')}
+        ('Verification', {'fields': ('is_verified', 'is_verified_pro', 'is_suspend','email_verified','phone_verified')}
          ))
 
     def created_since(self, obj):

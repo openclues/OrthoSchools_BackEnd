@@ -5,8 +5,10 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from blog.models import Blog
+from blog.serializers import BlogSerializer
 from post.serializers import AddPostSerializer, SpacePostSerializer
-from space.models import SpacePost
+from space.models import SpacePost, Space
 
 
 class CreatePostApiView(generics.CreateAPIView):
@@ -21,7 +23,7 @@ class CreatePostApiView(generics.CreateAPIView):
         post_images = self.request.FILES.getlist('post_images')
         video = self.request.FILES.get('video')
 
-        print(str(video) +"dfgpkdfgp[kdfgpk")
+        print(str(video) + "dfgpkdfgp[kdfgpk")
         if video:
             serializer.instance.video = video
             serializer.instance.save()
@@ -59,3 +61,42 @@ class GetPostApiView(generics.RetrieveAPIView):
         post = self.get_object()
 
         return Response(SpacePostSerializer(post, context=self.get_serializer_context()).data)
+
+
+class SearchBlogPostsApiView(generics.ListAPIView):
+    serializer_class = SpacePostSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        # parameters
+        search_query = self.request.query_params.get('search', '')  # Retrieve 'search' query parameter
+
+        return SpacePost.objects.filter(content__icontains= search_query)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        search_query = self.request.query_params.get('search', '')  # Retrieve 'search' query parameter
+
+        # spaces = Space
+        posts = []
+        if user.is_authenticated and user.userRole == '2':
+            posts = SpacePost.objects.filter(content__icontains=search_query)
+        else :
+            posts = SpacePost.objects.filter(content__icontains=search_query , space__allowed_user_types='public')
+        return Response(SpacePostSerializer(posts, many=True, context={
+            'request': self.request
+        }).data)
+
+
+class BlogSearchApiView(generics.ListAPIView):
+    serializer_class = BlogSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Blog.objects.filter(title__icontains=self.kwargs['search'])
+
+    def get(self, request, *args, **kwargs):
+        blogs = self.get_queryset()
+        return Response(BlogSerializer(blogs, many=True, context=self.get_serializer_context()).data)
+
+

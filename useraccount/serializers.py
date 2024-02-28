@@ -1,4 +1,8 @@
+from datetime import datetime
+
 from actstream.models import Action
+from django.contrib.auth.models import Group
+from django.utils import timezone
 from rest_framework import serializers
 
 from blog.models import Blog
@@ -55,22 +59,51 @@ class UserSerializer(serializers.ModelSerializer):
     # user_activities = serializers.SerializerMethodField()
     # courses = serializers.SerializerMethodField()
     days_left = serializers.SerializerMethodField()
+    is_staff = serializers.SerializerMethodField()
+    is_superuser = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
+    groups = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = UserAccount
         fields = "__all__"
 
-    def get_days_left(self, obj):
-        obj.date_joined
-        # check if user is not verified and 30 days from date joined
-        if obj.is_verified == False and obj.date_joined.day + 30 == obj.date_joined.day:
-            days_left = 30 - obj.date_joined.day
-            return days_left
-        elif obj.is_verified == True:
-            return 0
+    from django.utils import timezone
 
+    def get_groups(self, obj):
+
+        return UserAccount.objects.get(
+            id=obj.id
+        ).groups.all()
+
+    def get_permissions(self, obj):
+        return obj.get_all_permissions()
+
+    def get_is_staff(self, obj):
+        return obj.is_staff
+
+    def get_is_superuser(self, obj):
+        return obj.is_superuser
+
+    def get_days_left(self, obj):
+        # Check if user is not verified and joined date is not None
+        if not obj.is_verified and obj.date_joined:
+            # Get the current date and time with the timezone information from obj.date_joined
+            current_datetime = timezone.now()
+
+            # Calculate the difference between current date and joined date
+            days_difference = (current_datetime - obj.date_joined).days
+
+            # Check if 30 days have passed since the joined date
+            if days_difference >= 30:
+                return -1  # User is not verified and 30 days have passed
+            else:
+                return 30 - days_difference  # Return the number of days left
+        elif obj.is_verified:
+            return 0  # User is verified
         else:
-            return -1
+            return -1  # Return -1 if date_joined is None
+
             # def get_courses(self, obj):
     #     user = self.context['request'].user
     #     if user.userRole == 2:
@@ -152,16 +185,17 @@ class VisitorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
         fields = ['title', 'bio', 'study_in', 'cover', 'profileImage', 'birth_date', 'place_of_work', 'speciality',
-                  'user_account', 'id']
+                  'user_account', 'id',]
 
     def get_user_account(self, obj):
         return VisitorUserSerializer(obj, many=False, read_only=True).data
 
 
 class VerifyUserSerializer(serializers.ModelSerializer):
+    profile = FullUserSerializer(many=False, read_only=True)
     class Meta:
         model = VerificationProRequest
-        fields = ['requestStatus', 'user', 'id']
+        fields = ['requestStatus', 'profile', 'id']
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):

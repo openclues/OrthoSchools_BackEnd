@@ -40,10 +40,7 @@ class BlogPost(models.Model):
     title = models.CharField(max_length=100)
     is_banned = models.BooleanField(default=False)
     category = models.ManyToManyField('useraccount.Category', related_name='categorie_posts')
-    content = QuillField(
-        blank=True,
-        null=True
-    )
+    content = models.TextField(null=True, blank=True)
     cover = models.ImageField(upload_to='images/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -52,6 +49,24 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return f"{self.blog.title} - {self.title}"
+
+
+class PostLikeModel(models.Model):
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='blogPost_likes_1')
+    user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.post.title} - {self.user.username}"
+
+
+class ArticleCommentLikeModel(models.Model):
+    comment = models.ForeignKey('ArticleComment', on_delete=models.CASCADE, related_name='articleComment_likes')
+    user = models.ForeignKey("useraccount.UserAccount", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.comment.content} - {self.user.username}"
 
 
 class ArticleComment(models.Model):
@@ -67,15 +82,3 @@ class ArticleComment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-
-    def save(
-            self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        super().save(force_insert, force_update, using, update_fields)
-        message = Message.objects.create(
-            title="New Comment",
-            message="You have a new comment",
-            data={"type": "new_comment", "id": self.id},
-        )
-        message.recipients.set([self.post.blog.user.id])
-        message.save()

@@ -42,10 +42,11 @@ def send_notification(sender, instance, created, **kwargs):
                 body=instance.message
             )
             message_data = {
-                "data": str(instance.data)  # Add your custom data here
+                "payload": str(instance.data)  # Add your custom data here
             }
             for user in instance.recipients.all():
                 devices = Device.objects.filter(user_id=user.id)
+                print(user.id, devices)
                 for device in devices:
                     token = device.fcm_token
                     fcm_message = messaging.Message(
@@ -54,4 +55,4 @@ def send_notification(sender, instance, created, **kwargs):
                         token=token
                     )
                     fcm_messages.append(fcm_message)
-            messaging.send_all(fcm_messages)
+            messaging.send_each(fcm_messages)

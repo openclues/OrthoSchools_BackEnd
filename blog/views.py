@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponse
 from django.shortcuts import render, get_list_or_404
 from django.shortcuts import get_object_or_404, render
 from django.views import View
@@ -12,11 +13,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from commentable.models import Comment
 from commentable.serializers import CommentSerializer, CommentOnPostCreateSerializer
+from djangoProject1.send_notification_service import SendNotificationService
 from likable.models import Like
 from notifications.models import Message
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
 from useraccount.models import Category
-from .models import Blog, BlogPost, ArticleComment
+from .models import Blog, BlogPost, ArticleComment, PostLikeModel, ArticleCommentLikeModel
 from rest_framework import generics, status
 
 from .serializers import BlogSerializer, BlogPostSerializer, BlogPostNewSerializer, CreateBlogSerializer, \
@@ -100,8 +102,8 @@ class RecommendedBlogListView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request):
-        blogs = Blog.objects.order_by('?').exclude(followers=request.user)[:5]
-        return Response(BlogSerializer(blogs, many=True, context= {
+        blogs = Blog.objects.order_by('?')
+        return Response(BlogSerializer(blogs, many=True, context={
             'request': request
         }).data)
 
@@ -124,29 +126,53 @@ class LikeAndUnlikeArticle(APIView):
     def get(self, request):
         post_id = request.query_params.get('article_id', None)
         post = BlogPost.objects.get(id=post_id)
-        if post.likes.filter(
-                user=request.user
-
-        ).exists():
-            like = Like.objects.get(
+        if PostLikeModel.objects.filter(
                 user=request.user,
-                object_id=post_id,
-                content_type=ContentType.objects.get_for_model(post)
+                post=post
+        ).exists():
+            like = PostLikeModel.objects.get(
+                user=request.user,
+                post=post
             )
             like.delete()
-
-            return Response({"parent_likes_count": post.likes.count(), 'message': 'unliked', 'isLiked': False},
+            return Response({"parent_likes_count": PostLikeModel.objects.filter(
+                post=post
+            ).count(), 'message': 'unliked', 'isLiked': False},
                             status=status.HTTP_200_OK)
-
         else:
-            like = Like.objects.create(
+            like = PostLikeModel.objects.create(
                 user=request.user,
-                object_id=post_id,
-                content_type=ContentType.objects.get_for_model(post)
+                post=post
             )
             like.save()
-            return Response({"parent_likes_count": post.likes.count(), 'message': 'liked', 'isLiked': True},
+
+            return Response({"parent_likes_count": PostLikeModel.objects.filter(
+                post=post
+            ).count(), 'message': 'like', 'isLiked': True},
                             status=status.HTTP_200_OK)
+        # if post.likes.filter(d
+        #         user=request.user
+        #
+        # ).exists():
+        #     like = Like.objects.get(
+        #         user=request.user,
+        #         object_id=post_id,
+        #         content_type=ContentType.objects.get_for_model(post)
+        #     )
+        #     like.delete()
+        #
+        #     return Response({"parent_likes_count": post.likes.count(), 'message': 'unliked', 'isLiked': False},
+        #                     status=status.HTTP_200_OK)
+        #
+        # else:
+        #     like = Like.objects.create(
+        #         user=request.user,
+        #         object_id=post_id,
+        #         content_type=ContentType.objects.get_for_model(post)
+        #     )
+        #     like.save()
+        #     return Response({"parent_likes_count": post.likes.count(), 'message': 'liked', 'isLiked': True},
+        #                     status=status.HTTP_200_OK)
 
 
 class BlogScreenView(APIView):
@@ -218,11 +244,9 @@ class BlogCreateAPIView(APIView):
             serializer.validated_data['user'] = request.user
             serializer.save()
             instance = serializer.instance
-            #retireve list of integers from string list
+            # retireve list of integers from string list
             category_ids = request.data.get('category', [])
             # category_ids = list(map(int, category_ids))
-            print(category_ids)
-            # instance.category.set(Category.objects.filter(id__in=category_ids))
             for category_id in category_ids:
                 try:
                     if category_id.isdigit():
@@ -295,58 +319,34 @@ class CreateBlogPost(APIView):
     serializer_class = BlogPostNewSerializer
 
     def post(self, request, *args, **kwargs):
-        # is_featured = models.BooleanField(default=False)
-        # blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts')
-        # title = models.CharField(max_length=100)
-        # is_banned = models.BooleanField(default=False)
-        # category = models.ManyToManyField('useraccount.Category', related_name='categorie_posts')
-        # content = QuillField(
-        #     blank=True,
-        #     null=True
-        # )
-        # cover = models.ImageField(upload_to='images/')
-
         request.data['blog'] = request.data.get('blog_id')
         category_ids = request.data.get('categories', [])
-        # category_ids.tolist
-        # category_ids = list(map(int, category_ids))
         request.data['category'] = category_ids
         request.data['is_featured'] = request.data.get('is_featured') == 'true'
         request.data['is_banned'] = request.data.get('is_banned') == 'true'
         request.data['content'] = request.data.get('content')
         request.data['cover'] = request.data.get('cover')
         request.data['title'] = request.data.get('title')
-        quill = Quill(
-            json_string=request.data.get('content')
-        )
+
         post = BlogPost.objects.create(
 
             blog=Blog.objects.get(id=request.data.get('blog_id')),
             title=request.data.get('title'),
             is_banned=request.data.get('is_banned'),
             is_featured=request.data.get('is_featured'),
-            content=quill,
+            content=request.data.get('content'),
             cover=request.data.get('cover'),
         )
         categories_str = request.data.get('categories', '[]')
 
         # Use json.loads to convert the string into a Python list
         category_ids = json.loads(categories_str)
-
-        # Ensure category_ids are integers
-        # category_ids = list(map(int, category_ids))
-
-        # Replace the loop with a single line using set()
-        # print(category_ids)
         post.category.set(Category.objects.filter(id__in=category_ids))
-        # post.category.save()
-        # post.category.set(get_list_or_404(Category, id__in=category_ids))
-        # post.category.set([Category.objects.get(id=request.data.get('category_id'))])
-        post.content = quill
+        # post.content = quill
         post.save()
         print(BlogPostNewSerializer(post, context={"request": request}).data)
 
-        return Response({'message': 'created', "post": post.content.delta}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'created', "post": post.content}, status=status.HTTP_201_CREATED)
 
 
 class GetArticlesByCategory(APIView):
@@ -370,5 +370,70 @@ class GetArticleComments(APIView):
         comments = ArticleComment.objects.filter(post=post)
 
         return Response(
-            BlogCommentSerializer(comments, many=True).data
+            {
+                'comments': BlogCommentSerializer(comments, many=True, context={
+                    'request': request
+                }).data,
+                'isLiked': PostLikeModel.objects.filter(post = post, user=request.user).exists(),
+                'likes_count': PostLikeModel.objects.filter(post = post).count()
+            }
+        )
+
+
+class CommentOnArticle(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        post_id = request.data.get('post_id', None)
+        post = BlogPost.objects.get(id=post_id)
+        comment = ArticleComment.objects.create(
+            post=post,
+            user=request.user,
+            content=request.data.get('content')
+        )
+        SendNotificationService.seneMessagewithPaylod(
+            title="New Comment",
+            message=f"{request.user.first_name} {request.user.last_name} commented on your post",
+            data={
+                'type': 'blog_comment',
+                'user': request.user.id,
+                'postId': post.id,
+                'post' : BlogPostNewSerializer(post, many=False, context={
+                    'request': request}).data
+
+            },
+            recipients=[post.blog.user.id]
+        )
+        return Response({
+            "comment" : BlogCommentSerializer(comment, many=False, context={
+                    'request': request
+                }).data,
+        })
+class EditBlogView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        blog_id = request.data.get('blog_id', None)
+        blog = Blog.objects.get(id=blog_id)
+        blog.title = request.data.get('title')
+        blog.description = request.data.get('description')
+        blog.cover = request.data.get('cover', blog.cover)
+        category_ids = request.data.get('category', [])
+        for category_id in category_ids:
+            try:
+                if category_id.isdigit():
+                    category = Category.objects.get(id=category_id)
+                    blog.category.add(category)
+                else:
+                    pass
+            except Category.DoesNotExist:
+                # Handle the case where the category doesn't exist
+                pass
+        blog.save()
+
+        # blog.save()
+        return Response(
+            BlogSerializer(blog, context={
+                'request': request
+            }).data
         )

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from blog.models import BlogPost
 from blog.serializers import BlogInsideArticlesSerializer
-from space.models import SpacePost, Space, SpaceFile, ImageModel
+from space.models import SpacePost, Space, SpaceFile, ImageModel, PostLike
 from useraccount.models import UserAccount, ProfileModel
 from useraccount.serializers import RecommendedSpacesSerializer, VisitorProfileSerializer
 
@@ -75,19 +75,9 @@ class UserPostSerializer(serializers.ModelSerializer):
         profile = ProfileModel.objects.filter(user=obj).first()
         return str(profile.profileImage)
 
-    # def get_profileImage(self, obj):
-    #     profile = ProfileModel.objects.filter(user=obj).first()
-    #     if profile:
-    #         if profile.profileImage:
-    #             return profile.profileImage
-    #         else:
-    #             return None
-    #     else:
-    #         return None
-
 
 class BlogPostNewSerializers(serializers.ModelSerializer):
-    content = serializers.SerializerMethodField()
+    # content = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     blog = BlogInsideArticlesSerializer(read_only=True)
     # is_saved = serializers.SerializerMethodField()
@@ -101,9 +91,9 @@ class BlogPostNewSerializers(serializers.ModelSerializer):
         model = BlogPost
         fields = '__all__'
 
-    def get_content(self, obj):
-        print(obj.content.delta)
-        return obj.content.delta
+    # def get_content(self, obj):
+    #     print(obj.content.delta)
+    #     return obj.content.delta
 
     def get_is_liked(self, obj):
         return obj.likes.filter(user=self.context['request'].user).exists()
@@ -153,7 +143,7 @@ class SpacePostSerializer(serializers.ModelSerializer):
     def get_is_liked(self, obj):
         user = self.context['request'].user
         if user.is_authenticated:
-            if user in obj.likes.all():
+            if obj.interactions.filter(user=user).exists():
                 return True
             else:
                 return False
@@ -164,7 +154,7 @@ class SpacePostSerializer(serializers.ModelSerializer):
     #     return obj.post_files.all().values_list('file', flat=True)
 
     def get_likes_count(self, obj):
-        return obj.likes.count()
+        return obj.interactions.count()
 
     def get_comments_count(self, obj):
         return obj.comments.count()
@@ -255,3 +245,6 @@ class DeletePostSerializer(serializers.ModelSerializer):
 # create a view api to get a list of spaces and blogs with search of category_name
 
 #
+
+
+

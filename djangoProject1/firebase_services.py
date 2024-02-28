@@ -42,7 +42,6 @@ class FirebaseServices:
         for device in user_devices:
             token = device.fcm_token
             fcm_message = messaging.Message(
-
                 notification=notification,
                 data=message_data,
                 token=token
@@ -50,6 +49,7 @@ class FirebaseServices:
             fcm_messages.append(fcm_message)
 
         messaging.send_each(fcm_messages)
+
 
     def Send_Notification_for_to_all(self, title, body, data):
         user_devices = Device.objects.all()
@@ -105,8 +105,6 @@ class FirebaseServices:
         device, created = Device.objects.get_or_create(user_id=user_id, device_id=device_id)
         device.fcm_token = fcm_token
         device.save()
-
-
 
     @staticmethod
     def sendNotification(title, message, data, recipients):

@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from django.contrib.contenttypes.models import ContentType
@@ -11,12 +12,14 @@ from blog.models import Blog
 from blog.serializers import BlogSerializer
 from blog.views import PaginationList
 from commentable.models import Comment
+from djangoProject1.firebase_services import FirebaseServices
+from djangoProject1.send_notification_service import SendNotificationService
 from likable.models import Like
 from notifications.models import Message
 from post.serializers import SpacePostSerializer
 from useraccount.models import Category
 from useraccount.serializers import RecommendedSpacesSerializer
-from .models import Space, SpacePost, PostComment, CommentReply, ReplyLike
+from .models import Space, SpacePost, PostComment, CommentReply, ReplyLike, PostLike, CommentLike
 from .serializers import SpaceSerializer, JoinSpaceSerializer, LeaveSpaceSerializer, SimpleSpaceSerializer, \
     MakePostCommentSerializer, PostCommentSerializer, ReplySerializer
 from django.db.models import F, Max, Value, DateTimeField
@@ -42,7 +45,7 @@ class UserSpacesListView(generics.ListAPIView):
 
 
 class JoinSpaceApiView(APIView):
-    # serializer_class = JoinSpaceSerializer
+
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -50,6 +53,12 @@ class JoinSpaceApiView(APIView):
         space = Space.objects.get(id=space_id)
         if space.is_allowed_to_join(space, request.user):
             space.include_users.add(request.user)
+            SendNotificationService.seneMessagewithPaylod(
+                title=space.name,
+                message='Welcome to ' + space.name + ' space. You are now a member of this space.',
+                data={'type': 'new_space', 'spaceId': space.id, 'spaceName': space.name, 'space_cover' : space.cover.url},
+                recipients=[request.user.id]
+            )
             return Response(SimpleSpaceSerializer(space, many=False, context={'request': self.request}).data,
                             status=status.HTTP_200_OK, )
         else:
@@ -133,8 +142,9 @@ class GetHomeSpacePostsApiView(generics.ListAPIView):
     #         return SpacePostSerializer
     #
     def get_serializer(self, *args, **kwargs):
-    #     if self.request.user.userRole == 2:
-            return SpacePostSerializer(*args, **kwargs, context={'request': self.request})
+        #     if self.request.user.userRole == 2:
+        return SpacePostSerializer(*args, **kwargs, context={'request': self.request})
+
     #     else:
     #         return SpacePostSerializer(*args, **kwargs, context={'request': self.request})
 
@@ -169,28 +179,26 @@ class LikeAndUnlikePost(APIView):
     def get(self, request):
         post_id = request.query_params.get('post_id', None)
         post = SpacePost.objects.get(id=post_id)
-        if post.likes.filter(
+        if post.interactions.filter(
                 user=request.user
 
         ).exists():
-            like = Like.objects.get(
+            like = PostLike.objects.get(
                 user=request.user,
-                object_id=post_id,
-                content_type=ContentType.objects.get_for_model(post)
+                post=post,
             )
             like.delete()
 
-            return Response({"parent_likes_count": post.likes.count(), 'message': 'unliked', 'isLiked': False},
+            return Response({"parent_likes_count": post.interactions.count(), 'message': 'unliked', 'isLiked': False},
                             status=status.HTTP_200_OK)
 
         else:
-            like = Like.objects.create(
+            like = PostLike.objects.create(
                 user=request.user,
-                object_id=post_id,
-                content_type=ContentType.objects.get_for_model(post)
+                post=post,
             )
             like.save()
-            return Response({"parent_likes_count": post.likes.count(), 'message': 'liked', 'isLiked': True},
+            return Response({"parent_likes_count": post.interactions.count(), 'message': 'liked', 'isLiked': True},
                             status=status.HTTP_200_OK)
 
 
@@ -292,14 +300,16 @@ class MakePostComment(APIView):
             post=post,
             content=text
         )
-        messgge = Message.objects.create(
+        print(post_id)
+        print(post.user.id)
+
+        SendNotificationService.seneMessagewithPaylod(
             title='New Comment',
             message='You have a new comment on your post',
-            data={'type': 'new_comment', 'id': comment.id}
-
+            data={'type': 'new_comments', 'commentId': comment.id, 'postId': post_id, 'comment': comment.content,
+                  "commentorName": comment.user.first_name},
+            recipients=[post.user.id]
         )
-        messgge.recipients.set([post.user.id])
-        messgge.save()
         return Response(
             PostCommentSerializer(
                 comment, context={
@@ -318,6 +328,12 @@ class MakeAreplyOnComment(APIView):
             user=request.user,
             comment=comment,
             content=text
+        )
+        SendNotificationService.seneMessagewithPaylod(
+            title='New Reply',
+            message='You have a new reply on your comment',
+            data={'type': 'new_reply', 'replyId': reply.id, 'commentId': comment.id, 'postId': str(comment.post.id),},
+            recipients=[comment.user.id]
         )
         return Response(
             ReplySerializer(
@@ -355,3 +371,41 @@ class LikeUnLikeReply(APIView):
             like.save()
             return Response({"parent_likes_count": reply.likes.count(), 'message': 'liked', 'isLiked': True},
                             status=status.HTTP_200_OK)
+
+
+class LikeAndUnlikeComment(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        comment_id = request.query_params.get('comment_id', None)
+        comment = PostComment.objects.get(id=comment_id)
+        if comment.interActions.filter(
+                user=request.user
+
+        ).exists():
+            like = CommentLike.objects.get(
+                user=request.user,
+                comment=comment
+            )
+            like.delete()
+            return Response(
+                {"parent_likes_count": comment.interActions.count(), 'message': 'unliked', 'isLiked': False},
+                status=status.HTTP_200_OK)
+
+        else:
+
+            like = CommentLike.objects.create(
+                user=request.user,
+                comment=comment
+            )
+            like.save()
+            SendNotificationService.seneMessagewithPaylod(
+                title='New Like',
+                message='You have a new like on your comment',
+                data={'type': 'new_like', 'commentId': comment.id, 'postId': str(comment.post.id), 'comment': comment.content,
+                        "commentorName": comment.user.first_name},
+                recipients=[comment.user.id]
+            )
+            return Response({"parent_likes_count": comment.interActions.count(), 'message': 'liked', 'isLiked': True},
+                            status=status.HTTP_200_OK)
+

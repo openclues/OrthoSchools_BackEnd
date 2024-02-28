@@ -153,7 +153,7 @@ class PostlikeSerializer(serializers.ModelSerializer):
 
 class PostCommentSerializer(serializers.ModelSerializer):
     from post.serializers import UserPostSerializer
-
+    is_liked = serializers.SerializerMethodField(read_only=True)
     user = UserPostSerializer(read_only=True, many=False)
     replies = serializers.SerializerMethodField(read_only=True)
     likes = serializers.SerializerMethodField(read_only=True)
@@ -162,6 +162,15 @@ class PostCommentSerializer(serializers.ModelSerializer):
         model = PostComment
         fields = '__all__'
 
+    def get_is_liked(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            if obj.interActions.filter(user=user).exists():
+                return True
+            else:
+                return False
+        else:
+            return False
     def get_replies(self, obj):
         request = self.context.get('request')
         return ReplySerializer(CommentReply.objects.filter(comment=obj)
@@ -170,8 +179,7 @@ class PostCommentSerializer(serializers.ModelSerializer):
             }).data
 
     def get_likes(self, obj):
-        return CommentLikeSerializer(obj.likes.all(), many=True).data
-
+        return obj.interActions.count()
 
 class CommentLikeSerializer(serializers.ModelSerializer):
     class Meta:

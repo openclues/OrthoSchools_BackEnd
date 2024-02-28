@@ -28,6 +28,9 @@ SECRET_KEY = 'django-insecure-@j-1tiq463#h4t5jm295f#-z(icpua+qpj*p51+6bzs^dh-^q!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+VERIFICATIONREQUESTS ='users'
+PREMIUMREQUESTS = 'users'
+USERS = 'users'
 
 
 
@@ -71,9 +74,9 @@ DJOSER = {
 # ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'  # Redirect after confirmation
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = 'mail.orthoschools.com'
-EMAIL_HOST_USER = 'auth@orthoschools.com'
-EMAIL_HOST_PASSWORD = 'Java456!@'
+EMAIL_HOST = 'mail.r4v5zsqf.a2hosted.com'
+EMAIL_HOST_USER = 'accounts@r4v5zsqf.a2hosted.com'
+EMAIL_HOST_PASSWORD = 'Java2992'
 EMAIL_PORT = 587
 # EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'auth@orthoschools.com'

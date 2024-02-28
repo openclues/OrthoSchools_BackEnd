@@ -2,13 +2,13 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from blog.models import Blog, BlogPost, ArticleComment
+from blog.models import Blog, BlogPost, ArticleComment, ArticleCommentLikeModel
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
+from useraccount.models import UserAccount, ProfileModel
 from useraccount.serializers import VisitorProfileSerializer
 
 
 class CreateBlogSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Blog
         fields = ['title', 'description', 'cover']
@@ -44,12 +44,35 @@ class BlogSerializer(serializers.ModelSerializer):
     def get_followers_count(self, obj):
         return obj.followers.count()
 
+
+class UserCommentSerializer(serializers.ModelSerializer):
+    profileImage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserAccount
+        fields = ['id', 'first_name', 'last_name', 'profileImage', 'userRole', 'is_verified', 'is_verified_pro']
+
+    def get_profileImage(self, obj):
+        profile = ProfileModel.objects.filter(user=obj).first()
+        return str(profile.profileImage)
+
+
 class BlogCommentSerializer(serializers.ModelSerializer):
-    user = VisitorProfileSerializer(read_only=True)
+    user = UserCommentSerializer(read_only=True)
+    isArticleLiked = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = ArticleComment
-        fields = ['id', 'content', 'user', 'created_at', 'updated_at']
+        fields = ['id', 'content', 'user', 'created_at', 'updated_at', 'isArticleLiked', 'likes_count']
+
+    def get_isArticleLiked(self, obj):
+        return ArticleCommentLikeModel.objects.filter(comment=obj, user=self.context['request'].user).exists()
+
+    def get_likes_count(self, obj):
+        return ArticleCommentLikeModel.objects.filter(comment=obj).count()
+
+
 class BlogPostSerializer(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
 
@@ -74,7 +97,7 @@ class BlogInsideArticlesSerializer(serializers.ModelSerializer):
 
 
 class BlogPostNewSerializer(serializers.ModelSerializer):
-    content = serializers.SerializerMethodField()
+    # content = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     blog = BlogInsideArticlesSerializer(read_only=True)
     # is_saved = serializers.SerializerMethodField()
@@ -88,10 +111,10 @@ class BlogPostNewSerializer(serializers.ModelSerializer):
         model = BlogPost
         fields = '__all__'
 
-    def get_content(self, obj):
-        print(obj.content.delta)
-        return obj.content.delta
-
+    # def get_content(self, obj):
+    #     print(obj.content.delta)
+    #     return obj.content.delta
+    #
     def get_is_liked(self, obj):
         return obj.likes.filter(user=self.context['request'].user).exists()
 
