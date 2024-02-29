@@ -23,26 +23,27 @@ from rest_framework.routers import DefaultRouter
 import useraccount.websiteViews.views
 from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, \
     LikeAndUnlikeArticle, BlogScreenView, BlogCreateAPIView, FollowUnfollowBlogApiView, CreateBlogPost, \
-    GetArticlesByCategory, RecommendedBlogListView, GetArticleComments, CommentOnArticle, EditBlogView
+    GetArticlesByCategory, RecommendedBlogListView, GetArticleComments, CommentOnArticle, EditBlogView, ArticlesSearch
 from commentable.views import GetSpacePostComments, MakeAreplayOnAComment, MakeBlogPostComment, GetSinglePostComment
 from course.views import CourseApiListView
 from djangoProject1 import settings
-from notifications.views import RegisterDeviceView
-from post.views import CreatePostApiView, GetPostApiView, SearchBlogPostsApiView, BlogSearchApiView
+from notifications.views import RegisterDeviceView, RemoveFcmToken
+from post.views import CreatePostApiView, GetPostApiView, SearchBlogPostsApiView, BlogSearchApiView, SpacesSearch
 from saveditem.views import GetSaved, SaveAndUnsavePost
 from space.models import Space
 from space.serializers import ActivityViewSet
 from space.views import UserSpacesListView, JoinSpaceApiView, LeaveSpaceApiView, SpaceRetrieveApiView, \
     GetRecommendedSpacesApiView, GetHomeSpacePostsApiView, GETSPACESANDBLOGSWITHCATEGORYNAME, LikeAndUnlikePost, \
     SpacePostsListView, FilterSpacesAndArticlesWithCategoryName, MakePostComment, MakeAreplyOnComment, \
-    DiscoverPopularSpacesAndBlogs, LikeUnLikeReply, LikeAndUnlikeComment
+    DiscoverPopularSpacesAndBlogs, LikeUnLikeReply, LikeAndUnlikeComment, UpdatePostComment
 from useraccount.userViews import RegisterApiView, CreateProfileApiView, UpdateUserAndProfileApiView, \
     CustomTokenCreateView, GetProfileApiView, ProfileInterestsApiView, CategoriesApiView, HomeDataApiView, \
     ProfileViewSet, MyProfileViewSet, UserUpdateApiView, GetMySpaces, MyActivities, GenerateAndSendEmailCode, \
     VerifyEmailCode, GetUsersNoticiations, ViewNotification, SendPremiumRequest, UploadUserCardId, UploadCertificate, \
     UploadSelfie, RemoveCertificate, RemoveCardId, RemoveSelfie, CreateAverificationRequest, UploadProfileImage, \
     UpadateProfile, ChangePassword, SendCodeForResetPassword, ResetPassword, UploadCoverImage, MakePremium, \
-    GetUsersListView, GetVerificationProRequestsForAdmin, ApproveOrDisApproveVerificationRequest
+    GetUsersListView, GetVerificationProRequestsForAdmin, ApproveOrDisApproveVerificationRequest, BIOupdateView, \
+    SetPhoneNumberToVerified
 from useraccount.websiteViews import profile_views
 
 # from useraccount.websiteViews.views import signup_view
@@ -99,6 +100,7 @@ urlpatterns = [
     path('myprofile/', MyProfileViewSet.as_view(), name='my_profile'),
     # path('verify/pro', VerificationRequestViewSet.as_view(), name='send_verification_request'),
     path('update/profile', UserUpdateApiView.as_view(), name='update_profile'),
+    path('update/bio/', BIOupdateView.as_view(), name='update_bio'),
     path('api/spaces/', GetMySpaces.as_view(), name='get_my_spaces'),
     path('api/recommended-spaces/', GetRecommendedSpacesApiView.as_view(), name='get_recommended_spaces'),
     path('api/recommended-blogs/', RecommendedBlogListView.as_view(), name='get_recommended_blogs'),
@@ -148,12 +150,17 @@ urlpatterns = [
     path('premieum/', MakePremium.as_view(), name='make_premieum'),
     path('read/articles/', GetArticlesByCategory.as_view(), name='read-articles'),
     path('search/posts/', SearchBlogPostsApiView.as_view(), name='search_posts'),
+    path('search/articles/', ArticlesSearch.as_view(), name='search_articles'),
+    path('search/spaces/', SpacesSearch.as_view(), name='search_spaces'),
     path('search/blogs/', BlogSearchApiView.as_view(), name='search_blogs'),
     path('manage/users/', GetUsersListView.as_view(), name='get_users'),
     path('blog/edit/', EditBlogView.as_view(), name='edit_blog'),
+    path('unregister_device/', RemoveFcmToken.as_view(), name='unregister_device'),
+    path('comment/update/', UpdatePostComment.as_view(), name='update_comment'),
+
     path('verificationsRequests/', GetVerificationProRequestsForAdmin.as_view(), name='get_verification_requests'),
     path('verificationRequest/interact/', ApproveOrDisApproveVerificationRequest.as_view(), name='approve_or_disapprove_verification_request'),
-
+    path('verify/phone/', SetPhoneNumberToVerified.as_view(), name='verify_phone'),
 ]
 
 if settings.DEBUG:

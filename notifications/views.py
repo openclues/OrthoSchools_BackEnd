@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework import generics, status
 
 from djangoProject1.firebase_services import FirebaseServices
-from notifications.models import Message
+from notifications.models import Message, Device
 from notifications.serializers import MessageSerializer
 
 
@@ -43,4 +43,9 @@ class GetAllMessages(generics.ListAPIView):
         return Message.objects.filter(recipients__in=[self.request.user])
 
 
-
+class RemoveFcmToken(APIView):
+    def post(self, request):
+        user_id = request.user.id
+        device_id = request.data.get('device_id')
+        FirebaseServices.un_register_device_for_push_notification(user_id, device_id)
+        return Response({'success': True})

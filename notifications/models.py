@@ -47,12 +47,13 @@ def send_notification(sender, instance, created, **kwargs):
             for user in instance.recipients.all():
                 devices = Device.objects.filter(user_id=user.id)
                 print(user.id, devices)
-                for device in devices:
-                    token = device.fcm_token
-                    fcm_message = messaging.Message(
-                        notification=notification,
-                        data=message_data,
-                        token=token
-                    )
-                    fcm_messages.append(fcm_message)
-            messaging.send_each(fcm_messages)
+                if devices:
+                    for device in devices:
+                        token = device.fcm_token
+                        fcm_message = messaging.Message(
+                            notification=notification,
+                            data=message_data,
+                            token=token
+                        )
+                        fcm_messages.append(fcm_message)
+                    messaging.send_each(fcm_messages)

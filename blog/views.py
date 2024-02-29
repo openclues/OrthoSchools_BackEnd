@@ -26,7 +26,7 @@ from .serializers import BlogSerializer, BlogPostSerializer, BlogPostNewSerializ
 
 
 class PaginationList(PageNumberPagination):
-    page_size = 2
+    page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -80,24 +80,12 @@ class FeaturedBlogListView(APIView):
 class FilteredArticlesListView(generics.ListAPIView):
     serializer_class = BlogPostNewSerializer
     queryset = BlogPost.objects.all()
-    filter_backends = [SearchFilter]
+    # filter_backends = [SearchFilter]
     pagination_class = PaginationList
-    search_fields = ['category__name']  # Assuming 'name' is a field in your Category model
+    # search_fields = ['category__name']  # Assuming 'name' is a field in your Category model
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(is_banned=False)
-        category = self.request.query_params.get('category', None)
-        following = self.request.query_params.get('following', None)
-        if category:
-            queryset = queryset.filter(category__name=category)
-        if following:
-            queryset = queryset.filter(
-                blog__followers__in=[self.request.user])  # Assuming 'name' is a field in your Category model
-
-        return queryset
-
-
+        return BlogPost.objects.all().order_by('-updated_at')
 class RecommendedBlogListView(APIView):
     permission_classes = [IsAuthenticated, ]
 
@@ -346,7 +334,7 @@ class CreateBlogPost(APIView):
         post.save()
         print(BlogPostNewSerializer(post, context={"request": request}).data)
 
-        return Response({'message': 'created', "post": post.content}, status=status.HTTP_201_CREATED)
+        return Response(BlogPostNewSerializer(post, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
 
 class GetArticlesByCategory(APIView):
@@ -437,3 +425,25 @@ class EditBlogView(APIView):
                 'request': request
             }).data
         )
+
+class ArticlesSearch(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        search_query = request.query_params.get('search', '')  # Retrieve 'search' query parameter
+        posts = BlogPost.objects.filter(content__icontains=search_query).order_by('-updated_at')
+        return Response(BlogPostNewSerializer(posts, many=True, context={
+            'request': request
+        }).data)
+
+
+class BlogsSearchView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        search_query = request.query_params.get('search', '')  # Retrieve 'search' query parameter
+        blogs = Blog.objects.filter(title__icontains=search_query)
+        return Response(BlogSerializer(blogs, many=True, context={
+            'request': request
+        }).data)

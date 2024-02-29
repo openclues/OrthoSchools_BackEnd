@@ -4,11 +4,14 @@ from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from blog.models import Blog
 from blog.serializers import BlogSerializer
 from post.serializers import AddPostSerializer, SpacePostSerializer
 from space.models import SpacePost, Space
+from space.serializers import SpaceSerializer
+from useraccount.serializers import RecommendedSpacesSerializer
 
 
 class CreatePostApiView(generics.CreateAPIView):
@@ -92,11 +95,30 @@ class BlogSearchApiView(generics.ListAPIView):
     serializer_class = BlogSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        return Blog.objects.filter(title__icontains=self.kwargs['search'])
 
     def get(self, request, *args, **kwargs):
-        blogs = self.get_queryset()
+        search = request.query_params.get('search', '')
+        blogs = Blog.objects.filter(title__icontains=search)
         return Response(BlogSerializer(blogs, many=True, context=self.get_serializer_context()).data)
+
+
+
+
+
+
+# class SearchArticles
+class SpacesSearch(APIView):
+    def get(self, request):
+        search_query = request.query_params.get('search', '')  # Retrieve 'search' query parameter
+        user = request.user
+        spaces = []
+        if user.is_authenticated and user.userRole == '2':
+            spaces = Space.objects.filter(name__icontains=search_query)
+        else:
+            spaces = Space.objects.filter(name__icontains=search_query, allowed_user_types='public')
+        return Response(RecommendedSpacesSerializer(spaces, many=True, context={
+            'request': request
+        }).data)
+
 
 

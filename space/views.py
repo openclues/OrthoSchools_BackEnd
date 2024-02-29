@@ -409,3 +409,22 @@ class LikeAndUnlikeComment(APIView):
             return Response({"parent_likes_count": comment.interActions.count(), 'message': 'liked', 'isLiked': True},
                             status=status.HTTP_200_OK)
 
+
+
+
+class UpdatePostComment(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        comment_id = self.request.data.get('comment_id', None)
+        text = self.request.data.get('content', None)
+        comment = PostComment.objects.get(id=comment_id)
+        comment.content = text
+        comment.save()
+        return Response(
+            PostCommentSerializer(
+                comment, context={
+                    'request': self.request
+                }
+            ).data
+        )

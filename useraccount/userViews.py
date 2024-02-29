@@ -636,22 +636,22 @@ class GetUsersListView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         # param
         search = request.query_params.get('search', None)
-        if request.user.groups.filter(name__contains='users').exists():
-            if search is not None:
-                # search for name or email or phone number
-                users = ProfileModel.objects.filter(user__first_name__icontains=search) | ProfileModel.objects.filter(
-                    user__last_name__icontains=search) | ProfileModel.objects.filter(
-                    user__email__icontains=search) | ProfileModel.objects.filter(user__phone__icontains=search)
-                return Response(FullUserSerializer(users, many=True, context={
-                    'request': request
-                }).data, status=status.HTTP_200_OK)
-            else:
-                users = ProfileModel.objects.all()
-                return Response(FullUserSerializer(users, many=True,
-                                                   context={
-                                                       'request': request
-                                                   }
-                                                   ).data, status=status.HTTP_200_OK)
+        # if request.user.groups.filter(name__contains='users').exists():
+        if search is not None:
+            # search for name or email or phone number
+            users = ProfileModel.objects.filter(user__first_name__icontains=search) | ProfileModel.objects.filter(
+                user__last_name__icontains=search) | ProfileModel.objects.filter(
+                user__email__icontains=search) | ProfileModel.objects.filter(user__phone__icontains=search)
+            return Response(FullUserSerializer(users, many=True, context={
+                'request': request
+            }).data, status=status.HTTP_200_OK)
+        else:
+            users = ProfileModel.objects.all()
+            return Response(FullUserSerializer(users, many=True,
+                                               context={
+                                                   'request': request
+                                               }
+                                               ).data, status=status.HTTP_200_OK)
 
 
 class GetVerificationProRequestsForAdmin(APIView):
@@ -717,3 +717,29 @@ class ApproveOrDisApproveVerificationRequest(APIView):
         else:
             return Response({'message': 'You are not allowed to access this resource'},
                             status=status.HTTP_403_FORBIDDEN)
+
+
+class BIOupdateView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        bio = request.data.get('bio', None)
+        if bio is not None:
+            user.profilemodel.bio = bio
+            user.profilemodel.save()
+            return Response({'bio': bio}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Bio is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SetPhoneNumberToVerified(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        user.phone_verified = True
+        user.is_verified = True
+        user.save()
+        return Response(FullUserSerializer(
+            user.profilemodel, many=False, context={'request': self.request}).data, status=status.HTTP_200_OK)

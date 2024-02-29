@@ -106,6 +106,11 @@ class FirebaseServices:
         device.fcm_token = fcm_token
         device.save()
 
+    def un_register_device_for_push_notification(user_id, device_id):
+        """
+        Removes the device information from the database
+        """
+        Device.objects.filter(user_id=user_id, device_id=device_id).delete()
     @staticmethod
     def sendNotification(title, message, data, recipients):
         notification = messaging.Notification(
