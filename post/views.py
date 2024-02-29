@@ -21,12 +21,9 @@ class CreatePostApiView(generics.CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(user=user)
-        print(serializer.instance)
-        print(self.request.data)
         post_images = self.request.FILES.getlist('post_images')
         video = self.request.FILES.get('video')
 
-        print(str(video) + "dfgpkdfgp[kdfgpk")
         if video:
             serializer.instance.video = video
             serializer.instance.save()
@@ -44,7 +41,7 @@ class CreatePostApiView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(SpacePostSerializer(
+        return Response(AddPostSerializer(
             serializer.instance,
             context=self.get_serializer_context()
         ).data, status=status.HTTP_201_CREATED, )

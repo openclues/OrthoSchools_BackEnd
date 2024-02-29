@@ -275,7 +275,9 @@ class FollowUnfollowBlogApiView(APIView):
                     'user': request.user.id
                 }
             )
-            message.recipients.set([request.user.id])
+            message.recipients.set([
+                blog.user.id
+            ])
             message.save()
             return Response({'message': 'followed', 'is_followed': True})
 

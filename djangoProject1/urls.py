@@ -27,7 +27,7 @@ from blog.views import BlogDetailView, BlogListView, FilteredArticlesListView, \
 from commentable.views import GetSpacePostComments, MakeAreplayOnAComment, MakeBlogPostComment, GetSinglePostComment
 from course.views import CourseApiListView
 from djangoProject1 import settings
-from notifications.views import RegisterDeviceView, RemoveFcmToken
+from notifications.views import RegisterDeviceView, RemoveFcmToken, MarkAllMessagesRead
 from post.views import CreatePostApiView, GetPostApiView, SearchBlogPostsApiView, BlogSearchApiView, SpacesSearch
 from saveditem.views import GetSaved, SaveAndUnsavePost
 from space.models import Space
@@ -157,6 +157,7 @@ urlpatterns = [
     path('blog/edit/', EditBlogView.as_view(), name='edit_blog'),
     path('unregister_device/', RemoveFcmToken.as_view(), name='unregister_device'),
     path('comment/update/', UpdatePostComment.as_view(), name='update_comment'),
+    path('read/notifications/', MarkAllMessagesRead.as_view(), name='mark_all_messages_read'),
 
     path('verificationsRequests/', GetVerificationProRequestsForAdmin.as_view(), name='get_verification_requests'),
     path('verificationRequest/interact/', ApproveOrDisApproveVerificationRequest.as_view(), name='approve_or_disapprove_verification_request'),

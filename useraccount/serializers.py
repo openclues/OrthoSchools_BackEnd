@@ -6,6 +6,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from blog.models import Blog
+from notifications.models import Message
 from space.models import Space, SpacePost
 from useraccount.api.serializers.user_api_serializer import CategorySerializer
 from useraccount.models import ProfileModel, UserAccount, VerificationProRequest, Certificate
@@ -138,13 +139,14 @@ class FullUserSerializer(serializers.ModelSerializer):
     is_me = serializers.SerializerMethodField()
     blog = serializers.SerializerMethodField()
     certificates = serializers.SerializerMethodField()
+    unread_notifications = serializers.SerializerMethodField()
 
     # verified_pro_request = serializers.SerializerMethodField()
 
     class Meta:
         model = ProfileModel
         fields = ['title', 'bio', 'study_in', 'cover', 'profileImage', 'birth_date', 'place_of_work', 'speciality',
-                  'user', 'is_me', 'id_card', 'selfie', 'blog', 'certificates', 'country', 'city', 'state']
+                  'user', 'is_me', 'id_card', 'selfie', 'blog', 'certificates', 'country', 'city', 'state','unread_notifications']
 
     def get_is_me(self, obj):
         user = self.context['request'].user
@@ -171,6 +173,11 @@ class FullUserSerializer(serializers.ModelSerializer):
         else:
             return None
 
+    def get_unread_notifications(self, obj):
+        user = self.context['request'].user
+        messages = Message.objects.filter(recipients__in=[user]).exclude(read_by__in=[user]).count()
+
+        return messages
 
 class VisitorUserSerializer(serializers.ModelSerializer):
     class Meta:
